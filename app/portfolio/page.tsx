@@ -1,35 +1,17 @@
 import PortfolioClient from "./portfolio-client";
+import { getPortfolioItems } from "@/lib/strapi";
+import type { Metadata } from "next";
 
-type PortfolioItemType = {
-    id: number;
-    title: string;
-    category: string;
-    image: string;
-    alt?: string;
+export const metadata: Metadata = {
+    title: "Portfolio",
+    description:
+        "Entdecke meine besten Fotografien. Portfolio von Nicolas Klein mit Porträts, Events und kreativen Projekten aus Saarbrücken und Umgebung.",
+    openGraph: {
+        title: "Portfolio | Nicolas Klein Photography",
+        description:
+            "Entdecke meine besten Fotografien. Portfolio von Nicolas Klein mit Porträts, Events und kreativen Projekten.",
+    },
 };
-
-async function getPortfolioItems(): Promise<PortfolioItemType[]> {
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/portfolio-items?populate=FullImage`,
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-            },
-            // cache: "force-cache",
-        }
-    );
-    const json = await res.json();
-
-    return (json.data || []).map(
-        (item: any): PortfolioItemType => ({
-            id: item.id,
-            title: item.Title,
-            category: item.Description,
-            image: item.FullImage.url,
-            alt: item.description,
-        })
-    );
-}
 
 export default async function Portfolio() {
     const portfolioItems = await getPortfolioItems();

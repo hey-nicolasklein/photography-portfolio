@@ -19,9 +19,87 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-    title: "Nicolas Klein Photography",
-    description: "Professional photography portfolio of Nicolas Klein",
-    generator: "v0.dev",
+    title: {
+        default:
+            "Nicolas Klein Photography - Professionelle Fotografie in Saarbrücken",
+        template: "%s | Nicolas Klein Photography",
+    },
+    description:
+        "Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie. Authentische Momente in minimalistischem Schwarzweiß-Stil.",
+    keywords: [
+        "Fotograf Saarbrücken",
+        "Portrait Fotografie",
+        "Event Fotografie",
+        "Hochzeitsfotograf",
+        "Professionelle Fotografie",
+        "Nicolas Klein",
+        "Schwarzweiß Fotografie",
+        "Saarland Fotograf",
+    ],
+    authors: [{ name: "Nicolas Klein" }],
+    creator: "Nicolas Klein",
+    publisher: "Nicolas Klein Photography",
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+        },
+    },
+    openGraph: {
+        type: "website",
+        locale: "de_DE",
+        url: "https://nicolasklein.photography",
+        siteName: "Nicolas Klein Photography",
+        title: "Nicolas Klein Photography - Professionelle Fotografie in Saarbrücken",
+        description:
+            "Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.",
+        images: [
+            {
+                url: "/og-image.jpg",
+                width: 1200,
+                height: 630,
+                alt: "Nicolas Klein Photography",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Nicolas Klein Photography",
+        description: "Professioneller Fotograf in Saarbrücken",
+        images: ["/og-image.jpg"],
+    },
+    icons: {
+        icon: [
+            { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+            { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        ],
+        apple: [
+            {
+                url: "/apple-touch-icon.png",
+                sizes: "180x180",
+                type: "image/png",
+            },
+        ],
+        other: [
+            {
+                rel: "mask-icon",
+                url: "/safari-pinned-tab.svg",
+                color: "#000000",
+            },
+        ],
+    },
+    manifest: "/site.webmanifest",
+    alternates: {
+        canonical: "https://nicolasklein.photography",
+    },
+    verification: {
+        google: "your-google-verification-code", // You'll need to add this when setting up Google Search Console
+    },
 };
 
 export default function RootLayout({
@@ -30,7 +108,16 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="de">
+            <head>
+                <link rel="icon" href="/favicon.ico" sizes="any" />
+                <meta name="theme-color" content="#000000" />
+                <meta name="msapplication-TileColor" content="#000000" />
+                <meta
+                    name="msapplication-config"
+                    content="/browserconfig.xml"
+                />
+            </head>
             <body className={`${inter.variable} font-sans antialiased`}>
                 <ScrollProgress />
                 {children}

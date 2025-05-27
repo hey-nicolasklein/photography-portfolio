@@ -6,16 +6,10 @@ import { motion } from "framer-motion";
 import LightboxPortal from "./lightbox-portal";
 import GalleryItem from "./gallery-item";
 import { useLightbox } from "@/hooks/use-lightbox";
-
-type TransformedGalleryItem = {
-    id: number;
-    src: string;
-    alt: string;
-    category: string;
-};
+import type { GalleryItem as GalleryItemType } from "@/types";
 
 interface PhotoGalleryProps {
-    galleryItems: TransformedGalleryItem[];
+    galleryItems: GalleryItemType[];
 }
 
 export default function PhotoGallery({ galleryItems }: PhotoGalleryProps) {

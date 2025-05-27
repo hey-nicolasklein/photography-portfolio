@@ -1,11 +1,10 @@
 {
-	"folders": [
-		{
-			"path": ".."
-		},
-		{
-			"path": "../../strapi-cloud-template-blog-3e96d9be0f"
-		}
-	],
-	"settings": {}
+    "folders": [
+        {
+            "path": ".."
+        },
+        {
+            "path": "../../photography-strapi"
+        }
+    ]
 }

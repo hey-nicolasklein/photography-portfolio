@@ -7,14 +7,7 @@ import AnimatedSection from "@/components/animated-section";
 import LightboxPortal from "@/components/lightbox-portal";
 import PortfolioItem from "@/components/portfolio-item";
 import { useLightbox } from "@/hooks/use-lightbox";
-
-type PortfolioItemType = {
-    id: number;
-    title: string;
-    category: string;
-    image: string;
-    alt?: string;
-};
+import type { PortfolioItem as PortfolioItemType } from "@/types";
 
 export default function PortfolioClient({
     portfolioItems,
@@ -31,15 +24,18 @@ export default function PortfolioClient({
     return (
         <main className="min-h-screen bg-white text-black">
             <header className="bg-white z-50 container mx-auto px-4 py-8 flex justify-between items-center">
-                <h1 className="text-xl font-light tracking-wider">
+                <Link
+                    href="/"
+                    className="text-xl font-light tracking-wider hover:opacity-80 transition-opacity"
+                >
                     NICOLAS KLEIN
-                </h1>
+                </Link>
                 <nav className="hidden md:flex space-x-8">
                     <Link
                         href="/"
                         className="text-sm hover:border-b hover:border-black transition-none"
                     >
-                        home
+                        startseite
                     </Link>
                     <Link
                         href="/portfolio"
@@ -51,26 +47,28 @@ export default function PortfolioClient({
                         href="/pricing"
                         className="text-sm hover:border-b hover:border-black transition-none"
                     >
-                        pricing
+                        preise
                     </Link>
                 </nav>
                 <div className="flex items-center space-x-4">
                     <Link
-                        href="https://instagram.com"
-                        className="text-black"
+                        href="https://www.instagram.com/hey.nicolasklein/"
+                        className="text-black hover:scale-110 transition-transform duration-300"
                         aria-label="Instagram"
+                        target="_blank"
+                        rel="noopener noreferrer"
                     >
                         <Instagram size={20} />
                     </Link>
                     <MobileMenu
                         links={[
-                            { href: "/", label: "home" },
+                            { href: "/", label: "startseite" },
                             {
                                 href: "/portfolio",
                                 label: "portfolio",
                                 active: true,
                             },
-                            { href: "/pricing", label: "pricing" },
+                            { href: "/pricing", label: "preise" },
                         ]}
                     />
                 </div>
@@ -105,20 +103,16 @@ export default function PortfolioClient({
                         </p>
                         <div className="flex space-x-4 mt-4 md:mt-0">
                             <Link
-                                href="#"
-                                className="text-sm text-gray-500 hover:text-black"
+                                href="/impressum"
+                                className="text-sm text-gray-500 hover:text-black transition-colors"
                             >
-                                Privacy
+                                Impressum
                             </Link>
                             <Link
-                                href="#"
-                                className="text-sm text-gray-500 hover:text-black"
-                            >
-                                Terms
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-sm text-gray-500 hover:text-black"
+                                href="https://www.instagram.com/hey.nicolasklein/"
+                                className="text-sm text-gray-500 hover:text-black transition-colors"
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 Instagram
                             </Link>
