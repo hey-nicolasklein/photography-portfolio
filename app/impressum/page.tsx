@@ -2,17 +2,14 @@ import Link from "next/link";
 import { Instagram } from "lucide-react";
 import MobileMenu from "@/components/mobile-menu";
 import AnimatedSection from "@/components/animated-section";
-import type { Metadata } from "next";
+import { generateMetadata } from "@/lib/og";
 
-export const metadata: Metadata = {
+export const metadata = generateMetadata({
     title: "Impressum",
-    description:
-        "Impressum und rechtliche Angaben von Nicolas Klein Photography, Saarbrücken.",
-    robots: {
-        index: false,
-        follow: true,
-    },
-};
+    description: "Impressum und rechtliche Angaben von Nicolas Klein Photography, Saarbrücken.",
+    path: "/impressum",
+    noIndex: true,
+});
 
 export default function Impressum() {
     return (

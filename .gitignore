@@ -25,5 +25,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-./workfiles
+workfiles
 .DS_Store

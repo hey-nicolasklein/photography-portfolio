@@ -65,6 +65,7 @@ export default function GalleryItem({
                     className="object-cover"
                     sizes="(max-width: 768px) 80vw, (max-width: 1200px) 40vw, 33vw"
                     priority={index < 3} // Prioritize loading first 3 images
+                    fetchPriority="high"
                 />
             </motion.div>
 

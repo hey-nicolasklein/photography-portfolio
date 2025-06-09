@@ -5,6 +5,7 @@ import "./globals.css";
 import ScrollProgress from "@/components/scroll-progress";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import { generatePhotographerStructuredData } from "@/lib/og";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -61,10 +62,16 @@ export const metadata: Metadata = {
             "Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.",
         images: [
             {
-                url: "/og-image.jpg",
+                url: "/api/og?title=Nicolas Klein Photography&description=Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.&type=default",
                 width: 1200,
                 height: 630,
                 alt: "Nicolas Klein Photography",
+            },
+            {
+                url: "/og-default.svg",
+                width: 1200,
+                height: 630,
+                alt: "Nicolas Klein Photography - Default",
             },
         ],
     },
@@ -72,7 +79,9 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Nicolas Klein Photography",
         description: "Professioneller Fotograf in Saarbrücken",
-        images: ["/og-image.jpg"],
+        images: ["/api/og?title=Nicolas Klein Photography&description=Professioneller Fotograf in Saarbrücken&type=default"],
+        creator: "@hey.nicolasklein",
+        site: "@hey.nicolasklein",
     },
     icons: {
         icon: [
@@ -120,6 +129,12 @@ export default function RootLayout({
                 />
             </head>
             <body className={`${inter.variable} font-sans antialiased`}>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(generatePhotographerStructuredData()),
+                    }}
+                />
                 <ScrollProgress />
                 {children}
                 <SpeedInsights />

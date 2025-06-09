@@ -1,0 +1,41 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000"/>
+      <stop offset="50%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <pattern id="dots" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <circle cx="30" cy="30" r="4" fill="#ffffff" fill-opacity="0.02"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  
+  <!-- Main title -->
+  <text x="600" y="280" text-anchor="middle" fill="white" font-family="Inter, system-ui, sans-serif" font-size="80" font-weight="300" letter-spacing="0.2em">
+    NICOLAS KLEIN
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="340" text-anchor="middle" fill="#cccccc" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="300" letter-spacing="0.1em">
+    PHOTOGRAPHY
+  </text>
+  
+  <!-- Description -->
+  <text x="600" y="420" text-anchor="middle" fill="#999999" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="300">
+    Professionelle Fotografie in Saarbrücken
+  </text>
+  
+  <!-- Services -->
+  <text x="200" y="570" fill="#666666" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="300" letter-spacing="0.1em">
+    Porträts • Events • Follow Around
+  </text>
+  
+  <!-- Website -->
+  <text x="1000" y="570" text-anchor="end" fill="#999999" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="300" letter-spacing="0.2em">
+    nicolasklein.photography
+  </text>
+</svg> 

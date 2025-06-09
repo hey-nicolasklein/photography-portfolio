@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+When running, installing or updating packages - use pnpm.
+/components go into components folder
+/types is for types
+This project is Next 15 with a strapi backend
