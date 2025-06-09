@@ -2,9 +2,11 @@ import type {
     StrapiGalleryItem,
     StrapiPortfolioItem,
     StrapiBioItem,
+    StrapiStory,
     GalleryItem,
     PortfolioItem,
     BioItem,
+    Story,
     StrapiResponse,
 } from "@/types";
 
@@ -152,5 +154,47 @@ export async function getBio(): Promise<BioItem | null> {
     } catch (error) {
         console.error("Error fetching bio:", error);
         return null;
+    }
+}
+
+// Fetch stories from Strapi
+export async function getStories(): Promise<Story[]> {
+    try {
+        const res = await fetch(`${STRAPI_URL}/api/stories?populate=images`, {
+            headers: {
+                Authorization: `Bearer ${STRAPI_TOKEN}`,
+            },
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+            console.error(
+                "Failed to fetch stories:",
+                res.status,
+                res.statusText
+            );
+            return [];
+        }
+
+        const json: StrapiResponse<StrapiStory> = await res.json();
+        const stories = json.data || [];
+
+        return stories.map((story) => ({
+            id: story.id,
+            documentId: story.documentId,
+            title: story.title,
+            description: story.description,
+            images: story.images.map((image) => ({
+                id: image.id,
+                url: getFullImageUrl(image.url),
+                alt: image.alternativeText || image.name || story.title,
+                width: image.width,
+                height: image.height,
+            })),
+            createdAt: story.createdAt,
+        }));
+    } catch (error) {
+        console.error("Error fetching stories:", error);
+        return [];
     }
 }

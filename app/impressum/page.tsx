@@ -17,61 +17,63 @@ export const metadata: Metadata = {
 export default function Impressum() {
     return (
         <main className="min-h-screen bg-white text-black">
-            <header className="bg-white z-50 container mx-auto px-4 py-8 flex justify-between items-center">
-                <Link
-                    href="/"
-                    className="text-xl font-light tracking-wider hover:opacity-80 transition-opacity"
-                >
-                    NICOLAS KLEIN
-                </Link>
-                <nav className="hidden md:flex space-x-8">
+            <header className="bg-white/80 backdrop-blur-xl shadow-sm sticky top-0 z-50 border-b border-gray-100">
+                <div className="container mx-auto px-4 py-8 flex justify-between items-center">
                     <Link
                         href="/"
-                        className="text-sm hover:border-b hover:border-black transition-none"
+                        className="text-xl font-light tracking-[0.2em] hover:opacity-80 transition-opacity uppercase"
                     >
-                        startseite
+                        NICOLAS KLEIN
                     </Link>
-                    <Link
-                        href="/portfolio"
-                        className="text-sm hover:border-b hover:border-black transition-none"
-                    >
-                        portfolio
-                    </Link>
-                    <Link
-                        href="/pricing"
-                        className="text-sm hover:border-b hover:border-black transition-none"
-                    >
-                        preise
-                    </Link>
-                </nav>
-                <div className="flex items-center space-x-4">
-                    <Link
-                        href="https://www.instagram.com/hey.nicolasklein/"
-                        className="text-black hover:scale-110 transition-transform duration-300"
-                        aria-label="Instagram"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Instagram size={20} />
-                    </Link>
-                    <MobileMenu
-                        links={[
-                            { href: "/", label: "startseite" },
-                            { href: "/portfolio", label: "portfolio" },
-                            { href: "/pricing", label: "preise" },
-                            {
-                                href: "/impressum",
-                                label: "impressum",
-                                active: true,
-                            },
-                        ]}
-                    />
+                    <nav className="hidden md:flex space-x-8">
+                        <Link
+                            href="/"
+                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
+                        >
+                            startseite
+                        </Link>
+                        <Link
+                            href="/portfolio"
+                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
+                        >
+                            portfolio
+                        </Link>
+                        <Link
+                            href="/pricing"
+                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
+                        >
+                            preise
+                        </Link>
+                    </nav>
+                    <div className="flex items-center space-x-4">
+                        <Link
+                            href="https://www.instagram.com/hey.nicolasklein/"
+                            className="text-black hover:scale-110 transition-transform duration-300"
+                            aria-label="Instagram"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Instagram size={20} />
+                        </Link>
+                        <MobileMenu
+                            links={[
+                                { href: "/", label: "startseite" },
+                                { href: "/portfolio", label: "portfolio" },
+                                { href: "/pricing", label: "preise" },
+                                {
+                                    href: "/impressum",
+                                    label: "impressum",
+                                    active: true,
+                                },
+                            ]}
+                        />
+                    </div>
                 </div>
             </header>
 
             <section className="container mx-auto px-4 py-16">
                 <AnimatedSection animation="fade">
-                    <h1 className="text-3xl font-bold uppercase mb-8">
+                    <h1 className="text-4xl md:text-6xl font-black uppercase mb-8 tracking-tighter">
                         IMPRESSUM
                     </h1>
                 </AnimatedSection>
@@ -79,12 +81,14 @@ export default function Impressum() {
                 <AnimatedSection animation="slide-up" delay={0.1}>
                     <div className="max-w-2xl space-y-8">
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Angaben gemäß § 5 TMG
                             </h2>
-                            <div className="space-y-2 text-sm">
+                            <div className="space-y-2 text-sm font-light">
                                 <p>
-                                    <strong>Nicolas Klein Photography</strong>
+                                    <strong className="font-medium">
+                                        Nicolas Klein Photography
+                                    </strong>
                                 </p>
                                 <p>Nicolas Klein</p>
                                 <p>Heinrich-Köhl-Str. 41</p>
@@ -94,12 +98,14 @@ export default function Impressum() {
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Kontakt
                             </h2>
-                            <div className="space-y-2 text-sm">
+                            <div className="space-y-2 text-sm font-light">
                                 <p>
-                                    <strong>E-Mail:</strong>{" "}
+                                    <strong className="font-medium">
+                                        E-Mail:
+                                    </strong>{" "}
                                     <a
                                         href="mailto:hello@nicolasklein.photography?subject=Fotografie%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20würde%20gerne%20über%20deine%20Fotografie-Services%20sprechen.%0A%0AViele%20Grüße"
                                         className="underline hover:no-underline"
@@ -108,51 +114,59 @@ export default function Impressum() {
                                     </a>
                                 </p>
                                 <p>
-                                    <strong>Telefon:</strong> +49 176 47694426
+                                    <strong className="font-medium">
+                                        Telefon:
+                                    </strong>{" "}
+                                    +49 176 47694426
                                 </p>
                             </div>
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Berufsbezeichnung und berufsrechtliche
                                 Regelungen
                             </h2>
-                            <div className="space-y-2 text-sm">
+                            <div className="space-y-2 text-sm font-light">
                                 <p>
-                                    <strong>Berufsbezeichnung:</strong> Fotograf
+                                    <strong className="font-medium">
+                                        Berufsbezeichnung:
+                                    </strong>{" "}
+                                    Fotograf
                                 </p>
                                 <p>
-                                    <strong>Zuständige Kammer:</strong>{" "}
+                                    <strong className="font-medium">
+                                        Zuständige Kammer:
+                                    </strong>{" "}
                                     Handwerkskammer des Saarlandes
                                 </p>
                             </div>
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Kleinunternehmerregelung
                             </h2>
-                            <p className="text-sm">
+                            <p className="text-sm font-light">
                                 Gemäß § 19 UStG wird keine Umsatzsteuer
                                 berechnet.
                             </p>
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Redaktionell verantwortlich
                             </h2>
-                            <p className="text-sm">
+                            <p className="text-sm font-light">
                                 Nicolas Klein (Anschrift wie oben)
                             </p>
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 EU-Streitschlichtung
                             </h2>
-                            <p className="text-sm">
+                            <p className="text-sm font-light">
                                 Die Europäische Kommission stellt eine Plattform
                                 zur Online-Streitbeilegung (OS) bereit:{" "}
                                 <a
@@ -170,10 +184,10 @@ export default function Impressum() {
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Verbraucherstreitbeilegung/Universalschlichtungsstelle
                             </h2>
-                            <p className="text-sm">
+                            <p className="text-sm font-light">
                                 Wir sind nicht bereit oder verpflichtet, an
                                 Streitbeilegungsverfahren vor einer
                                 Verbraucherschlichtungsstelle teilzunehmen.
@@ -181,10 +195,10 @@ export default function Impressum() {
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Haftung für Inhalte
                             </h2>
-                            <p className="text-sm">
+                            <p className="text-sm font-light">
                                 Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG
                                 für eigene Inhalte auf diesen Seiten nach den
                                 allgemeinen Gesetzen verantwortlich. Nach §§ 8
@@ -197,10 +211,10 @@ export default function Impressum() {
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 tracking-wide uppercase">
                                 Urheberrecht
                             </h2>
-                            <p className="text-sm">
+                            <p className="text-sm font-light">
                                 Die durch die Seitenbetreiber erstellten Inhalte
                                 und Werke auf diesen Seiten unterliegen dem
                                 deutschen Urheberrecht. Die Vervielfältigung,
@@ -220,20 +234,20 @@ export default function Impressum() {
             <footer className="container mx-auto px-4 py-8 mt-16 border-t border-gray-200">
                 <AnimatedSection animation="fade">
                     <div className="flex flex-col md:flex-row justify-between items-center">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 font-light tracking-wider uppercase">
                             © {new Date().getFullYear()} Nicolas Klein
                             Photography
                         </p>
                         <div className="flex space-x-4 mt-4 md:mt-0">
                             <Link
                                 href="/impressum"
-                                className="text-sm text-gray-500 hover:text-black transition-colors"
+                                className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
                             >
                                 Impressum
                             </Link>
                             <Link
                                 href="https://www.instagram.com/hey.nicolasklein/"
-                                className="text-sm text-gray-500 hover:text-black transition-colors"
+                                className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >

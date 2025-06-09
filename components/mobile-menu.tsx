@@ -76,7 +76,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
         <div className="md:hidden">
             <button
                 onClick={toggleMenu}
-                className="p-2 focus:outline-none z-50 relative mobile-menu-button"
+                className="p-2 focus:outline-none z-50 relative mobile-menu-button text-black"
                 aria-label={isOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isOpen}
             >
@@ -108,7 +108,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="fixed inset-x-0 top-[73px] bottom-0 z-[90] backdrop-blur-md bg-white/80 flex flex-col"
+                        className="fixed inset-x-0 top-[73px] bottom-0 z-[90] backdrop-blur-md bg-white/80 text-black flex flex-col"
                         initial="closed"
                         animate="open"
                         exit="closed"

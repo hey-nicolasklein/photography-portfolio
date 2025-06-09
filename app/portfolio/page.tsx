@@ -1,19 +1,19 @@
 import PortfolioClient from "./portfolio-client";
-import { getPortfolioItems } from "@/lib/strapi";
+import { getStories } from "@/lib/strapi";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Portfolio",
     description:
-        "Entdecke meine besten Fotografien. Portfolio von Nicolas Klein mit Porträts, Events und kreativen Projekten aus Saarbrücken und Umgebung.",
+        "Entdecke meine Fotografie-Projekte und Geschichten. Portfolio von Nicolas Klein mit verschiedenen Projekten, Porträts, Events und kreativen Arbeiten aus Saarbrücken und Umgebung.",
     openGraph: {
         title: "Portfolio | Nicolas Klein Photography",
         description:
-            "Entdecke meine besten Fotografien. Portfolio von Nicolas Klein mit Porträts, Events und kreativen Projekten.",
+            "Entdecke meine Fotografie-Projekte und Geschichten. Portfolio von Nicolas Klein mit verschiedenen Projekten und kreativen Arbeiten.",
     },
 };
 
 export default async function Portfolio() {
-    const portfolioItems = await getPortfolioItems();
-    return <PortfolioClient portfolioItems={portfolioItems} />;
+    const stories = await getStories();
+    return <PortfolioClient stories={stories} />;
 }

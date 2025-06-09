@@ -43,6 +43,24 @@ export type StrapiBioItem = {
     profileImage: StrapiImage;
 };
 
+// New Story types based on the API response
+export type StrapiStory = {
+    id: number;
+    documentId: string;
+    title: string;
+    description: string;
+    images: StrapiImage[];
+    companyLogo?: StrapiImage;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    locale?: string;
+    localizations?: Array<{
+        id: number;
+        documentId: string;
+    }>;
+};
+
 // Transformed types for frontend use
 export type GalleryItem = {
     id: number;
@@ -66,6 +84,28 @@ export type BioItem = {
     description: string;
     profileImage: string;
     profileImageAlt: string;
+};
+
+// New Story type for frontend use
+export type Story = {
+    id: number;
+    documentId: string;
+    title: string;
+    description: string;
+    images: Array<{
+        id: number;
+        url: string;
+        alt: string;
+        width: number;
+        height: number;
+    }>;
+    companyLogo?: {
+        url: string;
+        alt: string;
+        width: number;
+        height: number;
+    };
+    createdAt: string;
 };
 
 // Generic Strapi API response
