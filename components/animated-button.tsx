@@ -1,87 +1,73 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 interface AnimatedButtonProps {
+    href: string;
     children: React.ReactNode;
-    icon?: LucideIcon;
-    onClick?: () => void;
-    href?: string;
+    variant?: "light" | "dark";
     className?: string;
 }
 
-const buttonVariants = {
-    initial: { scale: 1, y: 0 },
-    hover: { 
-        scale: 1.02, 
-        y: -2,
-        transition: {
-            duration: 0.2,
-            ease: "easeOut"
-        }
-    },
-    tap: {
-        scale: 0.98,
-        y: 0,
-        transition: {
-            duration: 0.1,
-            ease: "easeInOut"
-        }
-    }
-};
-
-const iconVariants = {
-    initial: { width: 0, opacity: 0, x: -10 },
-    hover: {
-        width: 20,
-        opacity: 1,
-        x: 0,
-        transition: {
-            duration: 0.4,
-            ease: "backOut"
-        }
-    }
-};
-
-export default function AnimatedButton({
-    children,
-    icon: Icon,
-    onClick,
-    href,
-    className = "",
+export default function AnimatedButton({ 
+    href, 
+    children, 
+    variant = "light",
+    className = "" 
 }: AnimatedButtonProps) {
-    const buttonContent = (
+    const baseClasses = "relative inline-block px-4 py-2 text-xs sm:text-sm uppercase tracking-wider font-medium overflow-hidden group transition-all duration-300";
+    
+    const variantClasses = {
+        light: "bg-white/20 backdrop-blur-sm text-white border border-white/30 drop-shadow-xl hover:border-white/60 hover:shadow-[0_0_10px_rgba(255,255,255,0.3)]",
+        dark: "bg-black/20 backdrop-blur-sm text-black border border-black/30 drop-shadow-xl hover:border-black/60 hover:shadow-[0_0_10px_rgba(0,0,0,0.3)]"
+    };
+
+    const shineClasses = {
+        light: "bg-gradient-to-r from-transparent via-white/20 to-transparent",
+        dark: "bg-gradient-to-r from-transparent via-black/20 to-transparent"
+    };
+
+    return (
         <motion.div
-            className={`inline-flex items-center justify-center bg-black text-white px-8 py-4 uppercase tracking-wider text-sm font-medium cursor-pointer ${className}`}
-            variants={buttonVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={onClick}
+            className="inline-block"
+            whileHover={{
+                scale: 1.05,
+                transition: {
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 20,
+                    mass: 1.2
+                }
+            }}
+            whileTap={{
+                scale: 0.95,
+                transition: {
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 20
+                }
+            }}
         >
-            <span className="relative">
-                {children}
-            </span>
-            
-            {Icon && (
+            <Link
+                href={href}
+                className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+            >
+                {/* Animated shine effect */}
                 <motion.div
-                    className="ml-2 flex items-center overflow-hidden"
-                    variants={iconVariants}
-                >
-                    <Icon size={16} />
-                </motion.div>
-            )}
+                    className={`absolute inset-0 ${shineClasses[variant]} -translate-x-full`}
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{
+                        duration: 0.8,
+                        ease: "easeInOut"
+                    }}
+                />
+                
+                <span className="relative z-10">
+                    {children}
+                </span>
+            </Link>
         </motion.div>
     );
-
-    if (href) {
-        return (
-            <a href={href} className="inline-block">
-                {buttonContent}
-            </a>
-        );
-    }
-
-    return buttonContent;
 } 

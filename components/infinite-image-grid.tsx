@@ -11,6 +11,7 @@ import LightboxPortal from "./lightbox-portal";
 import ContactCard from "./contact-card";
 import IntroCard from "./intro-card";
 import StoriesCard from "./stories-card";
+import AnimatedButton from "./animated-button";
 import type { GalleryItem, BioItem, Story } from "@/types";
 
 interface InfiniteImageGridProps {
@@ -383,29 +384,15 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             </p>
                             
                             {/* Contact Button */}
-                            <motion.a
-                                href="mailto:hello@nicolasklein.photography?subject=Fotografie%20Anfrage%20-%20Neue%20Erinnerungen&body=Hallo%20Nicolas,%0A%0Aich%20habe%20deine%20Galerie%20durchgeschaut%20und%20würde%20gerne%20über%20ein%20Fotoshooting%20sprechen.%0A%0AProjekt-Art:%20%0AEvent-Datum:%20%0ABudget-Bereich:%20%0A%0ABitte%20lass%20mich%20wissen,%20wann%20du%20verfügbar%20bist.%0A%0AViele%20Grüße"
-                                className="mt-6 px-8 py-3 bg-black text-white font-medium uppercase tracking-wider transition-colors duration-300 inline-block text-center cursor-pointer"
-                                whileHover={{ 
-                                    scale: 1.05,
-                                    y: -2,
-                                    backgroundColor: "#1f2937",
-                                    transition: {
-                                        duration: 0.2,
-                                        ease: "easeOut"
-                                    }
-                                }}
-                                whileTap={{ 
-                                    scale: 0.95,
-                                    y: 0,
-                                    transition: {
-                                        duration: 0.1,
-                                        ease: "easeInOut"
-                                    }
-                                }}
-                            >
-                                Erinnerungen schaffen
-                            </motion.a>
+                            <div className="mt-6">
+                                <AnimatedButton 
+                                    href="mailto:hello@nicolasklein.photography?subject=Fotografie%20Anfrage%20-%20Neue%20Erinnerungen&body=Hallo%20Nicolas,%0A%0Aich%20habe%20deine%20Galerie%20durchgeschaut%20und%20würde%20gerne%20über%20ein%20Fotoshooting%20sprechen.%0A%0AProjekt-Art:%20%0AEvent-Datum:%20%0ABudget-Bereich:%20%0A%0ABitte%20lass%20mich%20wissen,%20wann%20du%20verfügbar%20bist.%0A%0AViele%20Grüße"
+                                    variant="dark"
+                                    className="px-8 py-3"
+                                >
+                                    Erinnerungen schaffen
+                                </AnimatedButton>
+                            </div>
                         </motion.div>
                     </div>
                 </motion.div>

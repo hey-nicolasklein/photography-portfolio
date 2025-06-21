@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Camera, MapPin } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import AnimatedButton from "./animated-button";
 import type { BioItem } from "@/types";
 
 interface IntroCardProps {
@@ -57,46 +57,9 @@ export default function IntroCard({ bio }: IntroCardProps) {
                             
                             {/* Call to action button */}
                             <div className="mb-4">
-                                <motion.div
-                                    className="inline-block"
-                                    whileHover={{
-                                        scale: 1.05,
-                                        transition: {
-                                            type: "spring",
-                                            stiffness: 200,
-                                            damping: 20,
-                                            mass: 1.2
-                                        }
-                                    }}
-                                    whileTap={{
-                                        scale: 0.95,
-                                        transition: {
-                                            type: "spring",
-                                            stiffness: 400,
-                                            damping: 20
-                                        }
-                                    }}
-                                >
-                                    <Link
-                                        href="/kontakt"
-                                        className="relative inline-block bg-white/20 backdrop-blur-sm text-white px-4 py-2 text-xs sm:text-sm uppercase tracking-wider font-medium border border-white/30 drop-shadow-xl overflow-hidden group hover:border-white/60 hover:shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all duration-300"
-                                    >
-                                        {/* Animated shine effect */}
-                                        <motion.div
-                                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
-                                            initial={{ x: "-100%" }}
-                                            whileHover={{ x: "100%" }}
-                                            transition={{
-                                                duration: 0.8,
-                                                ease: "easeInOut"
-                                            }}
-                                        />
-                                        
-                                        <span className="relative z-10">
-                                            Mehr über mich
-                                        </span>
-                                    </Link>
-                                </motion.div>
+                                <AnimatedButton href="/kontakt" variant="light">
+                                    Mehr über mich
+                                </AnimatedButton>
                             </div>
                         </div>
                         
