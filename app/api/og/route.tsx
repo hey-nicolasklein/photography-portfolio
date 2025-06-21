@@ -81,84 +81,7 @@ export async function GET(request: NextRequest) {
               </div>
             </div>
           );
-        case 'pricing':
-          return (
-            <div
-              style={{
-                background: 'white',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'Inter',
-                color: 'black',
-                position: 'relative',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 72,
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  textAlign: 'center',
-                  marginBottom: 20,
-                  textTransform: 'uppercase',
-                }}
-              >
-                {title}
-              </div>
-              <div
-                style={{
-                  fontSize: 24,
-                  fontWeight: 300,
-                  color: '#666666',
-                  textAlign: 'center',
-                  maxWidth: 800,
-                  lineHeight: 1.4,
-                  marginBottom: 40,
-                }}
-              >
-                {description}
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 40,
-                  fontSize: 20,
-                  fontWeight: 500,
-                }}
-              >
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, fontWeight: 300 }}>€100</div>
-                  <div style={{ color: '#666666' }}>Portrait</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, fontWeight: 300 }}>€200</div>
-                  <div style={{ color: '#666666' }}>Event</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, fontWeight: 300 }}>€300</div>
-                  <div style={{ color: '#666666' }}>Follow Around</div>
-                </div>
-              </div>
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 40,
-                  right: 40,
-                  fontSize: 18,
-                  fontWeight: 300,
-                  color: '#999999',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                nicolasklein.photography
-              </div>
-            </div>
-          );
+
         default:
           return (
             <div
@@ -244,7 +167,7 @@ export async function GET(request: NextRequest) {
                     letterSpacing: '0.1em',
                   }}
                 >
-                  Porträts • Events • Follow Around
+                  Porträts • Events
                 </div>
                 <div
                   style={{

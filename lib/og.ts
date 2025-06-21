@@ -4,7 +4,7 @@ interface OpenGraphConfig {
   title: string;
   description: string;
   path?: string;
-  type?: 'default' | 'portfolio' | 'pricing';
+  type?: 'default' | 'portfolio';
   image?: string;
   noIndex?: boolean;
 }
@@ -100,7 +100,7 @@ export function generatePhotographerStructuredData() {
     jobTitle: 'Professional Photographer',
     url: 'https://nicolasklein.photography',
     image: `${baseUrl}/api/og?type=default`,
-    description: 'Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.',
+    description: 'Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts und Event-Fotografie.',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Saarbrücken',
@@ -113,29 +113,6 @@ export function generatePhotographerStructuredData() {
     },
     sameAs: [
       'https://www.instagram.com/hey.nicolasklein/',
-    ],
-    offers: [
-      {
-        '@type': 'Offer',
-        name: 'Portrait Photography',
-        price: '100',
-        priceCurrency: 'EUR',
-        description: 'Perfekt für persönliche Porträts',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Event Photography',
-        price: '200',
-        priceCurrency: 'EUR',
-        description: 'Halte unvergessliche Momente fest',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Follow Around Photography',
-        price: '300',
-        priceCurrency: 'EUR',
-        description: 'Ein ganzer Tag voller Erinnerungen',
-      },
     ],
   };
 } 

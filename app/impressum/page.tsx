@@ -36,12 +36,6 @@ export default function Impressum() {
                             portfolio
                         </Link>
                         <Link
-                            href="/pricing"
-                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
-                        >
-                            preise
-                        </Link>
-                        <Link
                             href="/kontakt"
                             className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
                         >
@@ -62,7 +56,6 @@ export default function Impressum() {
                             links={[
                                 { href: "/", label: "startseite" },
                                 { href: "/portfolio", label: "portfolio" },
-                                { href: "/pricing", label: "preise" },
                                 { href: "/kontakt", label: "kontakt" },
                                 {
                                     href: "/impressum",

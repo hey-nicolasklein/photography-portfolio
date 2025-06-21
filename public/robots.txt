@@ -12,5 +12,5 @@ Disallow: /api/
 # Allow important pages
 Allow: /
 Allow: /portfolio
-Allow: /pricing
+Allow: /kontakt
 Allow: /impressum 

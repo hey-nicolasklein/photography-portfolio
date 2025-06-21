@@ -12,6 +12,7 @@ import ContactCard from "./contact-card";
 import IntroCard from "./intro-card";
 import StoriesCard from "./stories-card";
 import AnimatedButton from "./animated-button";
+import { generatePhotographyBlur } from "@/lib/utils";
 import type { GalleryItem, BioItem, Story } from "@/types";
 
 interface InfiniteImageGridProps {
@@ -21,17 +22,70 @@ interface InfiniteImageGridProps {
 }
 
 // Skeleton component for loading states
-const ImageSkeleton = ({ index }: { index: number }) => (
-    <div className="w-full animate-pulse">
-        <div 
-            className="bg-gray-200 w-full"
-            style={{ 
-                height: `${Math.floor(Math.random() * 200) + 200}px`,
-                animationDelay: `${index * 0.1}s`
+const ImageSkeleton = ({ index }: { index: number }) => {
+    const randomHeight = Math.floor(Math.random() * 200) + 200;
+    
+    return (
+        <motion.div 
+            className="w-full mb-2 break-inside-avoid"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+                duration: 0.4, 
+                delay: index * 0.1,
+                ease: "easeOut"
             }}
-        />
-    </div>
-);
+        >
+            <div 
+                className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100"
+                style={{ height: `${randomHeight}px` }}
+            >
+                {/* Animated gradient overlay */}
+                <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                    initial={{ x: "-100%" }}
+                    animate={{ x: "100%" }}
+                    transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        repeatDelay: 1,
+                        ease: "easeInOut",
+                        delay: index * 0.2
+                    }}
+                />
+                
+                {/* Camera icon in center */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                        initial={{ scale: 0.8, opacity: 0.3 }}
+                        animate={{ scale: 1, opacity: 0.6 }}
+                        transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                            delay: index * 0.15
+                        }}
+                    >
+                        <Camera size={24} className="text-gray-300" />
+                    </motion.div>
+                </div>
+                
+                {/* Subtle grid pattern overlay */}
+                <div 
+                    className="absolute inset-0 opacity-5"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+                        backgroundSize: '20px 20px'
+                    }}
+                />
+                
+                {/* Bottom fade effect */}
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-100/80 to-transparent" />
+            </div>
+        </motion.div>
+    );
+};
 
 export default function InfiniteImageGrid({ initialImages, bio, stories }: InfiniteImageGridProps) {
     const [images, setImages] = useState<GalleryItem[]>(initialImages);
@@ -180,7 +234,7 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                             priority={index < 6}
                             placeholder="blur"
-                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                            blurDataURL={generatePhotographyBlur()}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     </div>
@@ -219,7 +273,7 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                             priority={actualIndex < 6}
                             placeholder="blur"
-                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                            blurDataURL={generatePhotographyBlur()}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     </div>
@@ -258,7 +312,7 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                             priority={actualIndex < 6}
                             placeholder="blur"
-                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAVGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                            blurDataURL={generatePhotographyBlur()}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     </div>
