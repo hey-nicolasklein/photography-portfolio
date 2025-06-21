@@ -1,4 +1,4 @@
-import { getGalleryItems, getBio, getStories } from "@/lib/strapi";
+import { getGalleryItems, getPortfolioItems, getBio, getStories } from "@/lib/strapi";
 import HomeClient from "./home-client";
 
 const structuredData = {
@@ -42,10 +42,52 @@ const structuredData = {
     },
 };
 
+async function getInitialImages() {
+    try {
+        // Use same logic as API for consistency
+        const [galleryItems, portfolioItems] = await Promise.all([
+            getGalleryItems(),
+            getPortfolioItems()
+        ]);
+
+        // Combine items (same as API)
+        const allItems = [
+            ...galleryItems.map(item => ({
+                id: item.id,
+                src: item.src,
+                alt: item.alt,
+                category: item.category || 'gallery'
+            })),
+            ...portfolioItems.map(item => ({
+                id: item.id + 10000,
+                src: item.image,
+                alt: item.alt || item.title,
+                category: item.category || 'portfolio'
+            }))
+        ];
+
+        // Remove duplicates (same as API)
+        const uniqueItems = allItems.filter((item, index, self) => 
+            index === self.findIndex(i => i.src === item.src)
+        );
+
+        // Simple shuffle (same as API)
+        const shuffledItems = [...uniqueItems].sort(() => Math.random() - 0.5);
+        
+        // Return first 12 items
+        return shuffledItems.slice(0, 12);
+    } catch (error) {
+        console.error('Error fetching initial images:', error);
+        return [];
+    }
+}
+
 export default async function Home() {
-    const galleryItems = await getGalleryItems();
-    const bio = await getBio();
-    const stories = await getStories();
+    const [galleryItems, bio, stories] = await Promise.all([
+        getInitialImages(),
+        getBio(),
+        getStories()
+    ]);
 
     return (
         <>

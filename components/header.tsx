@@ -20,7 +20,7 @@ function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
     return (
         <Link href={href} className="relative">
             <motion.span
-                className={`text-sm font-${isActive ? "medium" : "light"} tracking-wider uppercase block relative overflow-hidden`}
+                className={`text-sm font-${isActive ? "medium" : "light"} tracking-wider uppercase block relative overflow-hidden text-black`}
                 whileHover={{
                     scale: 1.05,
                     transition: {
@@ -99,7 +99,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                 <div className="flex-shrink-0 pr-8">
                     <Link
                         href="/"
-                        className="text-xl font-black tracking-[0.2em] hover:opacity-80 transition-opacity uppercase"
+                        className="text-xl font-black tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black"
                     >
                         NICOLAS KLEIN
                     </Link>
@@ -118,7 +118,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                             href="/portfolio"
                             isActive={currentPage === "portfolio"}
                         >
-                            portfolio
+                            projekte
                         </AnimatedNavLink>
                         
                         <AnimatedNavLink
