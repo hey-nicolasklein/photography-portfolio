@@ -108,14 +108,14 @@ export default function MobileMenu({ links }: MobileMenuProps) {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="fixed inset-x-0 top-[73px] bottom-0 z-[90] backdrop-blur-md bg-white/80 text-black flex flex-col"
+                        className="fixed inset-0 z-[40] backdrop-blur-xl bg-white/90 text-black flex flex-col"
                         initial="closed"
                         animate="open"
                         exit="closed"
                         variants={menuVariants}
                     >
                         <motion.div
-                            className="flex flex-col justify-center items-center flex-grow pt-8"
+                            className="flex flex-col justify-center items-center flex-grow"
                             variants={contentVariants}
                         >
                             <div className="flex flex-col space-y-8 items-center">
