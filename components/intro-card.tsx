@@ -20,9 +20,9 @@ export default function IntroCard({ bio }: IntroCardProps) {
                 ease: "easeOut"
             }}
         >
-            <div className="bg-white border-2 border-black text-black h-full flex flex-col min-h-[500px]">
-                {/* Extra Large Profile Image Section */}
-                <div className="relative h-80 overflow-hidden">
+            <div className="bg-white border-2 border-black text-black h-full flex flex-col">
+                {/* Profile Image Section - Responsive Height */}
+                <div className="relative overflow-hidden h-96 sm:h-[500px]">
                     <Image
                         src={bio?.profileImage || "/photographer.png"}
                         alt={bio?.profileImageAlt || "Nicolas Klein - Photographer"}
@@ -44,9 +44,9 @@ export default function IntroCard({ bio }: IntroCardProps) {
                     </div>
                 </div>
                 
-                {/* Content Section */}
-                <div className="p-6 flex-1 flex flex-col justify-between">
-                    <div>
+                {/* Content Section - Compact */}
+                <div className="p-6 flex-shrink-0">
+                    <div className="mb-4">
                         <p className="text-sm font-medium uppercase tracking-wider mb-3 text-gray-700">
                             {bio?.title || "Freiberuflicher Fotograf"}
                         </p>

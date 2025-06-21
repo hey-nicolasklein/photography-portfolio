@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useSpring, useMotionValue, useTransform, useScroll } from "framer-motion";
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
+import { Sun, Camera, Heart } from "lucide-react";
 import { useLightbox } from "@/hooks/use-lightbox";
 import LightboxPortal from "./lightbox-portal";
 import ContactCard from "./contact-card";
@@ -38,6 +39,51 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
     const [hasMore, setHasMore] = useState(true);
     
     const { lightboxOpen, currentIndex, openLightbox, closeLightbox } = useLightbox();
+    
+    // Scroll-based rotation
+    const { scrollYProgress } = useScroll();
+    
+    // Slingshot sun animation setup
+    const targetX = useMotionValue(0);
+    const targetY = useMotionValue(0);
+    const mouseDistance = useMotionValue(150); // Distance from sun center - start at max for full black
+    const [isInteracting, setIsInteracting] = useState(false);
+    
+    // Spring physics for slingshot effect - more elastic when interacting
+    const springX = useSpring(targetX, { 
+        stiffness: isInteracting ? 150 : 400, 
+        damping: isInteracting ? 15 : 25, 
+        mass: 1.2 
+    });
+    const springY = useSpring(targetY, { 
+        stiffness: isInteracting ? 150 : 400, 
+        damping: isInteracting ? 15 : 25, 
+        mass: 1.2 
+    });
+    const springScale = useSpring(isInteracting ? 1.15 : 1, { 
+        stiffness: 300, 
+        damping: 20, 
+        mass: 0.8 
+    });
+    
+    // Smooth spring-based distance for color animation
+    const smoothDistance = useSpring(mouseDistance, {
+        stiffness: 200,
+        damping: 25,
+        mass: 0.5
+    });
+    
+    // Scroll-based rotation - full rotation every page scroll
+    const scrollRotation = useTransform(scrollYProgress, [0, 1], [0, 2000]);
+    
+    // Color animation based on smooth mouse proximity with wider range
+    // Closer = more yellow, further = more black
+    const colorIntensity = useTransform(smoothDistance, [0, 120], [1, 0]);
+    const sunColor = useTransform(
+        colorIntensity,
+        [0, 1],
+        ['rgb(234, 179, 8)', 'rgb(0, 0, 0)'] // yellow to black (fixed order)
+    );
     
     // Intersection Observer for infinite scroll
     const { ref: loadMoreRef, inView } = useInView({
@@ -101,12 +147,15 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
         category: item.category,
     }));
 
-    // Function to render grid items with intro, contact, and stories cards inserted
+    // Function to render grid items with intro, stories, and contact cards inserted
     const renderGridItems = () => {
         const items = [];
         
-        // Add first 3 images
-        images.slice(0, 3).forEach((image, index) => {
+        // Insert intro card as the very first item (index 0)
+        items.push(<IntroCard key="intro-card" bio={bio} />);
+        
+        // Add first 3-4 images after intro card
+        images.slice(0, 4).forEach((image, index) => {
             items.push(
                 <motion.div
                     key={image.id}
@@ -138,14 +187,14 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
             );
         });
         
-        // Insert intro card after first 3 images
-        if (images.length > 3) {
-            items.push(<IntroCard key="intro-card" bio={bio} />);
+        // Insert stories card after first 4 images (intro + 4 images)
+        if (images.length > 4) {
+            items.push(<StoriesCard key="stories-card" stories={stories} />);
         }
         
-        // Add next 6 images (4-9)
-        images.slice(3, 9).forEach((image, index) => {
-            const actualIndex = index + 3;
+        // Add next 8 images (5-12)
+        images.slice(4, 12).forEach((image, index) => {
+            const actualIndex = index + 4;
             items.push(
                 <motion.div
                     key={image.id}
@@ -177,53 +226,14 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
             );
         });
         
-        // Insert contact card after first 9 images (3 + intro + 6)
-        if (images.length > 9) {
+        // Insert contact card after more images (intro + 4 images + stories + 8 images)
+        if (images.length > 12) {
             items.push(<ContactCard key="contact-card" />);
         }
         
-        // Add next 6 images (10-15)
-        images.slice(9, 15).forEach((image, index) => {
-            const actualIndex = index + 9;
-            items.push(
-                <motion.div
-                    key={image.id}
-                    className="mb-2 cursor-pointer group break-inside-avoid"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                        duration: 0.4, 
-                        delay: Math.min(actualIndex * 0.05, 0.5),
-                        ease: "easeOut"
-                    }}
-                    onClick={() => openLightbox(actualIndex)}
-                >
-                    <div className="relative overflow-hidden">
-                        <Image
-                            src={image.src}
-                            alt={image.alt}
-                            width={400}
-                            height={600}
-                            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
-                            priority={actualIndex < 6}
-                            placeholder="blur"
-                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAVGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                    </div>
-                </motion.div>
-            );
-        });
-        
-        // Insert stories card after first 15 images (3 + intro + 6 + contact + 6)
-        if (images.length > 15) {
-            items.push(<StoriesCard key="stories-card" stories={stories} />);
-        }
-        
         // Add remaining images
-        images.slice(15).forEach((image, index) => {
-            const actualIndex = index + 15;
+        images.slice(12).forEach((image, index) => {
+            const actualIndex = index + 12;
             items.push(
                 <motion.div
                     key={image.id}
@@ -289,11 +299,116 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
 
             {/* End message */}
             {!hasMore && !loading && (
-                <div className="text-center py-12">
-                    <p className="text-gray-500 text-sm">
-                        You've reached the end of the gallery
-                    </p>
-                </div>
+                <motion.div 
+                    className="text-center py-16"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    <div className="flex flex-col items-center space-y-6">
+                        {/* Slingshot Interactive Sun Icon */}
+                        <motion.div
+                            className="cursor-pointer"
+                            style={{
+                                x: springX,
+                                y: springY,
+                                scale: springScale,
+                                rotate: scrollRotation,
+                            }}
+                            onMouseEnter={() => {
+                                setIsInteracting(true);
+                            }}
+                            onMouseLeave={() => {
+                                setIsInteracting(false);
+                                // Snap back to center with bounce
+                                targetX.set(0);
+                                targetY.set(0);
+                                // Reset color to black
+                                mouseDistance.set(150);
+                            }}
+                            onMouseMove={(e) => {
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                const centerX = rect.left + rect.width / 2;
+                                const centerY = rect.top + rect.height / 2;
+                                
+                                // Calculate pull distance (like a slingshot)
+                                const deltaX = e.clientX - centerX;
+                                const deltaY = e.clientY - centerY;
+                                
+                                // Calculate distance from center for color animation
+                                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                                mouseDistance.set(Math.min(distance, 150)); // Cap at 150px for wider range
+                                
+                                if (!isInteracting) return;
+                                
+                                // Limit the pull distance and make it elastic
+                                const maxPull = 25;
+                                const pullX = Math.max(-maxPull, Math.min(maxPull, deltaX * 0.4));
+                                const pullY = Math.max(-maxPull, Math.min(maxPull, deltaY * 0.4));
+                                
+                                targetX.set(pullX);
+                                targetY.set(pullY);
+                            }}
+                            onMouseDown={() => {
+                                setIsInteracting(true);
+                            }}
+                            onMouseUp={() => {
+                                // Extra bounce back on release
+                                targetX.set(0);
+                                targetY.set(0);
+                            }}
+                        >
+                            <motion.div
+                                style={{ color: sunColor }}
+                                className="drop-shadow-lg"
+                            >
+                                <Sun size={48} />
+                            </motion.div>
+                        </motion.div>
+                        
+                        {/* Message */}
+                        <motion.div 
+                            className="space-y-3"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3, duration: 0.5 }}
+                        >
+                            <h3 className="text-xl font-bold text-gray-800">
+                                Das war's erstmal!
+                            </h3>
+                            <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
+                                Du hast alle bisherigen Erinnerungen gesehen. 
+                                <br />
+                                Zeit, gemeinsam neue zu schaffen!
+                            </p>
+                            
+                            {/* Contact Button */}
+                            <motion.a
+                                href="mailto:hello@nicolasklein.photography?subject=Fotografie%20Anfrage%20-%20Neue%20Erinnerungen&body=Hallo%20Nicolas,%0A%0Aich%20habe%20deine%20Galerie%20durchgeschaut%20und%20würde%20gerne%20über%20ein%20Fotoshooting%20sprechen.%0A%0AProjekt-Art:%20%0AEvent-Datum:%20%0ABudget-Bereich:%20%0A%0ABitte%20lass%20mich%20wissen,%20wann%20du%20verfügbar%20bist.%0A%0AViele%20Grüße"
+                                className="mt-6 px-8 py-3 bg-black text-white font-medium uppercase tracking-wider transition-colors duration-300 inline-block text-center cursor-pointer"
+                                whileHover={{ 
+                                    scale: 1.05,
+                                    y: -2,
+                                    backgroundColor: "#1f2937",
+                                    transition: {
+                                        duration: 0.2,
+                                        ease: "easeOut"
+                                    }
+                                }}
+                                whileTap={{ 
+                                    scale: 0.95,
+                                    y: 0,
+                                    transition: {
+                                        duration: 0.1,
+                                        ease: "easeInOut"
+                                    }
+                                }}
+                            >
+                                Erinnerungen schaffen
+                            </motion.a>
+                        </motion.div>
+                    </div>
+                </motion.div>
             )}
 
             <LightboxPortal

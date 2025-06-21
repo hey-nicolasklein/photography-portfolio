@@ -7,6 +7,7 @@ export default function ContactCard() {
     return (
         <motion.div
             className="mb-2 break-inside-avoid"
+            data-contact-card
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 

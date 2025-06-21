@@ -11,9 +11,8 @@ interface StoriesCardProps {
 }
 
 export default function StoriesCard({ stories }: StoriesCardProps) {
-    // Get 2 random stories for preview
-    const shuffledStories = [...stories].sort(() => Math.random() - 0.5);
-    const previewStories = shuffledStories.slice(0, 2);
+    // Get first 2 stories for preview (consistent ordering for SSR)
+    const previewStories = stories.slice(0, 2);
     const hasMoreStories = stories.length > 2;
 
     return (
@@ -113,10 +112,10 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                 <div className="grid grid-cols-2 gap-6 relative">
                                     {/* Third story image */}
                                     <div className="bg-gray-700 rounded-lg h-32 overflow-hidden relative">
-                                        {shuffledStories[2] && shuffledStories[2].images.length > 0 ? (
+                                        {stories[2] && stories[2].images.length > 0 ? (
                                             <Image
-                                                src={shuffledStories[2].images[0].url}
-                                                alt={shuffledStories[2].images[0].alt}
+                                                src={stories[2].images[0].url}
+                                                alt={stories[2].images[0].alt}
                                                 fill
                                                 className="object-cover"
                                                 sizes="(max-width: 500px) 50vw, 25vw"
@@ -126,10 +125,10 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                     
                                     {/* Fourth story image */}
                                     <div className="bg-gray-700 rounded-lg h-32 overflow-hidden relative">
-                                        {shuffledStories[3] && shuffledStories[3].images.length > 0 ? (
+                                        {stories[3] && stories[3].images.length > 0 ? (
                                             <Image
-                                                src={shuffledStories[3].images[0].url}
-                                                alt={shuffledStories[3].images[0].alt}
+                                                src={stories[3].images[0].url}
+                                                alt={stories[3].images[0].alt}
                                                 fill
                                                 className="object-cover"
                                                 sizes="(max-width: 500px) 50vw, 25vw"
