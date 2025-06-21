@@ -3,10 +3,76 @@
 import Link from "next/link";
 import { Instagram } from "lucide-react";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
 
 interface HeaderProps {
     currentPage?: "home" | "portfolio" | "pricing";
+}
+
+interface NavLinkProps {
+    href: string;
+    children: React.ReactNode;
+    isActive: boolean;
+}
+
+function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
+    return (
+        <Link href={href} className="relative">
+            <motion.span
+                className={`text-sm font-${isActive ? "medium" : "light"} tracking-wider uppercase block relative overflow-hidden`}
+                whileHover={{
+                    scale: 1.05,
+                    transition: {
+                        duration: 0.2,
+                        ease: "easeOut"
+                    }
+                }}
+                whileTap={{
+                    scale: 0.98,
+                    transition: {
+                        duration: 0.1,
+                        ease: "easeInOut"
+                    }
+                }}
+            >
+                {children}
+                
+                {/* Active state underline */}
+                {isActive && (
+                    <motion.div
+                        className="absolute bottom-0 left-0 h-[1px] bg-black"
+                        initial={{ width: "100%" }}
+                        layoutId="activeUnderline"
+                        transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30
+                        }}
+                    />
+                )}
+                
+                {/* Hover state underline */}
+                {!isActive && (
+                    <motion.div
+                        className="absolute bottom-0 left-0 h-[1px] bg-black"
+                        initial={{ width: 0 }}
+                        whileHover={{
+                            width: "100%",
+                            transition: {
+                                duration: 0.3,
+                                ease: "easeInOut"
+                            }
+                        }}
+                        transition={{
+                            duration: 0.2,
+                            ease: "easeInOut"
+                        }}
+                    />
+                )}
+            </motion.span>
+        </Link>
+    );
 }
 
 export default function Header({ currentPage = "home" }: HeaderProps) {
@@ -41,48 +107,62 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                 
                 <div className="flex items-center space-x-8">
                     <nav className="hidden md:flex space-x-8 items-center">
-                        <Link
+                        <AnimatedNavLink
                             href="/"
-                            className={`text-sm font-${currentPage === "home" ? "medium" : "light"} tracking-wider uppercase ${
-                                currentPage === "home" 
-                                    ? "border-b border-black transition-none"
-                                    : "hover:border-b hover:border-black transition-none"
-                            }`}
+                            isActive={currentPage === "home"}
                         >
                             startseite
-                        </Link>
-                        <Link
+                        </AnimatedNavLink>
+                        
+                        <AnimatedNavLink
                             href="/portfolio"
-                            className={`text-sm font-${currentPage === "portfolio" ? "medium" : "light"} tracking-wider uppercase ${
-                                currentPage === "portfolio" 
-                                    ? "border-b border-black transition-none"
-                                    : "hover:border-b hover:border-black transition-none"
-                            }`}
+                            isActive={currentPage === "portfolio"}
                         >
                             portfolio
-                        </Link>
-                        <Link
+                        </AnimatedNavLink>
+                        
+                        <AnimatedNavLink
                             href="/pricing"
-                            className={`text-sm font-${currentPage === "pricing" ? "medium" : "light"} tracking-wider uppercase ${
-                                currentPage === "pricing" 
-                                    ? "border-b border-black transition-none"
-                                    : "hover:border-b hover:border-black transition-none"
-                            }`}
+                            isActive={currentPage === "pricing"}
                         >
                             preise
-                        </Link>
+                        </AnimatedNavLink>
                     </nav>
                     
                     <div className="flex items-center space-x-4" style={{ position: 'relative', zIndex: 100 }}>
-                        <Link
-                            href="https://www.instagram.com/hey.nicolasklein/"
-                            className="text-black hover:scale-110 transition-transform duration-300"
-                            aria-label="Instagram"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <motion.div
+                            whileHover={{
+                                scale: 1.1,
+                                rotate: [0, -5, 5, 0],
+                                transition: {
+                                    scale: {
+                                        duration: 0.2,
+                                        ease: "easeOut"
+                                    },
+                                    rotate: {
+                                        duration: 0.6,
+                                        ease: "easeInOut"
+                                    }
+                                }
+                            }}
+                            whileTap={{
+                                scale: 0.9,
+                                transition: {
+                                    duration: 0.1,
+                                    ease: "easeInOut"
+                                }
+                            }}
                         >
-                            <Instagram size={20} />
-                        </Link>
+                            <Link
+                                href="https://www.instagram.com/hey.nicolasklein/"
+                                className="text-black transition-colors duration-300"
+                                aria-label="Instagram"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Instagram size={20} />
+                            </Link>
+                        </motion.div>
                         <MobileMenu
                             links={[
                                 {
