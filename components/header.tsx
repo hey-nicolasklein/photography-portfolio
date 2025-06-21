@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
 
 interface HeaderProps {
-    currentPage?: "home" | "portfolio" | "pricing";
+    currentPage?: "home" | "portfolio" | "pricing" | "kontakt";
 }
 
 interface NavLinkProps {
@@ -127,6 +127,13 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                         >
                             preise
                         </AnimatedNavLink>
+                        
+                        <AnimatedNavLink
+                            href="/kontakt"
+                            isActive={currentPage === "kontakt"}
+                        >
+                            kontakt
+                        </AnimatedNavLink>
                     </nav>
                     
                     <div className="flex items-center space-x-4" style={{ position: 'relative', zIndex: 100 }}>
@@ -179,6 +186,11 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                                     href: "/pricing", 
                                     label: "preise",
                                     active: currentPage === "pricing"
+                                },
+                                { 
+                                    href: "/kontakt", 
+                                    label: "kontakt",
+                                    active: currentPage === "kontakt"
                                 },
                             ]}
                         />

@@ -43,9 +43,9 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                 <div className="flex-1 p-8">
                     {previewStories.length > 0 ? (
                         <>
-                            <div className="grid grid-cols-2 gap-6 mb-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                                 {/* First story */}
-                                <div className="group cursor-pointer">
+                                <Link href="/portfolio" className="group cursor-pointer block">
                                     <div className="relative h-48 rounded-lg overflow-hidden mb-4">
                                         {previewStories[0].images.length > 0 ? (
                                             <Image
@@ -53,7 +53,7 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                                 alt={previewStories[0].images[0].alt}
                                                 fill
                                                 className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                                sizes="(max-width: 500px) 50vw, 25vw"
+                                                sizes="(max-width: 640px) 100vw, 50vw"
                                             />
                                         ) : (
                                             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
@@ -71,11 +71,11 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                             {previewStories[0].description}
                                         </p>
                                     </div>
-                                </div>
+                                </Link>
 
-                                {/* Second story */}
+                                {/* Second story - hidden on mobile for single column */}
                                 {previewStories[1] ? (
-                                    <div className="group cursor-pointer">
+                                    <Link href="/portfolio" className="group cursor-pointer hidden sm:block">
                                         <div className="relative h-48 rounded-lg overflow-hidden mb-4">
                                             {previewStories[1].images.length > 0 ? (
                                                 <Image
@@ -83,7 +83,7 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                                     alt={previewStories[1].images[0].alt}
                                                     fill
                                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                                    sizes="(max-width: 500px) 50vw, 25vw"
+                                                    sizes="50vw"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-700 flex items-center justify-center">
@@ -101,16 +101,16 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                                 {previewStories[1].description}
                                             </p>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ) : (
-                                    <div className="bg-gray-700 rounded-lg h-48"></div>
+                                    <div className="bg-gray-700 rounded-lg h-48 hidden sm:block"></div>
                                 )}
                             </div>
 
                             {/* Placeholder boxes that fade out */}
                             {hasMoreStories && (
-                                <div className="grid grid-cols-2 gap-6 relative">
-                                    {/* Third story image */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative">
+                                    {/* Third story image - always show */}
                                     <div className="bg-gray-700 rounded-lg h-32 overflow-hidden relative">
                                         {stories[2] && stories[2].images.length > 0 ? (
                                             <Image
@@ -118,20 +118,20 @@ export default function StoriesCard({ stories }: StoriesCardProps) {
                                                 alt={stories[2].images[0].alt}
                                                 fill
                                                 className="object-cover"
-                                                sizes="(max-width: 500px) 50vw, 25vw"
+                                                sizes="(max-width: 640px) 100vw, 50vw"
                                             />
                                         ) : null}
                                     </div>
                                     
-                                    {/* Fourth story image */}
-                                    <div className="bg-gray-700 rounded-lg h-32 overflow-hidden relative">
+                                    {/* Fourth story image - only on desktop */}
+                                    <div className="bg-gray-700 rounded-lg h-32 overflow-hidden relative hidden sm:block">
                                         {stories[3] && stories[3].images.length > 0 ? (
                                             <Image
                                                 src={stories[3].images[0].url}
                                                 alt={stories[3].images[0].alt}
                                                 fill
                                                 className="object-cover"
-                                                sizes="(max-width: 500px) 50vw, 25vw"
+                                                sizes="50vw"
                                             />
                                         ) : null}
                                     </div>

@@ -10,6 +10,12 @@ export default function Footer() {
                     </p>
                     <div className="flex space-x-6">
                         <Link
+                            href="/kontakt"
+                            className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
+                        >
+                            Kontakt
+                        </Link>
+                        <Link
                             href="/impressum"
                             className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
                         >

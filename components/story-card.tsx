@@ -100,80 +100,6 @@ export default function StoryCard({
 
     return (
         <div className="mb-16">
-            {/* Story Header */}
-            <div className="container mx-auto px-4 mb-8">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex items-start gap-6">
-                        {/* Timeline Column */}
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                            <h2 className="text-4xl md:text-3xl font-bold text-black mb-6 leading-tight">
-                                {story.title}
-                            </h2>
-
-                            <p className="text-lg md:text-lg text-gray-600 leading-relaxed mb-6 break-words">
-                                {story.description}
-                            </p>
-
-                            {/* Metadata */}
-                            <div className="flex items-center gap-8 text-sm text-gray-500 mb-6">
-                                <div className="flex items-center gap-2">
-                                    <Calendar size={16} />
-                                    <span>
-                                        {new Date(
-                                            story.createdAt
-                                        ).toLocaleDateString("en-US", {
-                                            year: "numeric",
-                                            month: "long",
-                                        })}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Eye size={16} />
-                                    <span>
-                                        {story.images.length}{" "}
-                                        {story.images.length === 1
-                                            ? "Image"
-                                            : "Images"}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* View Story Button */}
-                            <button
-                                onClick={() => handleImageClick(0)}
-                                className="group flex items-center gap-3 bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors duration-300 text-sm font-medium"
-                            >
-                                <Play
-                                    size={16}
-                                    className="group-hover:translate-x-0.5 transition-transform"
-                                />
-                                View Story
-                            </button>
-                        </div>
-
-                        {/* Company Logo */}
-                        {story.companyLogo && (
-                            <div className="flex-shrink-0">
-                                <div className="relative w-20 h-12 md:w-24 md:h-14">
-                                    <Image
-                                        src={story.companyLogo.url}
-                                        alt={
-                                            story.companyLogo.alt ||
-                                            "Company Logo"
-                                        }
-                                        fill
-                                        className="object-contain opacity-60 hover:opacity-100 transition-opacity"
-                                        sizes="(max-width: 768px) 80px, 96px"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
             {/* Full-width Image Gallery */}
             <div className="relative">
                 <div
@@ -266,6 +192,80 @@ export default function StoryCard({
                         </button>
                     </>
                 )}
+            </div>
+
+            {/* Story Header */}
+            <div className="container mx-auto px-4 mt-8">
+                <div className="max-w-4xl mx-auto">
+                    <div className="flex items-start gap-6">
+                        {/* Timeline Column */}
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                            <h2 className="text-4xl md:text-3xl font-bold text-black mb-6 leading-tight">
+                                {story.title}
+                            </h2>
+
+                            <p className="text-lg md:text-lg text-gray-600 leading-relaxed mb-6 break-words">
+                                {story.description}
+                            </p>
+
+                            {/* Metadata */}
+                            <div className="flex items-center gap-8 text-sm text-gray-500 mb-6">
+                                <div className="flex items-center gap-2">
+                                    <Calendar size={16} />
+                                    <span>
+                                        {new Date(
+                                            story.createdAt
+                                        ).toLocaleDateString("en-US", {
+                                            year: "numeric",
+                                            month: "long",
+                                        })}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Eye size={16} />
+                                    <span>
+                                        {story.images.length}{" "}
+                                        {story.images.length === 1
+                                            ? "Image"
+                                            : "Images"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* View Story Button */}
+                            <button
+                                onClick={() => handleImageClick(0)}
+                                className="group flex items-center gap-3 bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors duration-300 text-sm font-medium"
+                            >
+                                <Play
+                                    size={16}
+                                    className="group-hover:translate-x-0.5 transition-transform"
+                                />
+                                View Story
+                            </button>
+                        </div>
+
+                        {/* Company Logo */}
+                        {story.companyLogo && (
+                            <div className="flex-shrink-0">
+                                <div className="relative w-20 h-12 md:w-24 md:h-14">
+                                    <Image
+                                        src={story.companyLogo.url}
+                                        alt={
+                                            story.companyLogo.alt ||
+                                            "Company Logo"
+                                        }
+                                        fill
+                                        className="object-contain opacity-60 hover:opacity-100 transition-opacity"
+                                        sizes="(max-width: 768px) 80px, 96px"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

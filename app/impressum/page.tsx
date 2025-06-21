@@ -41,6 +41,12 @@ export default function Impressum() {
                         >
                             preise
                         </Link>
+                        <Link
+                            href="/kontakt"
+                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
+                        >
+                            kontakt
+                        </Link>
                     </nav>
                     <div className="flex items-center space-x-4">
                         <Link
@@ -57,6 +63,7 @@ export default function Impressum() {
                                 { href: "/", label: "startseite" },
                                 { href: "/portfolio", label: "portfolio" },
                                 { href: "/pricing", label: "preise" },
+                                { href: "/kontakt", label: "kontakt" },
                                 {
                                     href: "/impressum",
                                     label: "impressum",

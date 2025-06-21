@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Camera, MapPin } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import type { BioItem } from "@/types";
 
 interface IntroCardProps {
@@ -20,9 +21,9 @@ export default function IntroCard({ bio }: IntroCardProps) {
                 ease: "easeOut"
             }}
         >
-            <div className="bg-white border-2 border-black text-black h-full flex flex-col">
-                {/* Profile Image Section - Responsive Height */}
-                <div className="relative overflow-hidden h-96 sm:h-[500px]">
+            <div className="bg-white text-black h-full flex flex-col relative overflow-hidden">
+                {/* Profile Image Section - Portrait Photo Aspect Ratio */}
+                <div className="relative aspect-[3/4] sm:aspect-[3/4]">
                     <Image
                         src={bio?.profileImage || "/photographer.png"}
                         alt={bio?.profileImageAlt || "Nicolas Klein - Photographer"}
@@ -31,41 +32,83 @@ export default function IntroCard({ bio }: IntroCardProps) {
                         sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                         priority
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                    {/* Enhanced gradient overlay - more subtle on mobile, stronger on desktop */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-transparent to-transparent sm:from-black/90 sm:via-black/30 sm:to-transparent"></div>
                     
-                    {/* Name overlay on image */}
-                    <div className="absolute bottom-6 left-6 right-6">
-                        <div className="flex items-center text-white">
-                            <Camera size={24} className="mr-3 drop-shadow-lg" />
-                            <h3 className="text-2xl font-bold uppercase tracking-wider drop-shadow-lg">
-                                Nicolas Klein
-                            </h3>
+                    {/* Bio content overlay - only bottom third on mobile, more coverage on desktop */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white bg-gradient-to-t from-black/80 via-black/40 to-transparent sm:from-black/60 sm:to-transparent">
+                        <div className="mb-2 sm:mb-4">
+                            {/* Name with camera icon */}
+                            <div className="flex items-center mb-2 sm:mb-3">
+                                <Camera size={18} className="mr-2 sm:mr-3 drop-shadow-2xl sm:w-5 sm:h-5" />
+                                <h3 className="text-lg sm:text-xl font-bold uppercase tracking-wider drop-shadow-2xl">
+                                    Nicolas Klein
+                                </h3>
+                            </div>
+                            
+                            {/* <p className="text-xs sm:text-sm font-medium uppercase tracking-wider mb-2 sm:mb-3 text-white drop-shadow-xl">
+                                {bio?.title || "Freiberuflicher Fotograf"}
+                            </p> */}
+                            
+                            {/* Personal introduction on desktop, completely hidden on mobile */}
+                            <p className="hidden sm:block text-sm leading-relaxed mb-4 drop-shadow-xl text-white">
+                                Hey! Ich bin Nico und fange deine authentischen Momente ein.
+                            </p>
+                            
+                            {/* Call to action button */}
+                            <div className="mb-4">
+                                <motion.div
+                                    className="inline-block"
+                                    whileHover={{
+                                        scale: 1.05,
+                                        transition: {
+                                            type: "spring",
+                                            stiffness: 200,
+                                            damping: 20,
+                                            mass: 1.2
+                                        }
+                                    }}
+                                    whileTap={{
+                                        scale: 0.95,
+                                        transition: {
+                                            type: "spring",
+                                            stiffness: 400,
+                                            damping: 20
+                                        }
+                                    }}
+                                >
+                                    <Link
+                                        href="/kontakt"
+                                        className="relative inline-block bg-white/20 backdrop-blur-sm text-white px-4 py-2 text-xs sm:text-sm uppercase tracking-wider font-medium border border-white/30 drop-shadow-xl overflow-hidden group hover:border-white/60 hover:shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all duration-300"
+                                    >
+                                        {/* Animated shine effect */}
+                                        <motion.div
+                                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+                                            initial={{ x: "-100%" }}
+                                            whileHover={{ x: "100%" }}
+                                            transition={{
+                                                duration: 0.8,
+                                                ease: "easeInOut"
+                                            }}
+                                        />
+                                        
+                                        <span className="relative z-10">
+                                            Mehr über mich
+                                        </span>
+                                    </Link>
+                                </motion.div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                
-                {/* Content Section - Compact */}
-                <div className="p-6 flex-shrink-0">
-                    <div className="mb-4">
-                        <p className="text-sm font-medium uppercase tracking-wider mb-3 text-gray-700">
-                            {bio?.title || "Freiberuflicher Fotograf"}
-                        </p>
                         
-                        <p className="text-sm leading-relaxed mb-4">
-                            {bio?.description || 
-                                "Ich halte Momente fest, die Geschichten erzählen – mit einem minimalistischen Blick. Spezialisiert auf Porträts, Events und kommerzielle Fotografie."
-                            }
-                        </p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-xs text-gray-600">
-                        <div className="flex items-center">
-                            <MapPin size={14} className="mr-1" />
-                            Saarbrücken
-                        </div>
-                        
-                        <div className="uppercase tracking-wider">
-                            {bio?.tags || "Porträts • Events • Commercial"}
+                        <div className="flex items-center justify-between gap-4 sm:gap-6 text-xs text-white drop-shadow-lg">
+                            <div className="flex items-center">
+                                <MapPin size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
+                                <span className="text-xs sm:text-xs">Saarbrücken</span>
+                            </div>
+                            
+                            <div className="uppercase tracking-wider text-xs sm:text-xs">
+                                {bio?.tags || "Porträts • Events • Commercial"}
+                            </div>
                         </div>
                     </div>
                 </div>
