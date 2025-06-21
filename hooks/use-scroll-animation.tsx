@@ -13,7 +13,7 @@ export function useScrollAnimation({
   rootMargin = "0px",
   triggerOnce = true,
 }: UseScrollAnimationProps = {}) {
-  const ref = useRef<HTMLElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(false)
 
   useEffect(() => {

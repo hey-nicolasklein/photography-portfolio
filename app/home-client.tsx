@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import PhotoGallery from "@/components/photo-gallery";
-import MobileMenu from "@/components/mobile-menu";
+import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
 import ParallaxSection from "@/components/parallax-section";
 import type { GalleryItem, BioItem } from "@/types";
@@ -16,78 +14,10 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ galleryItems, bio }: HomeClientProps) {
-    const [scrolled, setScrolled] = useState(false);
-
-    // Handle scroll for header blur effect
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
+    console.log(bio?.description)
     return (
         <main className="min-h-screen bg-white text-black">
-            <header
-                className={`sticky top-0 z-50 transition-all duration-300 ${
-                    scrolled
-                        ? "bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100"
-                        : "bg-white"
-                }`}
-            >
-                <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-                    <Link
-                        href="/"
-                        className="text-xl font-light tracking-[0.2em] hover:opacity-80 transition-opacity uppercase"
-                    >
-                        NICOLAS KLEIN
-                    </Link>
-                    <nav className="hidden md:flex space-x-8">
-                        <Link
-                            href="/"
-                            className="text-sm font-medium tracking-wider uppercase border-b border-black transition-none"
-                        >
-                            startseite
-                        </Link>
-                        <Link
-                            href="/portfolio"
-                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
-                        >
-                            portfolio
-                        </Link>
-                        <Link
-                            href="/pricing"
-                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
-                        >
-                            preise
-                        </Link>
-                    </nav>
-                    <div className="flex items-center space-x-4">
-                        <Link
-                            href="https://www.instagram.com/hey.nicolasklein/"
-                            className="text-black hover:scale-110 transition-transform duration-300"
-                            aria-label="Instagram"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Instagram size={20} />
-                        </Link>
-                        <MobileMenu
-                            links={[
-                                {
-                                    href: "/",
-                                    label: "startseite",
-                                    active: true,
-                                },
-                                { href: "/portfolio", label: "portfolio" },
-                                { href: "/pricing", label: "preise" },
-                            ]}
-                        />
-                    </div>
-                </div>
-            </header>
+            <Header currentPage="home" />
 
             <AnimatedSection animation="fade" className="mt-8 mb-16">
                 <PhotoGallery galleryItems={galleryItems} />
@@ -131,10 +61,10 @@ export default function HomeClient({ galleryItems, bio }: HomeClientProps) {
                                 animation="slide-up"
                                 delay={0.1}
                             >
-                                <p className="leading-relaxed">
+                                <div className="leading-relaxed whitespace-pre-wrap break-words">
                                     {bio?.description ||
                                         "Ich halte Momente fest, die Geschichten erzählen – mit einem minimalistischen Blick in Schwarzweiß. Spezialisiert auf Porträts, Events und kommerzielle Fotografie mit einem künstlerischen Ansatz, der Komposition und Emotion in den Vordergrund stellt."}
-                                </p>
+                                </div>
                             </AnimatedSection>
 
                             <AnimatedSection

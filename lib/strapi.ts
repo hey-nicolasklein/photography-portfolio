@@ -160,11 +160,12 @@ export async function getBio(): Promise<BioItem | null> {
 // Fetch stories from Strapi
 export async function getStories(): Promise<Story[]> {
     try {
-        const res = await fetch(`${STRAPI_URL}/api/stories?populate=images`, {
+        const res = await fetch(`${STRAPI_URL}/api/stories?populate=images&pagination[pageSize]=100`, {
             headers: {
                 Authorization: `Bearer ${STRAPI_TOKEN}`,
             },
             cache: "no-store",
+            next: { revalidate: 60 }, // Cache for 60 seconds
         });
 
         if (!res.ok) {

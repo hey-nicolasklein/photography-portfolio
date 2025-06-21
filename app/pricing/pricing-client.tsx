@@ -1,83 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Check, Camera, Users, Clock } from "lucide-react";
-import { useState, useEffect } from "react";
-import MobileMenu from "@/components/mobile-menu";
+import { Check, Camera, Users, Clock } from "lucide-react";
+import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
 
 export default function PricingClient() {
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
     return (
         <main className="min-h-screen bg-white text-black">
-            <header
-                className={`sticky top-0 z-50 transition-all duration-300 ${
-                    scrolled
-                        ? "bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100"
-                        : "bg-white"
-                }`}
-            >
-                <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-                    <Link
-                        href="/"
-                        className="text-xl font-light tracking-[0.2em] hover:opacity-80 transition-opacity uppercase"
-                    >
-                        NICOLAS KLEIN
-                    </Link>
-                    <nav className="hidden md:flex space-x-8">
-                        <Link
-                            href="/"
-                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
-                        >
-                            startseite
-                        </Link>
-                        <Link
-                            href="/portfolio"
-                            className="text-sm font-light tracking-wider uppercase hover:border-b hover:border-black transition-none"
-                        >
-                            portfolio
-                        </Link>
-                        <Link
-                            href="/pricing"
-                            className="text-sm font-medium tracking-wider uppercase border-b border-black transition-none"
-                        >
-                            preise
-                        </Link>
-                    </nav>
-                    <div className="flex items-center space-x-4">
-                        <Link
-                            href="https://www.instagram.com/hey.nicolasklein/"
-                            className="text-black hover:scale-110 transition-transform duration-300"
-                            aria-label="Instagram"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Instagram size={20} />
-                        </Link>
-                        <MobileMenu
-                            links={[
-                                { href: "/", label: "startseite" },
-                                { href: "/portfolio", label: "portfolio" },
-                                {
-                                    href: "/pricing",
-                                    label: "preise",
-                                    active: true,
-                                },
-                            ]}
-                        />
-                    </div>
-                </div>
-            </header>
+            <Header currentPage="pricing" />
 
             <section className="container mx-auto px-4 py-16">
                 <AnimatedSection animation="fade">
@@ -99,7 +30,7 @@ export default function PricingClient() {
                                     </h3>
                                 </div>
                                 <p className="text-3xl font-light mb-4 group-hover:text-gray-800 transition-colors">
-                                    €100
+                                    €200
                                 </p>
                                 <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                                     Perfekt für persönliche Porträts. Wir
@@ -131,7 +62,7 @@ export default function PricingClient() {
                                     </li>
                                 </ul>
                                 <a
-                                    href="mailto:hello@nicolasklein.photography?subject=Portrait%20Fotoshooting%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20möchte%20gerne%20ein%20Portrait-Fotoshooting%20buchen%20(€100).%0A%0AGewünschter%20Termin:%20%0AGewünschte%20Uhrzeit:%20%0ALocation-Wünsche:%20%0ABesondere%20Wünsche:%20%0A%0ABitte%20bestätige%20deine%20Verfügbarkeit.%0A%0AViele%20Grüße"
+                                    href="mailto:hello@nicolasklein.photography?subject=Portrait%20Fotoshooting%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20möchte%20gerne%20ein%20Portrait-Fotoshooting%20buchen%20(€200).%0A%0AGewünschter%20Termin:%20%0AGewünschte%20Uhrzeit:%20%0ALocation-Wünsche:%20%0ABesondere%20Wünsche:%20%0A%0ABitte%20bestätige%20deine%20Verfügbarkeit.%0A%0AViele%20Grüße"
                                     className="w-full py-3 border border-black hover:bg-black hover:text-white transition-all duration-300 inline-block text-center group-hover:shadow-lg transform hover:translate-y-1"
                                 >
                                     Jetzt buchen
@@ -148,7 +79,7 @@ export default function PricingClient() {
                                     <h3 className="text-xl font-bold">Event</h3>
                                 </div>
                                 <p className="text-3xl font-light mb-4 group-hover:text-gray-800 transition-colors">
-                                    €200
+                                    €400
                                 </p>
                                 <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                                     Halte unvergessliche Momente fest. Ob
@@ -184,7 +115,7 @@ export default function PricingClient() {
                                     </li>
                                 </ul>
                                 <a
-                                    href="mailto:hello@nicolasklein.photography?subject=Event%20Fotografie%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20möchte%20gerne%20Event-Fotografie%20buchen%20(€200).%0A%0AEvent-Datum:%20%0AEvent-Zeit:%20%0ALocation:%20%0AArt%20des%20Events:%20%0AAnzahl%20Gäste:%20%0ABesondere%20Wünsche:%20%0A%0ABitte%20bestätige%20deine%20Verfügbarkeit.%0A%0AViele%20Grüße"
+                                    href="mailto:hello@nicolasklein.photography?subject=Event%20Fotografie%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20möchte%20gerne%20Event-Fotografie%20buchen%20(€400).%0A%0AEvent-Datum:%20%0AEvent-Zeit:%20%0ALocation:%20%0AArt%20des%20Events:%20%0AAnzahl%20Gäste:%20%0ABesondere%20Wünsche:%20%0A%0ABitte%20bestätige%20deine%20Verfügbarkeit.%0A%0AViele%20Grüße"
                                     className="w-full py-3 bg-black text-white hover:bg-gray-800 transition-all duration-300 inline-block text-center group-hover:shadow-lg transform hover:translate-y-1"
                                 >
                                     Jetzt buchen
@@ -203,7 +134,7 @@ export default function PricingClient() {
                                     </h3>
                                 </div>
                                 <p className="text-3xl font-light mb-4 group-hover:text-gray-800 transition-colors">
-                                    €300
+                                    €600
                                 </p>
                                 <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                                     Ein ganzer Tag voller Erinnerungen. Ich

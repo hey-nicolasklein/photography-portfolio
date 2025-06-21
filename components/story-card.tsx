@@ -53,12 +53,11 @@ export default function StoryCard({
             el.addEventListener("scroll", checkScrollability);
             checkScrollability();
 
-            window.addEventListener("load", checkScrollability);
+            // Only add resize listener, not load
             window.addEventListener("resize", checkScrollability);
 
             return () => {
                 el.removeEventListener("scroll", checkScrollability);
-                window.removeEventListener("load", checkScrollability);
                 window.removeEventListener("resize", checkScrollability);
             };
         }
@@ -109,11 +108,11 @@ export default function StoryCard({
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6 leading-tight">
+                            <h2 className="text-4xl md:text-3xl font-bold text-black mb-6 leading-tight">
                                 {story.title}
                             </h2>
 
-                            <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6 break-words">
+                            <p className="text-lg md:text-lg text-gray-600 leading-relaxed mb-6 break-words">
                                 {story.description}
                             </p>
 
@@ -199,6 +198,9 @@ export default function StoryCard({
                                             fill
                                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             sizes="(max-width: 768px) 85vw, (max-width: 1024px) 40vw, 33vw"
+                                            loading="lazy"
+                                            placeholder="blur"
+                                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                                             onError={() =>
                                                 handleImageError(image.id)
                                             }
