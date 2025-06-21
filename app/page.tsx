@@ -1,4 +1,4 @@
-import { getGalleryItems, getBio } from "@/lib/strapi";
+import { getGalleryItems, getBio, getStories } from "@/lib/strapi";
 import HomeClient from "./home-client";
 
 const structuredData = {
@@ -45,6 +45,7 @@ const structuredData = {
 export default async function Home() {
     const galleryItems = await getGalleryItems();
     const bio = await getBio();
+    const stories = await getStories();
 
     return (
         <>
@@ -54,7 +55,7 @@ export default async function Home() {
                     __html: JSON.stringify(structuredData),
                 }}
             />
-            <HomeClient galleryItems={galleryItems} bio={bio} />
+            <HomeClient galleryItems={galleryItems} bio={bio} stories={stories} />
         </>
     );
 }

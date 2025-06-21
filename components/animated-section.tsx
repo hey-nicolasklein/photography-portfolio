@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { motion } from "framer-motion"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
 
@@ -18,28 +17,28 @@ export default function AnimatedSection({
   delay = 0,
   animation = "fade",
 }: AnimatedSectionProps) {
-  const { ref, isInView } = useScrollAnimation({ threshold: 0.2 })
+  const { ref, isInView } = useScrollAnimation({ threshold: 0.1, triggerOnce: true })
 
   const animations = {
     fade: {
       hidden: { opacity: 0 },
-      visible: { opacity: 1, transition: { duration: 0.6, delay } },
+      visible: { opacity: 1, transition: { duration: 0.4, delay } },
     },
     "slide-up": {
-      hidden: { opacity: 0, y: 30 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay } },
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay } },
     },
     "slide-left": {
-      hidden: { opacity: 0, x: 30 },
-      visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay } },
+      hidden: { opacity: 0, x: 20 },
+      visible: { opacity: 1, x: 0, transition: { duration: 0.4, delay } },
     },
     "slide-right": {
-      hidden: { opacity: 0, x: -30 },
-      visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay } },
+      hidden: { opacity: 0, x: -20 },
+      visible: { opacity: 1, x: 0, transition: { duration: 0.4, delay } },
     },
     scale: {
-      hidden: { opacity: 0, scale: 0.9 },
-      visible: { opacity: 1, scale: 1, transition: { duration: 0.6, delay } },
+      hidden: { opacity: 0, scale: 0.95 },
+      visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay } },
     },
   }
 

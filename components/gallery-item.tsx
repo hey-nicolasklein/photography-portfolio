@@ -39,15 +39,12 @@ export default function GalleryItem({
     };
 
     return (
-        <motion.div
+        <div
             className="w-full h-full relative cursor-pointer overflow-hidden"
-            onHoverStart={() => setIsHovered(true)}
-            onHoverEnd={() => setIsHovered(false)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             onMouseMove={handleMouseMove}
             onClick={handleClick}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
         >
             <motion.div
                 className="w-full h-full"
@@ -121,6 +118,6 @@ export default function GalleryItem({
                 }}
                 transition={{ duration: 0.3 }}
             />
-        </motion.div>
+        </div>
     );
 }

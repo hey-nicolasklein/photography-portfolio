@@ -6,92 +6,94 @@ import PhotoGallery from "@/components/photo-gallery";
 import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
 import ParallaxSection from "@/components/parallax-section";
-import type { GalleryItem, BioItem } from "@/types";
+import StoriesPreview from "@/components/stories-preview";
+import type { GalleryItem, BioItem, Story } from "@/types";
 
 interface HomeClientProps {
     galleryItems: GalleryItem[];
     bio: BioItem | null;
+    stories: Story[];
 }
 
-export default function HomeClient({ galleryItems, bio }: HomeClientProps) {
-    console.log(bio?.description)
+export default function HomeClient({ galleryItems, bio, stories }: HomeClientProps) {
     return (
         <main className="min-h-screen bg-white text-black">
             <Header currentPage="home" />
 
-            <AnimatedSection animation="fade" className="mt-8 mb-16">
-                <PhotoGallery galleryItems={galleryItems} />
-            </AnimatedSection>
-
-            <ParallaxSection className="mb-16">
-                <div className="w-full h-[1px] bg-gray-200"></div>
-            </ParallaxSection>
-
-            <section className="container mx-auto px-4 py-8 mb-16">
-                <div className="grid md:grid-cols-5 gap-8 items-center">
-                    <AnimatedSection
-                        animation="slide-right"
-                        className="md:col-span-2"
-                    >
-                        <div className="relative h-[300px] md:h-[400px] overflow-hidden">
-                            <Image
-                                src={
-                                    bio?.profileImage || "/photographer.png"
-                                }
-                                alt={
-                                    bio?.profileImageAlt ||
-                                    "Nicolas Klein - Photographer"
-                                }
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, 40vw"
-                            />
+            {/* Hero Gallery Section */}
+            <div className="mb-16">
+                <section>
+                    {galleryItems && galleryItems.length > 0 ? (
+                        <PhotoGallery galleryItems={galleryItems} />
+                    ) : (
+                        <div className="container mx-auto px-4 text-center py-8">
+                            <p className="text-gray-500">No gallery items available</p>
                         </div>
-                    </AnimatedSection>
+                    )}
+                </section>
+            </div>
 
-                    <div className="md:col-span-3">
-                        <AnimatedSection animation="slide-up">
-                            <h2 className="text-2xl font-bold uppercase mb-4">
-                                {bio?.title || "FREIBERUFLICHER FOTOGRAF"}
+            {/* Stories Preview Section */}
+            {stories && stories.length > 0 ? (
+                <StoriesPreview stories={stories} />
+            ) : (
+                <div className="container mx-auto px-4 text-center py-8">
+                    <p className="text-gray-500">No stories available</p>
+                </div>
+            )}
+
+            {/* About Section */}
+            <div className="container mx-auto px-4 py-8 mb-16">
+                <section>
+                    <div className="grid md:grid-cols-5 gap-8 items-center">
+                        <div className="md:col-span-2">
+                            <div className="relative h-[300px] md:h-[400px] overflow-hidden">
+                                <Image
+                                    src={
+                                        bio?.profileImage || "/photographer.png"
+                                    }
+                                    alt={
+                                        bio?.profileImageAlt ||
+                                        "Nicolas Klein - Photographer"
+                                    }
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 768px) 100vw, 40vw"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="md:col-span-3">
+                            <h2 className="text-3xl font-bold uppercase mb-4 tracking-wider">
+                                Über mich
                             </h2>
-                        </AnimatedSection>
+                            <h3 className="text-xl text-gray-700 mb-6">
+                                {bio?.title || "FREIBERUFLICHER FOTOGRAF"}
+                            </h3>
 
-                        <div className="text-sm space-y-4">
-                            <AnimatedSection
-                                animation="slide-up"
-                                delay={0.1}
-                            >
+                            <div className="text-sm space-y-4">
                                 <div className="leading-relaxed whitespace-pre-wrap break-words">
                                     {bio?.description ||
                                         "Ich halte Momente fest, die Geschichten erzählen – mit einem minimalistischen Blick in Schwarzweiß. Spezialisiert auf Porträts, Events und kommerzielle Fotografie mit einem künstlerischen Ansatz, der Komposition und Emotion in den Vordergrund stellt."}
                                 </div>
-                            </AnimatedSection>
 
-                            <AnimatedSection
-                                animation="slide-up"
-                                delay={0.2}
-                            >
                                 <p className="text-sm text-gray-700">
                                     {bio?.tags ||
                                         "porträts / events / hochzeiten / commercial / editorial / travel / architektur"}
                                 </p>
-                            </AnimatedSection>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
-            <section
-                id="contact"
-                className="container mx-auto px-4 py-16 mb-16 bg-gray-50"
-            >
-                <AnimatedSection animation="fade">
-                    <h2 className="text-2xl font-bold uppercase mb-8 text-center">
-                        KONTAKT
+            {/* Contact Section */}
+            <div className="container mx-auto px-4 py-16 mb-16 bg-gray-50">
+                <section id="contact">
+                    <h2 className="text-3xl font-bold uppercase mb-8 text-center tracking-wider">
+                        Kontakt
                     </h2>
-                </AnimatedSection>
 
-                <AnimatedSection animation="slide-up" delay={0.1}>
                     <div className="max-w-md mx-auto text-center space-y-6">
                         <p className="text-gray-600">
                             Bereit, deine besonderen Momente festzuhalten?
@@ -107,35 +109,33 @@ export default function HomeClient({ galleryItems, bio }: HomeClientProps) {
                             <p>hello@nicolasklein.photography</p>
                         </div>
                     </div>
-                </AnimatedSection>
-            </section>
+                </section>
+            </div>
 
             <footer className="bg-white border-t border-gray-200">
                 <div className="container mx-auto px-4 py-12">
-                    <AnimatedSection animation="fade">
-                        <div className="flex flex-col md:flex-row justify-between items-center">
-                            <p className="text-sm text-gray-500 mb-4 md:mb-0 font-light tracking-wider uppercase">
-                                © {new Date().getFullYear()} Nicolas Klein
-                                Photography
-                            </p>
-                            <div className="flex space-x-6">
-                                <Link
-                                    href="/impressum"
-                                    className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
-                                >
-                                    Impressum
-                                </Link>
-                                <Link
-                                    href="https://www.instagram.com/hey.nicolasklein/"
-                                    className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Instagram
-                                </Link>
-                            </div>
+                    <div className="flex flex-col md:flex-row justify-between items-center">
+                        <p className="text-sm text-gray-500 mb-4 md:mb-0 font-light tracking-wider uppercase">
+                            © {new Date().getFullYear()} Nicolas Klein
+                            Photography
+                        </p>
+                        <div className="flex space-x-6">
+                            <Link
+                                href="/impressum"
+                                className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
+                            >
+                                Impressum
+                            </Link>
+                            <Link
+                                href="https://www.instagram.com/hey.nicolasklein/"
+                                className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Instagram
+                            </Link>
                         </div>
-                    </AnimatedSection>
+                    </div>
                 </div>
             </footer>
         </main>

@@ -156,10 +156,7 @@ body > div[role="dialog"] {
     inset: 0;
 }
 
-/* Hide hamburger menu when lightbox is open */
-body:has(> div[role="dialog"]) .mobile-menu-button {
-    display: none !important;
-}
+/* Mobile menu button should always be visible - only hide when menu is actually open */
 
 @layer utilities {
     .text-balance {

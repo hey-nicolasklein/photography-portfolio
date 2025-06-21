@@ -76,39 +76,17 @@ export default function MobileMenu({ links }: MobileMenuProps) {
         <div className="md:hidden">
             <button
                 onClick={toggleMenu}
-                className="p-2 focus:outline-none z-50 relative mobile-menu-button text-black"
+                className="p-2 text-black focus:outline-none z-[60] relative mobile-menu-button"
                 aria-label={isOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isOpen}
             >
-                <AnimatePresence mode="wait" initial={false}>
-                    {isOpen ? (
-                        <motion.div
-                            key="close"
-                            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                        >
-                            <X size={24} />
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="menu"
-                            initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
-                            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                            exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                        >
-                            <Menu size={24} />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="fixed inset-0 z-[40] backdrop-blur-xl bg-white/90 text-black flex flex-col"
+                        className="fixed inset-0 z-[50] backdrop-blur-xl bg-white/90 text-black flex flex-col"
                         initial="closed"
                         animate="open"
                         exit="closed"
