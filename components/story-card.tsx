@@ -4,7 +4,6 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Calendar, Eye, Play } from "lucide-react";
 import { motion } from "framer-motion";
-import { generatePhotographyBlur } from "@/lib/utils";
 import type { Story } from "@/types";
 
 interface StoryCardProps {
@@ -126,8 +125,7 @@ export default function StoryCard({
                                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             sizes="(max-width: 768px) 85vw, (max-width: 1024px) 40vw, 33vw"
                                             loading="lazy"
-                                            placeholder="blur"
-                                            blurDataURL={generatePhotographyBlur()}
+
                                             onError={() =>
                                                 handleImageError(image.id)
                                             }

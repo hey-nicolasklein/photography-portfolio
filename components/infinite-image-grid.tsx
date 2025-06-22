@@ -12,7 +12,6 @@ import ContactCard from "./contact-card";
 import IntroCard from "./intro-card";
 import StoriesCard from "./stories-card";
 import AnimatedButton from "./animated-button";
-import { generatePhotographyBlur } from "@/lib/utils";
 import type { GalleryItem, BioItem, Story } from "@/types";
 
 interface InfiniteImageGridProps {
@@ -233,8 +232,6 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
                             sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                             priority={index < 6}
-                            placeholder="blur"
-                            blurDataURL={generatePhotographyBlur()}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     </div>
@@ -272,8 +269,6 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
                             sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                             priority={actualIndex < 6}
-                            placeholder="blur"
-                            blurDataURL={generatePhotographyBlur()}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     </div>
@@ -311,8 +306,6 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                             className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
                             sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
                             priority={actualIndex < 6}
-                            placeholder="blur"
-                            blurDataURL={generatePhotographyBlur()}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     </div>
