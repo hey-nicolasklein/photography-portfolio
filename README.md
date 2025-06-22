@@ -1,4 +1,4 @@
-# Unique Photography Portfolio
+# 📸 No Bullshit Photography Portfolio
 
 No bullshit photography portfolio built with Next.js and Strapi CMS. Initial UI scaffolded with v0.
 

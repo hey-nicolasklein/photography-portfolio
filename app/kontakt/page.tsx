@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Instagram, Camera, MapPin, Mail } from "lucide-react";
 import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
+import ContactActionButton from "@/components/contact-action-button";
 import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
 
@@ -151,12 +152,10 @@ export default async function Kontakt() {
                                     Bereit für dein nächstes Fotoshooting?
                                 </p>
                                 
-                                <Link
-                                    href="mailto:hello@nicolasklein.photography?subject=Fotografie%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20würde%20gerne%20über%20deine%20Fotografie-Services%20sprechen.%0A%0AViele%20Grüße"
-                                    className="inline-block bg-black text-white px-8 py-3 uppercase tracking-wider font-medium hover:bg-gray-800 transition-colors"
-                                >
-                                    Nachricht senden
-                                </Link>
+                                <ContactActionButton 
+                                    text="Erinnerungen schaffen"
+                                    variant="dark"
+                                />
                             </div>
                         </AnimatedSection>
                     </div>
