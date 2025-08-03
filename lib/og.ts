@@ -10,7 +10,8 @@ interface OpenGraphConfig {
 }
 
 const baseUrl = 'https://nicolasklein.photography';
-const defaultOgImage = '/og-default.svg';
+const defaultOgImage = '/og_hero.png';
+const fallbackOgImage = '/og-default.svg';
 
 export function generateMetadata({
   title,
@@ -23,9 +24,8 @@ export function generateMetadata({
   const fullTitle = path === '' ? title : `${title} | Nicolas Klein Photography`;
   const url = `${baseUrl}${path}`;
   
-  // Use custom image, generate dynamic one, or fall back to default
-  const ogImageUrl = image || 
-    `/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&type=${type}`;
+  // Use custom image, default to static hero image, or generate dynamic one as fallback
+  const ogImageUrl = image || defaultOgImage;
 
   const metadata: Metadata = {
     title: fullTitle,
@@ -48,10 +48,10 @@ export function generateMetadata({
           alt: `${title} - Nicolas Klein Photography`,
         },
         {
-          url: defaultOgImage,
+          url: fallbackOgImage,
           width: 1200,
           height: 630,
-          alt: `${title} - Nicolas Klein Photography (Default)`,
+          alt: `${title} - Nicolas Klein Photography (Fallback)`,
         },
       ],
     },
@@ -91,6 +91,25 @@ export function generateStaticMetadata({
   });
 }
 
+// Helper function to generate metadata with dynamic OG image (for special cases)
+export function generateDynamicMetadata({
+  title,
+  description,
+  path = '',
+  type = 'default',
+  noIndex = false,
+}: Omit<OpenGraphConfig, 'image'>): Metadata {
+  const dynamicImage = `/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&type=${type}`;
+  return generateMetadata({
+    title,
+    description,
+    path,
+    image: dynamicImage,
+    noIndex,
+    type,
+  });
+}
+
 // Helper function for structured data (JSON-LD)
 export function generatePhotographerStructuredData() {
   return {
@@ -99,7 +118,7 @@ export function generatePhotographerStructuredData() {
     name: 'Nicolas Klein',
     jobTitle: 'Professional Photographer',
     url: 'https://nicolasklein.photography',
-    image: `${baseUrl}/api/og?type=default`,
+    image: `${baseUrl}${defaultOgImage}`,
     description: 'Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts und Event-Fotografie.',
     address: {
       '@type': 'PostalAddress',

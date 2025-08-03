@@ -3,6 +3,7 @@ import { Instagram } from "lucide-react";
 import MobileMenu from "@/components/mobile-menu";
 import AnimatedSection from "@/components/animated-section";
 import { generateMetadata } from "@/lib/og";
+import { getNicolasAge } from "@/lib/age";
 
 export const metadata = generateMetadata({
     title: "Impressum",
@@ -12,6 +13,8 @@ export const metadata = generateMetadata({
 });
 
 export default function Impressum() {
+    const age = getNicolasAge();
+    
     return (
         <main className="min-h-screen bg-white text-black">
             <header className="bg-white/80 backdrop-blur-xl shadow-sm sticky top-0 z-50 border-b border-gray-100">
@@ -155,7 +158,7 @@ export default function Impressum() {
                                 Redaktionell verantwortlich
                             </h2>
                             <p className="text-sm font-light">
-                                Nicolas Klein (Anschrift wie oben)
+                                Nicolas Klein, {age} Jahre (Anschrift wie oben)
                             </p>
                         </div>
 

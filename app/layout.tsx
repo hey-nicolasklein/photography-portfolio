@@ -62,16 +62,16 @@ export const metadata: Metadata = {
             "Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.",
         images: [
             {
-                url: "/api/og?title=Nicolas Klein Photography&description=Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.&type=default",
+                url: "/og_hero.png",
                 width: 1200,
                 height: 630,
                 alt: "Nicolas Klein Photography",
             },
             {
-                url: "/og-default.svg",
+                url: "/api/og?title=Nicolas Klein Photography&description=Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts, Events und Follow-Around Fotografie.&type=default",
                 width: 1200,
                 height: 630,
-                alt: "Nicolas Klein Photography - Default",
+                alt: "Nicolas Klein Photography - Dynamic",
             },
         ],
     },
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Nicolas Klein Photography",
         description: "Professioneller Fotograf in Saarbrücken",
-        images: ["/api/og?title=Nicolas Klein Photography&description=Professioneller Fotograf in Saarbrücken&type=default"],
+        images: ["/og_hero.png"],
         creator: "@hey.nicolasklein",
         site: "@hey.nicolasklein",
     },

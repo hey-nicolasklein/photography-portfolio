@@ -5,6 +5,7 @@ import AnimatedSection from "@/components/animated-section";
 import ContactActionButton from "@/components/contact-action-button";
 import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
+import { getNicolasAge } from "@/lib/age";
 
 export const metadata = generateMetadata({
     title: "Kontakt",
@@ -14,6 +15,9 @@ export const metadata = generateMetadata({
 
 export default async function Kontakt() {
     const bio = await getBio();
+    const age = getNicolasAge();
+
+    console.log(age);
     
     return (
         <main className="min-h-screen bg-white text-black">
@@ -50,7 +54,7 @@ export default async function Kontakt() {
                                     <div className="text-lg leading-relaxed font-light text-center">
                                         <p className="mb-6">
                                             <em>
-                                                Hey! Ich bin Nico, 27 Jahre alt und arbeite seit einigen Jahren als freiberuflicher Fotograf in Saarbrücken. 
+                                                Hey! Ich bin Nico, {age} Jahre alt und arbeite seit einigen Jahren als freiberuflicher Fotograf in Saarbrücken. 
                                                 Mit meiner Kamera fange ich authentische Momente ein, die im Alltag oft verloren gehen – Geschichten, die erzählt werden wollen.
                                             </em>
                                         </p>
