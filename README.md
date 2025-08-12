@@ -5,18 +5,16 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/docs) [![Strapi](https://img.shields.io/badge/Strapi-5-2E7EEA?logo=strapi&logoColor=white)](https://docs.strapi.io/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/docs) [![Vercel](https://img.shields.io/badge/Hosted_on-Vercel-000?logo=vercel&logoColor=white)](https://vercel.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
-```mermaid
-graph LR
-  A[Browser] -- requests --> B[Next.js 15 App Router]
-  B -- fetch --> C[(Strapi v5 API)]
-  C -- serves --> D[(Uploads / Media)]
-  B -- deploy --> E[Vercel]
-  C -- deploy --> F[Strapi Cloud/Node Host]
-```
-
 Modern, no-nonsense photography portfolio built with Next.js 15 and a Strapi CMS backend. The UI is animated, mobile-first, and fast by default.
 
 ![UI Screenshot](public/ui_screenshot.png)
+
+[![Deploy backend to Strapi Cloud](https://img.shields.io/badge/Deploy_backend_to-Strapi_Cloud-2E7EEA?logo=strapi&logoColor=white)](https://cloud.strapi.io/)
+
+### Repository links
+
+- Frontend (this repo): [hey-nicolasklein/photography-portfolio](https://github.com/hey-nicolasklein/photography-portfolio)
+- Backend (Strapi): [hey-nicolasklein/photography-strapi](https://github.com/hey-nicolasklein/photography-strapi)
 
 ## Stack
 
@@ -39,7 +37,7 @@ Modern, no-nonsense photography portfolio built with Next.js 15 and a Strapi CMS
 
 - Node.js 20 or 22
 - pnpm (recommended): `npm i -g pnpm`
-- Strapi backend in `../photography-strapi` (see backend README)
+- Strapi backend in `../photography-strapi` (see backend README: [photography-strapi](https://github.com/hey-nicolasklein/photography-strapi))
 
 ## Quick start (local)
 
@@ -95,6 +93,17 @@ Visit `http://localhost:3000`.
 
 Types are defined in `types/strapi.ts`. Fetching logic lives in `lib/strapi.ts`.
 
+### API endpoints used
+
+The frontend consumes these Strapi endpoints (JSON API):
+
+- `GET /api/bio?populate=*`
+- `GET /api/gallery-items?populate=*`
+- `GET /api/portfolio-items?populate=*`
+- `GET /api/stories?populate=*`
+
+See backend details and examples in: [photography-strapi](https://github.com/hey-nicolasklein/photography-strapi).
+
 ## Scripts
 
 ```bash
@@ -111,7 +120,15 @@ pnpm lint      # Lint
   - If your Strapi assets are served from a different domain, update `images.remotePatterns` in `next.config.mjs` to include that host.
 
 - **Backend (Strapi)**
-  - Deploy to Strapi Cloud or any Node host. Ensure CORS allows your frontend origin and create a production API token with the required access.
+  - Deploy to Strapi Cloud or any Node host. Ensure CORS allows your frontend origin and create a production API token with the required access. See: [photography-strapi](https://github.com/hey-nicolasklein/photography-strapi)
+  - One-click guidance: [Strapi Cloud](https://cloud.strapi.io/) • Guide: [Deployment docs](https://docs.strapi.io/cloud/getting-started/deployment/)
+
+After backend is live, set in this frontend:
+
+```env
+NEXT_PUBLIC_STRAPI_URL=https://YOUR-STRAPI-CLOUD-URL
+STRAPI_API_TOKEN=your_production_token
+```
 
 ### Environment variables
 
