@@ -254,12 +254,7 @@ body.lightbox-open {
     z-index: 1;
 }
 
-/* Ensure lightbox is above everything */
-body > div[role="dialog"] {
-    z-index: 9999;
-    position: fixed;
-    inset: 0;
-}
+/* Removed overly broad selector that broke Radix dialogs */
 
 /* Mobile menu button should always be visible - only hide when menu is actually open */
 

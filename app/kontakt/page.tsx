@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Instagram, Camera, MapPin, Mail } from "lucide-react";
+import { Instagram, Camera, MapPin, Mail, Aperture, PartyPopper, Trophy } from "lucide-react";
 import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
 import ContactActionButton from "@/components/contact-action-button";
 import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
+import ProfileBubble from "@/components/profile-bubble";
 import { getNicolasAge } from "@/lib/age";
 
 export const metadata = generateMetadata({
@@ -37,6 +38,17 @@ export default async function Kontakt() {
                                     Freiberuflicher Fotograf
                                 </p>
                             </div>
+
+                            {bio?.profileImage && (
+                                <div className="flex justify-center">
+                                    <ProfileBubble
+                                        imageUrl={bio.profileImage}
+                                        alt={bio.profileImageAlt || "Profilbild"}
+                                        message="Lust zu quatschen? Schreib mir einfach eine Nachricht – ich freu mich!"
+                                        size="xl"
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         {/* Bio Section */}
@@ -123,26 +135,34 @@ export default async function Kontakt() {
                                 <h3 className="text-xl font-semibold uppercase tracking-wider mb-6">
                                     Spezialisierungen
                                 </h3>
-                                
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-                                    <div className="text-center">
+                                    <div className="text-center group">
+                                        <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gradient-to-br from-black to-gray-700 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:-rotate-1 group-hover:shadow-lg group-active:scale-95 group-active:translate-y-0.5 group-active:brightness-95 group-active:from-gray-900 group-active:to-black">
+                                            <Aperture size={22} />
+                                        </div>
                                         <h4 className="font-medium uppercase tracking-wider mb-2">Porträts</h4>
                                         <p className="text-sm font-light text-gray-600">
                                             Authentische & natürliche Porträtfotografie
                                         </p>
                                     </div>
                                     
-                                    <div className="text-center">
+                                    <div className="text-center group">
+                                        <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gradient-to-br from-black to-gray-700 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:rotate-1 group-hover:shadow-lg group-active:scale-95 group-active:translate-y-0.5 group-active:brightness-95 group-active:from-gray-900 group-active:to-black">
+                                            <PartyPopper size={22} />
+                                        </div>
                                         <h4 className="font-medium uppercase tracking-wider mb-2">Events</h4>
                                         <p className="text-sm font-light text-gray-600">
                                             Hochzeiten, Feiern & besondere Momente
                                         </p>
                                     </div>
                                     
-                                    <div className="text-center">
-                                        <h4 className="font-medium uppercase tracking-wider mb-2">Commercial</h4>
+                                    <div className="text-center group">
+                                        <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gradient-to-br from-black to-gray-700 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:-rotate-1 group-hover:shadow-lg group-active:scale-95 group-active:translate-y-0.5 group-active:brightness-95 group-active:from-gray-900 group-active:to-black">
+                                            <Trophy size={22} />
+                                        </div>
+                                        <h4 className="font-medium uppercase tracking-wider mb-2">Sport</h4>
                                         <p className="text-sm font-light text-gray-600">
-                                            Geschäftsfotografie & Unternehmen
+                                            Mannschafts- & Vereinsfotos
                                         </p>
                                     </div>
                                 </div>
