@@ -54,7 +54,7 @@ export default function QrShareDialog({ open, onOpenChange, url, bio }: QrShareD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[92vw] max-w-md p-5 sm:p-6">
+      <DialogContent className="w-[80vw] max-w-md p-5 p-6">
         <DialogHeader>
           <DialogTitle className="sr-only">Website teilen</DialogTitle>
         </DialogHeader>
@@ -69,8 +69,8 @@ export default function QrShareDialog({ open, onOpenChange, url, bio }: QrShareD
           )}
 
           <div className="bg-white p-4 rounded-md shadow-sm">
-            <div className="w-[64vw] max-w-[320px] min-w-[180px] aspect-square">
-              <StyledQrCode value={resolvedUrl} />
+            <div className="aspect-square min-w-[50px] max-w-[320px] w-[150px] sm:w-[320px]">
+              <StyledQrCode value={resolvedUrl} size={typeof window !== "undefined" && window.innerWidth >= 640 ? 320 : 150} />
             </div>
           </div>
 
