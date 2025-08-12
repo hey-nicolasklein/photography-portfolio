@@ -95,17 +95,17 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                     : "bg-white"
             }`}
         >
-            <div className="mx-8 px-4 py-6 flex justify-between items-center">
-                <div className="flex-shrink-0 pr-8">
+            <div className="mx-4 md:mx-8 px-4 py-4 md:py-6 flex justify-between items-center">
+                <div className="min-w-0 pr-2 md:pr-8">
                     <Link
                         href="/"
-                        className="text-xl font-black tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black"
+                        className="block max-w-[60vw] sm:max-w-none truncate whitespace-nowrap text-xl font-black tracking-[0.15em] sm:tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black"
                     >
                         NICOLAS KLEIN
                     </Link>
                 </div>
                 
-                <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-2 sm:space-x-4">
                     <nav className="hidden md:flex space-x-8 items-center">
                         <AnimatedNavLink
                             href="/"
@@ -136,8 +136,8 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                         </AnimatedNavLink>
                     </nav>
                     
-                    <div className="flex items-center space-x-4" style={{ position: 'relative', zIndex: 100 }}>
-                        <motion.div
+                    <div className="flex items-center space-x-2 sm:space-x-4" style={{ position: 'relative', zIndex: 100 }}>
+                        <motion.div className="hidden sm:block"
                             whileHover={{
                                 scale: 1.1,
                                 rotate: [0, -5, 5, 0],
@@ -170,7 +170,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                                 <Instagram size={20} />
                             </Link>
                         </motion.div>
-                        <motion.div
+                        <motion.div className="hidden sm:block"
                             whileHover={{
                                 scale: 1.1,
                                 rotate: [0, -5, 5, 0],
