@@ -136,7 +136,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                         </AnimatedNavLink>
                     </nav>
                     
-                    <div className="flex items-center space-x-2 sm:space-x-4" style={{ position: 'relative', zIndex: 100 }}>
+                    <div className="flex items-center space-x-2 sm:space-x-4 relative z-[100]">
                         <motion.div className="hidden sm:block"
                             whileHover={{
                                 scale: 1.1,
