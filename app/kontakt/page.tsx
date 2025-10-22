@@ -5,7 +5,7 @@ import AnimatedSection from "@/components/animated-section";
 import ContactActionButton from "@/components/contact-action-button";
 import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
-import ProfileBubble from "@/components/profile-bubble";
+import KontaktHero from "@/components/kontakt-hero";
 import { getNicolasAge } from "@/lib/age";
 
 export const metadata = generateMetadata({
@@ -40,14 +40,12 @@ export default async function Kontakt() {
                             </div>
 
                             {bio?.profileImage && (
-                                <div className="flex justify-center">
-                                    <ProfileBubble
-                                        imageUrl={bio.profileImage}
-                                        alt={bio.profileImageAlt || "Profilbild"}
-                                        message="Lust zu quatschen? Schreib mir einfach eine Nachricht – ich freu mich!"
-                                        size="xl"
-                                    />
-                                </div>
+                                <KontaktHero
+                                    imageUrl={bio.profileImage}
+                                    alt={bio.profileImageAlt || "Profilbild"}
+                                    message="Lust zu quatschen? Schreib mir einfach eine Nachricht – ich freu mich!"
+                                    scrollTargetId="kontakt-section"
+                                />
                             )}
                         </div>
 
@@ -93,7 +91,7 @@ export default async function Kontakt() {
 
                         {/* Contact Section */}
                         <AnimatedSection animation="slide-up" delay={0.3}>
-                            <div className="text-center mb-16">
+                            <div id="kontakt-section" className="text-center mb-16 scroll-mt-24">
                                 <h2 className="text-2xl font-bold uppercase tracking-wider mb-8">
                                     Lass uns sprechen
                                 </h2>
