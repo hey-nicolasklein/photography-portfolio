@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { ArrowDown } from "lucide-react";
 
 interface ProfileBubbleProps {
   imageUrl: string;
@@ -90,8 +91,24 @@ export default function ProfileBubble({ imageUrl, alt, message, size = "md", onC
       {message ? (
         <div className="relative mt-3 z-0">
           <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-muted" />
-          <div className="rounded-2xl bg-muted px-3 py-2 text-sm text-muted-foreground shadow-sm text-center">
+          <div className={`rounded-2xl bg-muted px-3 py-2 text-sm text-muted-foreground shadow-sm text-center ${
+            onClick ? "pb-1" : ""
+          }`}>
             {message}
+            {onClick && (
+              <motion.div
+                className="flex items-center justify-center gap-1 mt-2 text-xs font-medium"
+                animate={{ y: [0, 3, 0] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <span>Zum Kontakt</span>
+                <ArrowDown size={14} />
+              </motion.div>
+            )}
           </div>
         </div>
       ) : null}
