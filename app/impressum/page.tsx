@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import AnimatedSection from "@/components/animated-section";
 import { generateMetadata } from "@/lib/og";
 import { getNicolasAge } from "@/lib/age";
@@ -15,7 +16,7 @@ export default function Impressum() {
     const age = getNicolasAge();
     
     return (
-        <main className="min-h-screen bg-white text-black">
+        <main className="min-h-screen bg-white text-black overflow-x-hidden">
             <Header />
 
             <section className="container mx-auto px-4 py-16">
@@ -55,7 +56,7 @@ export default function Impressum() {
                                     </strong>{" "}
                                     <a
                                         href="mailto:hello@nicolasklein.photography?subject=Fotografie%20Anfrage&body=Hallo%20Nicolas,%0A%0Aich%20würde%20gerne%20über%20deine%20Fotografie-Services%20sprechen.%0A%0AViele%20Grüße"
-                                        className="underline hover:no-underline"
+                                        className="underline hover:no-underline break-all"
                                     >
                                         hello@nicolasklein.photography
                                     </a>
@@ -120,7 +121,7 @@ export default function Impressum() {
                                     href="https://ec.europa.eu/consumers/odr/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="underline hover:no-underline"
+                                    className="underline hover:no-underline break-all"
                                 >
                                     https://ec.europa.eu/consumers/odr/
                                 </a>
@@ -178,32 +179,7 @@ export default function Impressum() {
                 </AnimatedSection>
             </section>
 
-            <footer className="container mx-auto px-4 py-8 mt-16 border-t border-gray-200">
-                <AnimatedSection animation="fade">
-                    <div className="flex flex-col md:flex-row justify-between items-center">
-                        <p className="text-sm text-gray-500 font-light tracking-wider uppercase">
-                            © {new Date().getFullYear()} Nicolas Klein
-                            Photography
-                        </p>
-                        <div className="flex space-x-4 mt-4 md:mt-0">
-                            <Link
-                                href="/impressum"
-                                className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
-                            >
-                                Impressum
-                            </Link>
-                            <Link
-                                href="https://www.instagram.com/hey.nicolasklein/"
-                                className="text-sm text-gray-500 hover:text-black transition-colors font-light tracking-wider uppercase"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Instagram
-                            </Link>
-                        </div>
-                    </div>
-                </AnimatedSection>
-            </footer>
+            <Footer />
         </main>
     );
 }
