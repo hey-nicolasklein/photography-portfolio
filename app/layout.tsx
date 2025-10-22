@@ -128,7 +128,7 @@ export default function RootLayout({
                     content="/browserconfig.xml"
                 />
             </head>
-            <body className={`${inter.variable} font-sans antialiased`}>
+            <body className={`${inter.variable} font-sans antialiased bg-white`}>
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
