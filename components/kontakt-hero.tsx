@@ -6,11 +6,12 @@ interface KontaktHeroProps {
   imageUrl: string;
   alt: string;
   message: string;
+  scrollTargetId: string;
 }
 
-export default function KontaktHero({ imageUrl, alt, message }: KontaktHeroProps) {
+export default function KontaktHero({ imageUrl, alt, message, scrollTargetId }: KontaktHeroProps) {
   const handleClick = () => {
-    const element = document.getElementById("kontakt-section");
+    const element = document.getElementById(scrollTargetId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }

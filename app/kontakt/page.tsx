@@ -44,6 +44,7 @@ export default async function Kontakt() {
                                     imageUrl={bio.profileImage}
                                     alt={bio.profileImageAlt || "Profilbild"}
                                     message="Lust zu quatschen? Schreib mir einfach eine Nachricht – ich freu mich!"
+                                    scrollTargetId="kontakt-section"
                                 />
                             )}
                         </div>
@@ -90,7 +91,7 @@ export default async function Kontakt() {
 
                         {/* Contact Section */}
                         <AnimatedSection animation="slide-up" delay={0.3}>
-                            <div id="kontakt-section" className="text-center mb-16">
+                            <div id="kontakt-section" className="text-center mb-16 scroll-mt-24">
                                 <h2 className="text-2xl font-bold uppercase tracking-wider mb-8">
                                     Lass uns sprechen
                                 </h2>
