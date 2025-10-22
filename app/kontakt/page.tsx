@@ -5,7 +5,7 @@ import AnimatedSection from "@/components/animated-section";
 import ContactActionButton from "@/components/contact-action-button";
 import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
-import ScrollableProfileBubble from "@/components/scrollable-profile-bubble";
+import KontaktHero from "@/components/kontakt-hero";
 import { getNicolasAge } from "@/lib/age";
 
 export const metadata = generateMetadata({
@@ -40,15 +40,11 @@ export default async function Kontakt() {
                             </div>
 
                             {bio?.profileImage && (
-                                <div className="flex justify-center">
-                                    <ScrollableProfileBubble
-                                        imageUrl={bio.profileImage}
-                                        alt={bio.profileImageAlt || "Profilbild"}
-                                        message="Lust zu quatschen? Schreib mir einfach eine Nachricht – ich freu mich!"
-                                        size="xl"
-                                        scrollToId="kontakt-section"
-                                    />
-                                </div>
+                                <KontaktHero
+                                    imageUrl={bio.profileImage}
+                                    alt={bio.profileImageAlt || "Profilbild"}
+                                    message="Lust zu quatschen? Schreib mir einfach eine Nachricht – ich freu mich!"
+                                />
                             )}
                         </div>
 
