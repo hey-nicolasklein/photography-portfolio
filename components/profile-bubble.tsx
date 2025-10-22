@@ -9,9 +9,10 @@ interface ProfileBubbleProps {
   alt: string;
   message?: string;
   size?: "sm" | "md" | "lg" | "xl";
+  onClick?: () => void;
 }
 
-export default function ProfileBubble({ imageUrl, alt, message, size = "md" }: ProfileBubbleProps) {
+export default function ProfileBubble({ imageUrl, alt, message, size = "md", onClick }: ProfileBubbleProps) {
   const [isInteracting, setIsInteracting] = useState(false);
 
   // Interactive, bouncy hover similar to the sun interaction (lighter)
@@ -44,7 +45,18 @@ export default function ProfileBubble({ imageUrl, alt, message, size = "md" }: P
   }, [size]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div
+      className={`flex flex-col items-center ${onClick ? "cursor-pointer" : ""}`}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      } : undefined}
+    >
       <motion.div
         className={`relative ${containerSizeClass} rounded-full overflow-hidden ring-2 transition-shadow duration-300 ${
           isInteracting ? "ring-black/10 shadow-lg" : "ring-black/10 shadow-md"
