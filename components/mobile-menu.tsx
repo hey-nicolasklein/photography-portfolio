@@ -86,14 +86,14 @@ export default function MobileMenu({ links }: MobileMenuProps) {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="fixed inset-0 z-[9999] backdrop-blur-xl bg-white/90 text-black flex flex-col"
+                        className="fixed inset-0 z-[9999] backdrop-blur-xl bg-white/90 text-black flex items-center justify-center"
                         initial="closed"
                         animate="open"
                         exit="closed"
                         variants={menuVariants}
                     >
                         <motion.div
-                            className="flex flex-col justify-center items-center flex-grow"
+                            className="flex flex-col justify-center items-center w-full"
                             variants={contentVariants}
                         >
                             <div className="flex flex-col space-y-8 items-center">
@@ -127,7 +127,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                         </motion.div>
 
                         <motion.div
-                            className="absolute bottom-8 left-0 right-0 text-center text-sm text-gray-600"
+                            className="fixed bottom-8 left-0 right-0 text-center text-sm text-gray-600"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5, duration: 0.3 }}
