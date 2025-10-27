@@ -6,10 +6,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomIn } from "lucide-react";
+import { useTheme } from "next-themes";
 
 interface GalleryItemProps {
     photo: {
         src: string;
+        srcDark?: string;
         alt: string;
         category?: string;
     };
@@ -22,8 +24,13 @@ export default function GalleryItem({
     index,
     onClick,
 }: GalleryItemProps) {
+    const { theme, resolvedTheme } = useTheme();
     const [isHovered, setIsHovered] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+    // Determine which image to use based on theme
+    const currentTheme = resolvedTheme || theme;
+    const imageSrc = (currentTheme === 'dark' && photo.srcDark) ? photo.srcDark : photo.src;
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -56,7 +63,7 @@ export default function GalleryItem({
                 transition={{ duration: 0.4, ease: "easeOut" }}
             >
                 <Image
-                    src={photo.src || "/placeholder.svg"}
+                    src={imageSrc || "/placeholder.svg"}
                     alt={photo.alt}
                     fill
                     className="object-cover"
@@ -69,7 +76,7 @@ export default function GalleryItem({
             <AnimatePresence>
                 {isHovered && (
                     <motion.div
-                        className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex flex-col items-center justify-center"
+                        className="absolute inset-0 bg-gradient-to-t from-black/50 dark:from-white/50 to-transparent flex flex-col items-center justify-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -83,7 +90,7 @@ export default function GalleryItem({
                             transition={{ duration: 0.3, delay: 0.1 }}
                         >
                             <motion.div
-                                className="bg-white/90 text-black px-4 py-2 rounded-sm flex items-center gap-2"
+                                className="bg-white/90 dark:bg-gray-900/90 text-black dark:text-white px-4 py-2 rounded-sm flex items-center gap-2"
                                 whileHover={{ scale: 1.05 }}
                                 transition={{ duration: 0.2 }}
                             >
@@ -95,7 +102,7 @@ export default function GalleryItem({
 
                             {photo.category && (
                                 <motion.span
-                                    className="text-white text-xs bg-black/50 px-3 py-1 rounded-full"
+                                    className="text-white dark:text-black text-xs bg-black/50 dark:bg-white/50 px-3 py-1 rounded-full"
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 10 }}
