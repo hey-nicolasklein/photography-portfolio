@@ -5,6 +5,7 @@ import { Instagram, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
+import { SimpleThemeToggle } from "@/components/theme-toggle";
 
 interface HeaderProps {
     currentPage?: "home" | "portfolio" | "kontakt" | "pricing";
@@ -20,7 +21,7 @@ function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
     return (
         <Link href={href} className="relative">
             <motion.span
-                className={`text-sm font-${isActive ? "medium" : "light"} tracking-wider uppercase block relative overflow-hidden text-black`}
+                className={`text-sm font-${isActive ? "medium" : "light"} tracking-wider uppercase block relative overflow-hidden text-black dark:text-white`}
                 whileHover={{
                     scale: 1.05,
                     transition: {
@@ -37,11 +38,11 @@ function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
                 }}
             >
                 {children}
-                
+
                 {/* Active state underline */}
                 {isActive && (
                     <motion.div
-                        className="absolute bottom-0 left-0 h-[1px] bg-black"
+                        className="absolute bottom-0 left-0 h-[1px] bg-black dark:bg-white"
                         initial={{ width: "100%" }}
                         layoutId="activeUnderline"
                         transition={{
@@ -51,11 +52,11 @@ function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
                         }}
                     />
                 )}
-                
+
                 {/* Hover state underline */}
                 {!isActive && (
                     <motion.div
-                        className="absolute bottom-0 left-0 h-[1px] bg-black"
+                        className="absolute bottom-0 left-0 h-[1px] bg-black dark:bg-white"
                         initial={{ width: 0 }}
                         whileHover={{
                             width: "100%",
@@ -91,15 +92,15 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
         <header
             className={`sticky top-0 z-[55] transition-all duration-300 ${
                 scrolled
-                    ? "bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100"
-                    : "bg-white"
+                    ? "bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl shadow-lg border-b border-gray-100 dark:border-gray-800"
+                    : "bg-white dark:bg-gray-950"
             }`}
         >
             <div className="mx-4 md:mx-8 px-4 py-4 md:py-6 flex justify-between items-center">
                 <div className="min-w-0 pr-2 md:pr-8">
                     <Link
                         href="/"
-                        className="block max-w-[60vw] sm:max-w-none truncate whitespace-nowrap text-xl font-black tracking-[0.15em] sm:tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black"
+                        className="block max-w-[60vw] sm:max-w-none truncate whitespace-nowrap text-xl font-black tracking-[0.15em] sm:tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black dark:text-white"
                     >
                         NICOLAS KLEIN
                     </Link>
@@ -162,7 +163,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                         >
                             <Link
                                 href="https://www.instagram.com/hey.nicolasklein/"
-                                className="text-black transition-colors duration-300"
+                                className="text-black dark:text-white transition-colors duration-300"
                                 aria-label="Instagram"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -181,9 +182,22 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                             }}
                             whileTap={{ scale: 0.9, transition: { duration: 0.1, ease: "easeInOut" } }}
                         >
+                            <SimpleThemeToggle />
+                        </motion.div>
+                        <motion.div className="hidden sm:block"
+                            whileHover={{
+                                scale: 1.1,
+                                rotate: [0, -5, 5, 0],
+                                transition: {
+                                    scale: { duration: 0.2, ease: "easeOut" },
+                                    rotate: { duration: 0.6, ease: "easeInOut" },
+                                },
+                            }}
+                            whileTap={{ scale: 0.9, transition: { duration: 0.1, ease: "easeInOut" } }}
+                        >
                             <Link
                                 href="/share"
-                                className="text-black transition-colors duration-300"
+                                className="text-black dark:text-white transition-colors duration-300"
                                 aria-label="Teilen"
                             >
                                 <Share2 size={20} />

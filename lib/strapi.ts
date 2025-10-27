@@ -33,7 +33,7 @@ function getFullImageUrl(url: string): string {
 export async function getGalleryItems(): Promise<GalleryItem[]> {
     try {
         const res = await fetch(
-            `${STRAPI_URL}/api/gallery-items?populate=image`,
+            `${STRAPI_URL}/api/gallery-items?populate=image,darkModeImage`,
             {
                 headers: {
                     Authorization: `Bearer ${STRAPI_TOKEN}`,
@@ -59,9 +59,13 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
             const imageUrl = item.image[0]?.url || "/placeholder.svg";
             const fullImageUrl = getFullImageUrl(imageUrl);
 
+            const darkImageUrl = item.darkModeImage?.[0]?.url;
+            const fullDarkImageUrl = darkImageUrl ? getFullImageUrl(darkImageUrl) : undefined;
+
             return {
                 id: item.id,
                 src: fullImageUrl,
+                srcDark: fullDarkImageUrl,
                 alt:
                     item.image[0]?.alternativeText ||
                     item.image[0]?.name ||
@@ -79,7 +83,7 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
     try {
         const res = await fetch(
-            `${STRAPI_URL}/api/portfolio-items?populate=FullImage`,
+            `${STRAPI_URL}/api/portfolio-items?populate=FullImage,FullImageDarkMode`,
             {
                 headers: {
                     Authorization: `Bearer ${STRAPI_TOKEN}`,
@@ -105,6 +109,7 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
             title: item.Title,
             category: item.Description,
             image: getFullImageUrl(item.FullImage.url),
+            imageDark: item.FullImageDarkMode?.url ? getFullImageUrl(item.FullImageDarkMode.url) : undefined,
             alt: item.description,
         }));
     } catch (error) {
@@ -116,7 +121,7 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
 // Fetch bio item from Strapi
 export async function getBio(): Promise<BioItem | null> {
     try {
-        const res = await fetch(`${STRAPI_URL}/api/bio?populate=profileImage`, {
+        const res = await fetch(`${STRAPI_URL}/api/bio?populate=profileImage,profileImageDarkMode`, {
             headers: {
                 Authorization: `Bearer ${STRAPI_TOKEN}`,
             },
@@ -140,12 +145,16 @@ export async function getBio(): Promise<BioItem | null> {
             bioItem.profileImage?.url || "/photographer.png";
         const fullProfileImageUrl = getFullImageUrl(profileImageUrl);
 
+        const profileImageDarkUrl = bioItem.profileImageDarkMode?.url;
+        const fullProfileImageDarkUrl = profileImageDarkUrl ? getFullImageUrl(profileImageDarkUrl) : undefined;
+
         return {
             id: bioItem.id,
             tags: bioItem.tags,
             title: bioItem.title,
             description: bioItem.description,
             profileImage: fullProfileImageUrl,
+            profileImageDark: fullProfileImageDarkUrl,
             profileImageAlt:
                 bioItem.profileImage?.alternativeText ||
                 bioItem.profileImage?.name ||
@@ -160,7 +169,7 @@ export async function getBio(): Promise<BioItem | null> {
 // Fetch stories from Strapi
 export async function getStories(): Promise<Story[]> {
     try {
-        const res = await fetch(`${STRAPI_URL}/api/stories?populate=images&pagination[pageSize]=100`, {
+        const res = await fetch(`${STRAPI_URL}/api/stories?populate=images,darkModeImages,companyLogo,companyLogoDarkMode&pagination[pageSize]=100`, {
             headers: {
                 Authorization: `Bearer ${STRAPI_TOKEN}`,
             },
@@ -184,13 +193,24 @@ export async function getStories(): Promise<Story[]> {
             documentId: story.documentId,
             title: story.title,
             description: story.description,
-            images: story.images.map((image) => ({
-                id: image.id,
-                url: getFullImageUrl(image.url),
-                alt: image.alternativeText || image.name || story.title,
-                width: image.width,
-                height: image.height,
-            })),
+            images: story.images.map((image, index) => {
+                const darkImage = story.darkModeImages?.[index];
+                return {
+                    id: image.id,
+                    url: getFullImageUrl(image.url),
+                    urlDark: darkImage?.url ? getFullImageUrl(darkImage.url) : undefined,
+                    alt: image.alternativeText || image.name || story.title,
+                    width: image.width,
+                    height: image.height,
+                };
+            }),
+            companyLogo: story.companyLogo ? {
+                url: getFullImageUrl(story.companyLogo.url),
+                urlDark: story.companyLogoDarkMode?.url ? getFullImageUrl(story.companyLogoDarkMode.url) : undefined,
+                alt: story.companyLogo.alternativeText || story.companyLogo.name || `${story.title} logo`,
+                width: story.companyLogo.width,
+                height: story.companyLogo.height,
+            } : undefined,
             createdAt: story.createdAt,
         }));
     } catch (error) {

@@ -6,6 +6,7 @@ import ScrollProgress from "@/components/scroll-progress";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { generatePhotographerStructuredData } from "@/lib/og";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -118,7 +119,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="de">
+        <html lang="de" suppressHydrationWarning>
             <head>
                 <link rel="icon" href="/favicon.ico" sizes="any" />
                 <meta name="theme-color" content="#000000" />
@@ -129,16 +130,23 @@ export default function RootLayout({
                 />
             </head>
             <body className={`${inter.variable} font-sans antialiased`}>
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(generatePhotographerStructuredData()),
-                    }}
-                />
-                <ScrollProgress />
-                {children}
-                <SpeedInsights />
-                <Analytics />
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{
+                            __html: JSON.stringify(generatePhotographerStructuredData()),
+                        }}
+                    />
+                    <ScrollProgress />
+                    {children}
+                    <SpeedInsights />
+                    <Analytics />
+                </ThemeProvider>
             </body>
         </html>
     );

@@ -23,6 +23,7 @@ export type StrapiGalleryItem = {
     documentId: string;
     tag: string;
     image: StrapiImage[];
+    darkModeImage?: StrapiImage[];
 };
 
 export type StrapiPortfolioItem = {
@@ -31,6 +32,7 @@ export type StrapiPortfolioItem = {
     Title: string;
     Description: string;
     FullImage: StrapiImage;
+    FullImageDarkMode?: StrapiImage;
     description?: string;
 };
 
@@ -41,6 +43,7 @@ export type StrapiBioItem = {
     title: string;
     description: string;
     profileImage: StrapiImage;
+    profileImageDarkMode?: StrapiImage;
 };
 
 // New Story types based on the API response
@@ -50,7 +53,9 @@ export type StrapiStory = {
     title: string;
     description: string;
     images: StrapiImage[];
+    darkModeImages?: StrapiImage[];
     companyLogo?: StrapiImage;
+    companyLogoDarkMode?: StrapiImage;
     createdAt: string;
     updatedAt: string;
     publishedAt: string;
@@ -65,6 +70,7 @@ export type StrapiStory = {
 export type GalleryItem = {
     id: number;
     src: string;
+    srcDark?: string;
     alt: string;
     category: string;
 };
@@ -74,6 +80,7 @@ export type PortfolioItem = {
     title: string;
     category: string;
     image: string;
+    imageDark?: string;
     alt?: string;
 };
 
@@ -83,6 +90,7 @@ export type BioItem = {
     title: string;
     description: string;
     profileImage: string;
+    profileImageDark?: string;
     profileImageAlt: string;
 };
 
@@ -95,12 +103,14 @@ export type Story = {
     images: Array<{
         id: number;
         url: string;
+        urlDark?: string;
         alt: string;
         width: number;
         height: number;
     }>;
     companyLogo?: {
         url: string;
+        urlDark?: string;
         alt: string;
         width: number;
         height: number;

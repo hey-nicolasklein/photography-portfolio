@@ -107,7 +107,7 @@ export default function PhotoGallery({ galleryItems }: PhotoGalleryProps) {
                         e.stopPropagation();
                         scroll("left");
                     }}
-                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full ${
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-gray-900/80 text-black dark:text-white p-2 rounded-full ${
                         !canScrollLeft
                             ? "opacity-30 cursor-not-allowed"
                             : "opacity-80 hover:opacity-100"
@@ -123,7 +123,7 @@ export default function PhotoGallery({ galleryItems }: PhotoGalleryProps) {
                         e.stopPropagation();
                         scroll("right");
                     }}
-                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full ${
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-gray-900/80 text-black dark:text-white p-2 rounded-full ${
                         !canScrollRight
                             ? "opacity-30 cursor-not-allowed"
                             : "opacity-80 hover:opacity-100"

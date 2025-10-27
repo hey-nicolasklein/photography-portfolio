@@ -6,10 +6,12 @@ import { useState, useEffect, useCallback } from "react"
 import { createPortal } from "react-dom"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
+import { useTheme } from "next-themes"
 
 interface LightboxProps {
   images: {
     src: string
+    srcDark?: string
     alt: string
   }[]
   initialIndex: number
@@ -18,9 +20,15 @@ interface LightboxProps {
 }
 
 export default function LightboxPortal({ images, initialIndex, isOpen, onClose }: LightboxProps) {
+  const { theme, resolvedTheme } = useTheme()
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [loading, setLoading] = useState(true)
   const [isMounted, setIsMounted] = useState(false)
+
+  // Determine which image to use based on theme
+  const currentTheme = resolvedTheme || theme
+  const currentImage = images[currentIndex]
+  const imageSrc = (currentTheme === 'dark' && currentImage?.srcDark) ? currentImage.srcDark : currentImage?.src
 
   // Mount check for SSR
   useEffect(() => {
@@ -173,8 +181,8 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
             </div>
           )}
           <Image
-            src={images[currentIndex].src || "/placeholder.svg"}
-            alt={images[currentIndex].alt}
+            src={imageSrc || "/placeholder.svg"}
+            alt={currentImage?.alt || "Image"}
             fill
             className={`object-contain transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
             sizes="100vw"
