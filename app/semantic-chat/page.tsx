@@ -13,13 +13,26 @@ import { useState, useEffect, useRef } from 'react';
 export const dynamic = 'force-dynamic';
 
 export default function SemanticChatPage() {
-    const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, isLoading, setInput } = useChat({
         api: '/api/chat',
     });
 
     const [canvasImages, setCanvasImages] = useState<ImageMetadata[]>([]);
     const [currentQuery, setCurrentQuery] = useState<string>('');
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Example queries
+    const exampleQueries = [
+        "Show me wedding photos",
+        "Display gallery images",
+        "Find story images",
+        "Show all portfolio photos"
+    ];
+
+    // Handle example query click
+    const handleExampleClick = (query: string) => {
+        setInput(query);
+    };
 
     // Extract tool results from messages and update canvas
     useEffect(() => {
@@ -145,20 +158,39 @@ export default function SemanticChatPage() {
                             </div>
                         </ScrollArea>
 
+                        {/* Example Queries */}
+                        {messages.length === 0 && (
+                            <div className="px-4 py-2 border-t bg-white">
+                                <p className="text-xs text-gray-500 mb-2">Try these examples:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {exampleQueries.map((query, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => handleExampleClick(query)}
+                                            disabled={isLoading}
+                                            className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {query}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Input */}
                         <form onSubmit={handleSubmit} className="p-4 border-t bg-gray-50">
                             <div className="flex gap-2">
                                 <Input
-                                    value={input || ''}
+                                    value={input}
                                     onChange={handleInputChange}
                                     placeholder="Ask me to show you photos..."
                                     disabled={isLoading}
-                                    className="flex-1 bg-white text-gray-900"
+                                    className="flex-1 bg-white text-gray-900 border-gray-300"
                                 />
                                 <Button
                                     type="submit"
-                                    disabled={isLoading || !input || input.trim().length === 0}
-                                    className="bg-black text-white hover:bg-gray-800"
+                                    disabled={isLoading || !input || input.length === 0}
+                                    className="bg-black text-white hover:bg-gray-800 disabled:opacity-50"
                                 >
                                     {isLoading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
