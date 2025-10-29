@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Loader2 } from 'lucide-react';
 import { ImageMetadata } from '@/lib/strapi';
 import { useState, useEffect, useRef } from 'react';
+import Header from '@/components/header';
 
 // Prevent static generation for this interactive page
 export const dynamic = 'force-dynamic';
@@ -69,18 +70,10 @@ export default function SemanticChatPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* Header */}
-            <header className="border-b bg-white">
-                <div className="container mx-auto px-4 py-4">
-                    <h1 className="text-2xl font-bold text-gray-900">Semantic Image Chat</h1>
-                    <p className="text-sm text-gray-600">
-                        Ask me to find and display photos from your portfolio
-                    </p>
-                </div>
-            </header>
+            <Header currentPage="semantic-chat" />
 
             {/* Main content */}
-            <div className="container mx-auto p-4 h-[calc(100vh-120px)]">
+            <div className="container mx-auto p-4 h-[calc(100vh-100px)]">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
                     {/* Chat Panel */}
                     <div className="flex flex-col border rounded-lg bg-white overflow-hidden">
