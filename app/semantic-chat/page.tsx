@@ -14,12 +14,13 @@ import Header from '@/components/header';
 export const dynamic = 'force-dynamic';
 
 export default function SemanticChatPage() {
-    const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
+    const { messages, isLoading, append } = useChat({
         api: '/api/chat',
     });
 
     const [canvasImages, setCanvasImages] = useState<ImageMetadata[]>([]);
     const [currentQuery, setCurrentQuery] = useState<string>('');
+    const [inputValue, setInputValue] = useState<string>('');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Example queries
@@ -35,6 +36,20 @@ export default function SemanticChatPage() {
         await append({
             role: 'user',
             content: query,
+        });
+    };
+
+    // Handle form submission
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!inputValue.trim() || isLoading) return;
+
+        const message = inputValue.trim();
+        setInputValue(''); // Clear input immediately
+
+        await append({
+            role: 'user',
+            content: message,
         });
     };
 
@@ -177,8 +192,8 @@ export default function SemanticChatPage() {
                         <form onSubmit={handleSubmit} className="p-4 border-t bg-gray-50">
                             <div className="flex gap-2">
                                 <Input
-                                    value={input}
-                                    onChange={handleInputChange}
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
                                     placeholder="Ask me to show you photos..."
                                     disabled={isLoading}
                                     className="flex-1 bg-white text-gray-900 border-gray-300"
@@ -186,7 +201,7 @@ export default function SemanticChatPage() {
                                 />
                                 <Button
                                     type="submit"
-                                    disabled={isLoading || (input?.trim().length ?? 0) === 0}
+                                    disabled={isLoading || inputValue.trim().length === 0}
                                     className="bg-black text-white hover:bg-gray-800 disabled:opacity-50"
                                 >
                                     {isLoading ? (
