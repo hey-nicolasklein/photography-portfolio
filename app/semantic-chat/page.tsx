@@ -52,12 +52,12 @@ export default function SemanticChatPage() {
     }, [messages]);
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-white">
             {/* Header */}
-            <header className="border-b bg-card">
+            <header className="border-b bg-white">
                 <div className="container mx-auto px-4 py-4">
-                    <h1 className="text-2xl font-bold">Semantic Image Chat</h1>
-                    <p className="text-sm text-muted-foreground">
+                    <h1 className="text-2xl font-bold text-gray-900">Semantic Image Chat</h1>
+                    <p className="text-sm text-gray-600">
                         Ask me to find and display photos from your portfolio
                     </p>
                 </div>
@@ -67,9 +67,9 @@ export default function SemanticChatPage() {
             <div className="container mx-auto p-4 h-[calc(100vh-120px)]">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
                     {/* Chat Panel */}
-                    <div className="flex flex-col border rounded-lg bg-card overflow-hidden">
-                        <div className="p-4 border-b bg-muted/50">
-                            <h2 className="font-semibold">Chat</h2>
+                    <div className="flex flex-col border rounded-lg bg-white overflow-hidden">
+                        <div className="p-4 border-b bg-gray-50">
+                            <h2 className="font-semibold text-gray-900">Chat</h2>
                         </div>
 
                         {/* Messages */}
@@ -97,8 +97,8 @@ export default function SemanticChatPage() {
                                         <div
                                             className={`max-w-[80%] rounded-lg px-4 py-2 ${
                                                 message.role === 'user'
-                                                    ? 'bg-primary text-primary-foreground'
-                                                    : 'bg-muted'
+                                                    ? 'bg-black text-white'
+                                                    : 'bg-gray-100 text-gray-900'
                                             }`}
                                         >
                                             <p className="text-sm whitespace-pre-wrap">
@@ -137,7 +137,7 @@ export default function SemanticChatPage() {
 
                                 {isLoading && (
                                     <div className="flex justify-start">
-                                        <div className="bg-muted rounded-lg px-4 py-2">
+                                        <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-2">
                                             <Loader2 className="w-4 h-4 animate-spin" />
                                         </div>
                                     </div>
@@ -146,16 +146,20 @@ export default function SemanticChatPage() {
                         </ScrollArea>
 
                         {/* Input */}
-                        <form onSubmit={handleSubmit} className="p-4 border-t bg-muted/50">
+                        <form onSubmit={handleSubmit} className="p-4 border-t bg-gray-50">
                             <div className="flex gap-2">
                                 <Input
-                                    value={input}
+                                    value={input || ''}
                                     onChange={handleInputChange}
                                     placeholder="Ask me to show you photos..."
                                     disabled={isLoading}
-                                    className="flex-1"
+                                    className="flex-1 bg-white text-gray-900"
                                 />
-                                <Button type="submit" disabled={isLoading || !input?.trim()}>
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading || !input || input.trim().length === 0}
+                                    className="bg-black text-white hover:bg-gray-800"
+                                >
                                     {isLoading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
@@ -167,9 +171,9 @@ export default function SemanticChatPage() {
                     </div>
 
                     {/* Canvas Panel */}
-                    <div className="flex flex-col border rounded-lg bg-card overflow-hidden">
-                        <div className="p-4 border-b bg-muted/50">
-                            <h2 className="font-semibold">Image Canvas</h2>
+                    <div className="flex flex-col border rounded-lg bg-white overflow-hidden">
+                        <div className="p-4 border-b bg-gray-50">
+                            <h2 className="font-semibold text-gray-900">Image Canvas</h2>
                         </div>
                         <div className="flex-1 overflow-hidden">
                             <ImageCanvas images={canvasImages} query={currentQuery} />
