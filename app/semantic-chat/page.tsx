@@ -14,8 +14,11 @@ import Header from '@/components/header';
 export const dynamic = 'force-dynamic';
 
 export default function SemanticChatPage() {
-    const { messages, isLoading, append } = useChat({
+    const { messages, isLoading, sendMessage, error } = useChat({
         api: '/api/chat',
+        onError: (error: Error) => {
+            console.error('Chat error:', error);
+        },
     });
 
     const [canvasImages, setCanvasImages] = useState<ImageMetadata[]>([]);
@@ -33,10 +36,13 @@ export default function SemanticChatPage() {
 
     // Handle example query click - directly send the message
     const handleExampleClick = async (query: string) => {
-        await append({
-            role: 'user',
-            content: query,
-        });
+        try {
+            await sendMessage({
+                text: query,
+            });
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
     };
 
     // Handle form submission
@@ -47,34 +53,62 @@ export default function SemanticChatPage() {
         const message = inputValue.trim();
         setInputValue(''); // Clear input immediately
 
-        await append({
-            role: 'user',
-            content: message,
-        });
+        try {
+            await sendMessage({
+                text: message,
+            });
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setInputValue(message); // Restore message on error
+        }
     };
 
     // Extract tool results from messages and update canvas
     useEffect(() => {
-        const lastMessage = messages[messages.length - 1];
+        if (error) {
+            console.error('Chat API error:', error);
+        }
 
-        if (lastMessage?.role === 'assistant' && lastMessage.toolInvocations) {
-            for (const toolInvocation of lastMessage.toolInvocations) {
-                if (toolInvocation.state === 'result') {
-                    if (toolInvocation.toolName === 'showImages') {
-                        const result = toolInvocation.result as {
-                            images: ImageMetadata[];
-                            query: string;
-                        };
-                        setCanvasImages(result.images);
-                        setCurrentQuery(result.query);
-                    } else if (toolInvocation.toolName === 'clearCanvas') {
-                        setCanvasImages([]);
-                        setCurrentQuery('');
+        // Check all messages for tool results in parts
+        for (const message of messages) {
+            if (message.role === 'assistant') {
+                // In AI SDK 6, tool calls are in parts array
+                const parts = (message as any).parts || [];
+                
+                for (const part of parts) {
+                    // Check if it's a tool part with output available
+                    if (part.type?.startsWith('tool-') && part.state === 'output-available') {
+                        const toolName = part.type.replace('tool-', ''); // e.g., "tool-showImages" -> "showImages"
+                        const output = part.output as any;
+                        
+                        console.log('Tool part found:', toolName, output);
+                        
+                        if (toolName === 'showImages' && output) {
+                            const result = output as {
+                                images: ImageMetadata[];
+                                query: string;
+                                count?: number;
+                                total?: number;
+                            };
+                            console.log('showImages output:', result);
+                            if (result?.images && Array.isArray(result.images)) {
+                                setCanvasImages(result.images);
+                                setCurrentQuery(result.query || '');
+                            }
+                        } else if (toolName === 'clearCanvas') {
+                            setCanvasImages([]);
+                            setCurrentQuery('');
+                        }
                     }
                 }
             }
         }
-    }, [messages]);
+
+        // Debug: log message structure occasionally
+        if (messages.length > 0 && messages.length % 2 === 0) {
+            console.log('Latest messages structure:', messages.slice(-2));
+        }
+    }, [messages, error]);
 
     // Auto-scroll to bottom of chat
     useEffect(() => {
@@ -99,19 +133,27 @@ export default function SemanticChatPage() {
                         {/* Messages */}
                         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
                             <div className="space-y-4">
-                                {messages.length === 0 && (
-                                    <div className="text-center py-8 text-muted-foreground">
-                                        <p className="mb-2">Start a conversation!</p>
-                                        <p className="text-sm">Try asking:</p>
-                                        <ul className="text-sm mt-2 space-y-1">
-                                            <li>"Show me wedding photos"</li>
-                                            <li>"Display all portrait images"</li>
-                                            <li>"Find photos of Vinny"</li>
-                                        </ul>
-                                    </div>
-                                )}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                                <p className="text-red-800 text-sm">
+                                    Error: {error.message || 'Failed to communicate with server'}
+                                </p>
+                            </div>
+                        )}
 
-                                {messages.map((message) => (
+                        {messages.length === 0 && (
+                            <div className="text-center py-8 text-muted-foreground">
+                                <p className="mb-2">Start a conversation!</p>
+                                <p className="text-sm">Try asking:</p>
+                                <ul className="text-sm mt-2 space-y-1">
+                                    <li>"Show me wedding photos"</li>
+                                    <li>"Display all portrait images"</li>
+                                    <li>"Find photos of Vinny"</li>
+                                </ul>
+                            </div>
+                        )}
+
+                                {messages.map((message: any) => (
                                     <div
                                         key={message.id}
                                         className={`flex ${
@@ -125,35 +167,43 @@ export default function SemanticChatPage() {
                                                     : 'bg-gray-100 text-gray-900'
                                             }`}
                                         >
-                                            <p className="text-sm whitespace-pre-wrap">
-                                                {message.content}
-                                            </p>
-
-                                            {/* Show tool invocations */}
-                                            {message.toolInvocations && (
-                                                <div className="mt-2 text-xs opacity-70">
-                                                    {message.toolInvocations.map((tool) => (
-                                                        <div key={tool.toolCallId}>
-                                                            {tool.state === 'call' && (
-                                                                <p>Searching images...</p>
-                                                            )}
-                                                            {tool.state === 'result' &&
-                                                                tool.toolName === 'showImages' && (
-                                                                    <p>
-                                                                        Found{' '}
-                                                                        {
-                                                                            (
-                                                                                tool.result as {
-                                                                                    count: number;
-                                                                                }
-                                                                            ).count
-                                                                        }{' '}
-                                                                        images
-                                                                    </p>
-                                                                )}
-                                                        </div>
-                                                    ))}
+                                            {/* Render message parts (text and tool parts) */}
+                                            {(message as any).parts && (message as any).parts.length > 0 ? (
+                                                <div>
+                                                    {(message as any).parts.map((part: any, index: number) => {
+                                                        if (part.type === 'text') {
+                                                            return (
+                                                                <p key={index} className="text-sm whitespace-pre-wrap">
+                                                                    {part.text || ''}
+                                                                </p>
+                                                            );
+                                                        } else if (part.type?.startsWith('tool-')) {
+                                                            const toolName = part.type.replace('tool-', '');
+                                                            if (part.state === 'output-available' && toolName === 'showImages') {
+                                                                const output = part.output as { count?: number };
+                                                                return (
+                                                                    <div key={index} className="mt-2 text-xs opacity-70">
+                                                                        <p>
+                                                                            Found {output?.count || 0} images
+                                                                        </p>
+                                                                    </div>
+                                                                );
+                                                            } else if (part.state === 'call' || part.state === 'partial-output') {
+                                                                return (
+                                                                    <div key={index} className="mt-2 text-xs opacity-70">
+                                                                        <p>Searching images...</p>
+                                                                    </div>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        }
+                                                        return null;
+                                                    })}
                                                 </div>
+                                            ) : (
+                                                <p className="text-sm whitespace-pre-wrap">
+                                                    {message.content || ''}
+                                                </p>
                                             )}
                                         </div>
                                     </div>
@@ -177,6 +227,7 @@ export default function SemanticChatPage() {
                                     {exampleQueries.map((query, index) => (
                                         <button
                                             key={index}
+                                            type="button"
                                             onClick={() => handleExampleClick(query)}
                                             disabled={isLoading}
                                             className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
