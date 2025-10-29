@@ -198,3 +198,68 @@ export async function getStories(): Promise<Story[]> {
         return [];
     }
 }
+
+// Get all images with metadata for semantic search
+export interface ImageMetadata {
+    id: string;
+    title: string;
+    description: string;
+    url: string;
+    category: string;
+    alt: string;
+}
+
+export async function getAllImagesWithMetadata(): Promise<ImageMetadata[]> {
+    try {
+        const [galleryItems, portfolioItems, stories] = await Promise.all([
+            getGalleryItems(),
+            getPortfolioItems(),
+            getStories(),
+        ]);
+
+        const images: ImageMetadata[] = [];
+
+        // Add gallery items
+        galleryItems.forEach((item) => {
+            images.push({
+                id: `gallery-${item.id}`,
+                title: item.alt || 'Gallery image',
+                description: item.category || '',
+                url: item.src,
+                category: item.category || 'gallery',
+                alt: item.alt,
+            });
+        });
+
+        // Add portfolio items
+        portfolioItems.forEach((item) => {
+            images.push({
+                id: `portfolio-${item.id}`,
+                title: item.title || 'Portfolio image',
+                description: item.category || '',
+                url: item.image,
+                category: 'portfolio',
+                alt: item.alt || item.title,
+            });
+        });
+
+        // Add story images
+        stories.forEach((story) => {
+            story.images.forEach((image, index) => {
+                images.push({
+                    id: `story-${story.id}-${image.id}`,
+                    title: story.title,
+                    description: story.description || '',
+                    url: image.url,
+                    category: 'story',
+                    alt: image.alt || `${story.title} - Image ${index + 1}`,
+                });
+            });
+        });
+
+        return images;
+    } catch (error) {
+        console.error("Error fetching all images:", error);
+        return [];
+    }
+}
