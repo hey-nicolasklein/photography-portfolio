@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@ai-sdk/openai": "^2.0.56",
+        "@ai-sdk/react": "^2.0.82",
         "@emotion/is-prop-valid": "latest",
         "@hookform/resolvers": "^3.9.1",
         "@radix-ui/react-accordion": "1.2.2",

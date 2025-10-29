@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from 'ai';
+import { useChat } from '@ai-sdk/react';
 import { ImageCanvas } from '@/components/image-canvas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
