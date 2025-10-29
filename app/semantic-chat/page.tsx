@@ -13,7 +13,7 @@ import { useState, useEffect, useRef } from 'react';
 export const dynamic = 'force-dynamic';
 
 export default function SemanticChatPage() {
-    const { messages, input, handleInputChange, handleSubmit, isLoading, setInput } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
         api: '/api/chat',
     });
 
@@ -29,9 +29,12 @@ export default function SemanticChatPage() {
         "Show all portfolio photos"
     ];
 
-    // Handle example query click
-    const handleExampleClick = (query: string) => {
-        setInput(query);
+    // Handle example query click - directly send the message
+    const handleExampleClick = async (query: string) => {
+        await append({
+            role: 'user',
+            content: query,
+        });
     };
 
     // Extract tool results from messages and update canvas
@@ -186,10 +189,11 @@ export default function SemanticChatPage() {
                                     placeholder="Ask me to show you photos..."
                                     disabled={isLoading}
                                     className="flex-1 bg-white text-gray-900 border-gray-300"
+                                    autoComplete="off"
                                 />
                                 <Button
                                     type="submit"
-                                    disabled={isLoading || !input || input.length === 0}
+                                    disabled={isLoading || (input?.trim().length ?? 0) === 0}
                                     className="bg-black text-white hover:bg-gray-800 disabled:opacity-50"
                                 >
                                     {isLoading ? (
