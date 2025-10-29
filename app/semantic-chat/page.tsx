@@ -9,6 +9,9 @@ import { Send, Loader2 } from 'lucide-react';
 import { ImageMetadata } from '@/lib/strapi';
 import { useState, useEffect, useRef } from 'react';
 
+// Prevent static generation for this interactive page
+export const dynamic = 'force-dynamic';
+
 export default function SemanticChatPage() {
     const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
         api: '/api/chat',
@@ -152,7 +155,7 @@ export default function SemanticChatPage() {
                                     disabled={isLoading}
                                     className="flex-1"
                                 />
-                                <Button type="submit" disabled={isLoading || !input.trim()}>
+                                <Button type="submit" disabled={isLoading || !input?.trim()}>
                                     {isLoading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
