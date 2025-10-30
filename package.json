@@ -6,7 +6,10 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "add-tags": "tsx scripts/add-semantic-tags.ts",
+        "add-tags:vision": "tsx scripts/add-semantic-tags.ts --vision",
+        "add-tags:dry-run": "tsx scripts/add-semantic-tags.ts --dry-run"
     },
     "dependencies": {
         "@ai-sdk/openai": "^2.0.56",
@@ -49,6 +52,7 @@
         "cmdk": "1.0.4",
         "date-fns": "4.1.0",
         "embla-carousel-react": "8.5.1",
+        "formdata-node": "^6.0.3",
         "framer-motion": "latest",
         "input-otp": "1.4.1",
         "lucide-react": "^0.454.0",
@@ -76,6 +80,7 @@
         "@types/node": "^22",
         "@types/react": "^19",
         "@types/react-dom": "^19",
+        "dotenv": "^17.2.3",
         "postcss": "^8",
         "tailwindcss": "^3.4.17",
         "tsx": "^4.19.4",

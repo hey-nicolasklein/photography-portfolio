@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         }));
 
         const result = streamText({
-            model: openai('gpt-4o-mini'),
+            model: openai('gpt-5-nano'),
             messages: modelMessages,
             system: `You are a helpful photography assistant with semantic understanding capabilities. You can help users find and display photos from their portfolio.
 
@@ -86,23 +86,43 @@ After calling showImages, be conversational and friendly. Explain what images yo
 
                         // Score images based on semantic relevance
                         const scoredImages = allImages.map(img => {
-                            const searchText = `${img.title} ${img.description} ${img.category} ${img.alt || ''}`.toLowerCase();
+                            const searchText = `${img.title} ${img.description} ${img.category} ${img.alt || ''} ${img.embeddingDescription || ''}`.toLowerCase();
+                            const tagsText = (img.tags || []).join(' ').toLowerCase();
                             
                             let score = 0;
                             
-                            // Exact match gets highest score
+                            // Tag matches get highest priority (15 points)
+                            if (img.tags && img.tags.length > 0) {
+                                for (const term of queryTerms) {
+                                    const matchingTag = img.tags.find(tag => 
+                                        tag.toLowerCase().includes(term) || term.includes(tag.toLowerCase())
+                                    );
+                                    if (matchingTag) {
+                                        score += 15; // Tags are highly relevant
+                                    }
+                                }
+                                
+                                // Semantic tag matches
+                                for (const term of expandedTerms) {
+                                    if (tagsText.includes(term)) {
+                                        score += 8; // Semantic tag matches
+                                    }
+                                }
+                            }
+                            
+                            // Exact match gets high score
                             if (searchText.includes(queryLower)) {
                                 score += 10;
                             }
                             
-                            // Partial word matches
+                            // Partial word matches in text
                             for (const term of queryTerms) {
                                 if (searchText.includes(term)) {
                                     score += 5;
                                 }
                             }
                             
-                            // Semantic/synonym matches
+                            // Semantic/synonym matches in text
                             for (const term of expandedTerms) {
                                 if (searchText.includes(term) && !queryTerms.includes(term)) {
                                     score += 3;
