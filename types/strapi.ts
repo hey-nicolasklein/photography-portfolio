@@ -23,6 +23,7 @@ export type StrapiGalleryItem = {
     documentId: string;
     tag: string;
     image: StrapiImage[];
+    embeddingDescription?: string;
 };
 
 export type StrapiPortfolioItem = {
@@ -64,9 +65,12 @@ export type StrapiStory = {
 // Transformed types for frontend use
 export type GalleryItem = {
     id: number;
+    documentId?: string; // Strapi documentId for API updates
     src: string;
     alt: string;
+    caption?: string; // legacy: semantic tags stored in media caption
     category: string;
+    embeddingDescription?: string; // long semantic description for embeddings/search
 };
 
 export type PortfolioItem = {

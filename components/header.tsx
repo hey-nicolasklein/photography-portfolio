@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
 
 interface HeaderProps {
-    currentPage?: "home" | "portfolio" | "kontakt" | "pricing";
+    currentPage?: "home" | "portfolio" | "kontakt" | "pricing" | "semantic-chat";
 }
 
 interface NavLinkProps {
@@ -120,7 +120,14 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                         >
                             projekte
                         </AnimatedNavLink>
-                        
+
+                        <AnimatedNavLink
+                            href="/semantic-chat"
+                            isActive={currentPage === "semantic-chat"}
+                        >
+                            bild suche
+                        </AnimatedNavLink>
+
                         <AnimatedNavLink
                             href="/pricing"
                             isActive={currentPage === "pricing"}
@@ -196,18 +203,23 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                                     label: "startseite",
                                     active: currentPage === "home",
                                 },
-                                { 
-                                    href: "/portfolio", 
+                                {
+                                    href: "/portfolio",
                                     label: "portfolio",
                                     active: currentPage === "portfolio"
                                 },
-                                { 
-                                    href: "/pricing", 
+                                {
+                                    href: "/semantic-chat",
+                                    label: "bild suche",
+                                    active: currentPage === "semantic-chat"
+                                },
+                                {
+                                    href: "/pricing",
                                     label: "preise",
                                     active: currentPage === "pricing"
                                 },
-                                { 
-                                    href: "/kontakt", 
+                                {
+                                    href: "/kontakt",
                                     label: "kontakt",
                                     active: currentPage === "kontakt"
                                 },
