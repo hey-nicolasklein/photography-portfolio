@@ -7,7 +7,8 @@ import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
 
 interface HeaderProps {
-    currentPage?: "home" | "portfolio" | "kontakt" | "pricing" | "semantic-chat";
+    currentPage?: "home" | "portfolio" | "kontakt" | "pricing";
+    onLogoClick?: () => void;
 }
 
 interface NavLinkProps {
@@ -75,7 +76,7 @@ function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
     );
 }
 
-export default function Header({ currentPage = "home" }: HeaderProps) {
+export default function Header({ currentPage = "home", onLogoClick }: HeaderProps) {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -97,12 +98,21 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
         >
             <div className="mx-4 md:mx-8 px-4 py-4 md:py-6 flex justify-between items-center">
                 <div className="min-w-0 pr-2 md:pr-8">
-                    <Link
-                        href="/"
-                        className="block max-w-[60vw] sm:max-w-none truncate whitespace-nowrap text-xl font-black tracking-[0.15em] sm:tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black"
-                    >
-                        NICOLAS KLEIN
-                    </Link>
+                    {currentPage === "home" && onLogoClick ? (
+                        <button
+                            onClick={onLogoClick}
+                            className="block max-w-[60vw] sm:max-w-none truncate whitespace-nowrap text-xl font-black tracking-[0.15em] sm:tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black cursor-pointer text-left"
+                        >
+                            NICOLAS KLEIN
+                        </button>
+                    ) : (
+                        <Link
+                            href="/"
+                            className="block max-w-[60vw] sm:max-w-none truncate whitespace-nowrap text-xl font-black tracking-[0.15em] sm:tracking-[0.2em] hover:opacity-80 transition-opacity uppercase text-black"
+                        >
+                            NICOLAS KLEIN
+                        </Link>
+                    )}
                 </div>
                 
                 <div className="flex items-center space-x-2 sm:space-x-4">
@@ -119,13 +129,6 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                             isActive={currentPage === "portfolio"}
                         >
                             projekte
-                        </AnimatedNavLink>
-
-                        <AnimatedNavLink
-                            href="/semantic-chat"
-                            isActive={currentPage === "semantic-chat"}
-                        >
-                            bild suche
                         </AnimatedNavLink>
 
                         <AnimatedNavLink
@@ -207,11 +210,6 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                                     href: "/portfolio",
                                     label: "portfolio",
                                     active: currentPage === "portfolio"
-                                },
-                                {
-                                    href: "/semantic-chat",
-                                    label: "bild suche",
-                                    active: currentPage === "semantic-chat"
                                 },
                                 {
                                     href: "/pricing",

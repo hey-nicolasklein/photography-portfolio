@@ -5,7 +5,7 @@ import { motion, useSpring, useMotionValue, useTransform, useScroll } from "fram
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
-import { Sun, Camera, Heart } from "lucide-react";
+import { Sun, Camera, Heart, SearchX } from "lucide-react";
 import { useLightbox } from "@/hooks/use-lightbox";
 import LightboxPortal from "./lightbox-portal";
 import ContactCard from "./contact-card";
@@ -18,6 +18,8 @@ interface InfiniteImageGridProps {
     initialImages: GalleryItem[];
     bio: BioItem | null;
     stories: Story[];
+    searchQuery?: string;
+    onLoadingChange?: (loading: boolean) => void;
 }
 
 // Skeleton component for loading states
@@ -86,11 +88,106 @@ const ImageSkeleton = ({ index }: { index: number }) => {
     );
 };
 
-export default function InfiniteImageGrid({ initialImages, bio, stories }: InfiniteImageGridProps) {
+// Example search terms that we know work well with semantic search
+const exampleSearchTerms = [
+    "evening",
+    "portrait", 
+    "celebration",
+    "nature",
+    "sports",
+    "morning",
+    "wedding",
+    "festival"
+];
+
+// Component to display example images when search returns no results
+function ExampleImagesDisplay({ searchTerm }: { searchTerm: string }) {
+    const [exampleImages, setExampleImages] = useState<GalleryItem[]>([]);
+    const [loadingExamples, setLoadingExamples] = useState(true);
+    const { lightboxOpen, currentIndex, openLightbox, closeLightbox } = useLightbox();
+
+    useEffect(() => {
+        const loadExamples = async () => {
+            try {
+                const response = await fetch(`/api/search-images?query=${encodeURIComponent(searchTerm)}&page=1&limit=8`);
+                const results = await response.json();
+                setExampleImages(results);
+            } catch (error) {
+                console.error('Error loading example images:', error);
+                setExampleImages([]);
+            } finally {
+                setLoadingExamples(false);
+            }
+        };
+        loadExamples();
+    }, [searchTerm]);
+
+    if (loadingExamples || exampleImages.length === 0) {
+        return null;
+    }
+
+    const photos = exampleImages.map((item) => ({
+        src: item.src,
+        alt: item.alt,
+        category: item.category,
+    }));
+
+    return (
+        <div className="w-full px-2">
+            <Masonry
+                breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }}
+                className="flex w-auto gap-2"
+                columnClassName="bg-clip-padding"
+            >
+                {exampleImages.map((image, index) => (
+                    <motion.div
+                        key={image.id}
+                        className="mb-2 cursor-pointer group break-inside-avoid"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ 
+                            duration: 0.4, 
+                            delay: index * 0.05,
+                            ease: "easeOut"
+                        }}
+                        onClick={() => openLightbox(index)}
+                    >
+                        <div className="relative overflow-hidden">
+                            <Image
+                                src={image.src}
+                                alt={image.alt}
+                                width={400}
+                                height={600}
+                                className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                                sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
+                            />
+                            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                        </div>
+                    </motion.div>
+                ))}
+            </Masonry>
+            <LightboxPortal
+                images={photos}
+                initialIndex={currentIndex}
+                isOpen={lightboxOpen}
+                onClose={closeLightbox}
+            />
+        </div>
+    );
+}
+
+export default function InfiniteImageGrid({ initialImages, bio, stories, searchQuery = "", onLoadingChange }: InfiniteImageGridProps) {
     const [images, setImages] = useState<GalleryItem[]>(initialImages);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [isSearching, setIsSearching] = useState(false);
+    const [exampleSearchTerm, setExampleSearchTerm] = useState<string>("");
+    
+    // Notify parent of loading state changes
+    useEffect(() => {
+        onLoadingChange?.(loading);
+    }, [loading, onLoadingChange]);
     
     const { lightboxOpen, currentIndex, openLightbox, closeLightbox } = useLightbox();
     
@@ -150,7 +247,11 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
         
         setLoading(true);
         try {
-            const response = await fetch(`/api/portfolio-images?page=${page + 1}&limit=12`);
+            const apiEndpoint = searchQuery.trim() 
+                ? `/api/search-images?query=${encodeURIComponent(searchQuery.trim())}&page=${page + 1}&limit=12`
+                : `/api/portfolio-images?page=${page + 1}&limit=12`;
+            
+            const response = await fetch(apiEndpoint);
             const newImages = await response.json();
             
             if (newImages.length === 0) {
@@ -179,6 +280,85 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
         }
     };
 
+    // Reset images and pagination when search query changes
+    useEffect(() => {
+        const loadSearchResults = async () => {
+            if (searchQuery.trim().length === 0) {
+                // Show example search results when search is empty
+                const randomTerm = exampleSearchTerms[Math.floor(Math.random() * exampleSearchTerms.length)];
+                setExampleSearchTerm(randomTerm);
+                setIsSearching(true);
+                setLoading(true);
+                setPage(1);
+                setHasMore(true);
+                
+                try {
+                    const response = await fetch(`/api/search-images?query=${encodeURIComponent(randomTerm)}&page=1&limit=12`);
+                    const exampleResults = await response.json();
+                    
+                    // If no results, fallback to initial images
+                    if (exampleResults.length === 0) {
+                        setImages(initialImages);
+                        setHasMore(true);
+                    } else {
+                        setImages(exampleResults);
+                        if (exampleResults.length < 12) {
+                            setHasMore(false);
+                        } else {
+                            setHasMore(true);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading example images:', error);
+                    // Fallback to initial images on error
+                    setImages(initialImages);
+                    setHasMore(true);
+                } finally {
+                    setLoading(false);
+                    setIsSearching(false);
+                }
+                return;
+            }
+
+            setIsSearching(true);
+            setLoading(true);
+            setPage(1);
+            setHasMore(true);
+            
+            try {
+                const response = await fetch(`/api/search-images?query=${encodeURIComponent(searchQuery.trim())}&page=1&limit=12`);
+                const searchResults = await response.json();
+                
+                // If no results, show example images as suggestions
+                if (searchResults.length === 0) {
+                    setImages([]); // Keep empty to show "no results" message
+                    
+                    // Pick a random example term to show below
+                    const randomTerm = exampleSearchTerms[Math.floor(Math.random() * exampleSearchTerms.length)];
+                    setExampleSearchTerm(randomTerm);
+                    setHasMore(false);
+                } else {
+                    setImages(searchResults);
+                    setExampleSearchTerm(""); // Clear example term when we have real results
+                    if (searchResults.length < 12) {
+                        setHasMore(false);
+                    } else {
+                        setHasMore(true);
+                    }
+                }
+            } catch (error) {
+                console.error('Error searching images:', error);
+                setImages([]);
+                setHasMore(false);
+            } finally {
+                setLoading(false);
+                setIsSearching(false);
+            }
+        };
+
+        loadSearchResults();
+    }, [searchQuery, initialImages]);
+
     // Trigger loading when intersection observer fires
     useEffect(() => {
         if (inView && hasMore && !loading) {
@@ -204,11 +384,15 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
     // Function to render grid items with intro, stories, and contact cards inserted
     const renderGridItems = () => {
         const items = [];
+        const hasActiveSearch = searchQuery.trim().length > 0;
         
-        // Insert intro card as the very first item (index 0)
-        items.push(<IntroCard key="intro-card" bio={bio} />);
+        // Only show special cards when not actively searching (includes example results)
+        if (!hasActiveSearch) {
+            // Insert intro card as the very first item (index 0)
+            items.push(<IntroCard key="intro-card" bio={bio} />);
+        }
         
-        // Add first 3-4 images after intro card
+        // Add first 4 images (after intro card when not searching, from start when searching)
         images.slice(0, 4).forEach((image, index) => {
             items.push(
                 <motion.div
@@ -239,8 +423,8 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
             );
         });
         
-        // Insert stories card after first 4 images (intro + 4 images)
-        if (images.length > 4) {
+        // Insert stories card after first 4 images (only when not actively searching)
+        if (!hasActiveSearch && images.length > 4) {
             items.push(<StoriesCard key="stories-card" stories={stories} />);
         }
         
@@ -276,8 +460,8 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
             );
         });
         
-        // Insert contact card after more images (intro + 4 images + stories + 8 images)
-        if (images.length > 12) {
+        // Insert contact card after more images (only when not actively searching)
+        if (!hasActiveSearch && images.length > 12) {
             items.push(<ContactCard key="contact-card" />);
         }
         
@@ -335,6 +519,51 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                 )}
             </Masonry>
 
+            {/* No results message with example images below */}
+            {searchQuery.trim().length > 0 && images.length === 0 && !loading && (
+                <div className="space-y-12">
+                    <motion.div 
+                        className="text-center py-16"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="flex items-center justify-center gap-3">
+                                <SearchX size={24} className="text-gray-800" />
+                                <h2 className="text-xl font-medium text-gray-800">
+                                    Keine Sucheergebnisse
+                                </h2>
+                            </div>
+                            <p className="text-sm text-gray-600 max-w-md">
+                                Versuche es mit anderen Suchbegriffen oder lösche die Suche, um alle Bilder zu sehen.
+                            </p>
+                        </div>
+                    </motion.div>
+                    
+                    {/* Load and show example images */}
+                    {exampleSearchTerm && (
+                        <>
+                            <div className="w-full px-2 mb-8">
+                                <motion.div 
+                                    className="text-center mb-8"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+                                        <span className="inline-block mr-2">✨</span>
+                                        Aber hier sind ein paar andere schöne Bilder
+                                        <span className="inline-block ml-2">📸</span>
+                                    </h3>
+                                </motion.div>
+                            </div>
+                            <ExampleImagesDisplay searchTerm={exampleSearchTerm} />
+                        </>
+                    )}
+                </div>
+            )}
+
             {/* Intersection observer trigger */}
             <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
                 {loading && (
@@ -345,8 +574,8 @@ export default function InfiniteImageGrid({ initialImages, bio, stories }: Infin
                 )}
             </div>
 
-            {/* End message */}
-            {!hasMore && !loading && (
+            {/* End message - only show when not searching */}
+            {!hasMore && !loading && searchQuery.trim().length === 0 && (
                 <motion.div 
                     className="text-center py-16"
                     initial={{ opacity: 0, y: 50 }}
