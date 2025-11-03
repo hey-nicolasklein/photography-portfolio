@@ -182,6 +182,7 @@ export default function ShareModal() {
                                         {canWebShare && (
                                             <Button
                                                 onClick={handleSystemShare}
+                                                variant="outline"
                                                 className="flex-1 min-w-[160px] group"
                                             >
                                                 <span className="inline-flex items-center">
