@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Share2 } from "lucide-react";
+import { Instagram } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
+import ShareModal from "@/components/share-modal";
 
 interface HeaderProps {
     currentPage?: "home" | "portfolio" | "kontakt" | "pricing";
@@ -181,13 +182,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                             }}
                             whileTap={{ scale: 0.9, transition: { duration: 0.1, ease: "easeInOut" } }}
                         >
-                            <Link
-                                href="/share"
-                                className="text-black transition-colors duration-300"
-                                aria-label="Teilen"
-                            >
-                                <Share2 size={20} />
-                            </Link>
+                            <ShareModal />
                         </motion.div>
                         <MobileMenu
                             links={[
