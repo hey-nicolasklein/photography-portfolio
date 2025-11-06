@@ -5,7 +5,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/docs) [![Strapi](https://img.shields.io/badge/Strapi-5-2E7EEA?logo=strapi&logoColor=white)](https://docs.strapi.io/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/docs) [![Vercel](https://img.shields.io/badge/Hosted_on-Vercel-000?logo=vercel&logoColor=white)](https://vercel.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
-Modern, no-nonsense photography portfolio built with Next.js 15 and a Strapi CMS backend. The UI is animated, mobile-first, and fast by default.
+Modern, no-nonsense photography portfolio built with Next.js 15 and a Strapi CMS backend. The UI is animated, mobile-first, and fast by default. You can visit my portfolio at [nicolasklein.photography](https://nicolasklein.photography) ✨
 
 ![UI Screenshot](public/ui_screenshot.png)
 
