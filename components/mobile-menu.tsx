@@ -97,7 +97,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                                 right: 0,
                                 bottom: 0,
                                 width: "100vw",
-                                height: "100vh",
+                                height: "100dvh",
                             }}
                         >
                             {/* Header with close button */}
@@ -154,7 +154,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                             </div>
 
                             {/* Footer at bottom */}
-                            <div className="absolute bottom-8 left-0 right-0">
+                            <div className="absolute bottom-8 left-0 right-0 pb-[env(safe-area-inset-bottom)]">
                                 <motion.div
                                     className="text-center text-sm text-gray-600"
                                     initial={{ opacity: 0, y: 20 }}

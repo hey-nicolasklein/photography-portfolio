@@ -110,7 +110,7 @@ export default function ShareModal() {
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
-                            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+                            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
                             initial="closed"
                             animate="open"
                             exit="closed"
@@ -123,7 +123,7 @@ export default function ShareModal() {
                                 right: 0,
                                 bottom: 0,
                                 width: "100vw",
-                                height: "100vh",
+                                height: "100dvh",
                             }}
                         >
                             <motion.div
@@ -158,7 +158,7 @@ export default function ShareModal() {
                                             <Button
                                                 variant="outline"
                                                 onClick={handleCopy}
-                                                className="flex-1 min-w-[160px] group"
+                                                className="flex-1 min-w-[160px] group bg-white text-black border-gray-300 hover:bg-gray-50 hover:text-black"
                                             >
                                                 <span className="inline-flex items-center">
                                                     <LinkIcon className="mr-2 h-4 w-4" /> Link kopieren
@@ -166,7 +166,7 @@ export default function ShareModal() {
                                                 </span>
                                             </Button>
                                         )}
-                                        <Button asChild variant="outline" className="flex-1 min-w-[160px] group">
+                                        <Button asChild variant="outline" className="flex-1 min-w-[160px] group bg-white text-black border-gray-300 hover:bg-gray-50 hover:text-black">
                                             <Link
                                                 href="https://www.instagram.com/hey.nicolasklein/"
                                                 target="_blank"
@@ -183,7 +183,7 @@ export default function ShareModal() {
                                             <Button
                                                 onClick={handleSystemShare}
                                                 variant="outline"
-                                                className="flex-1 min-w-[160px] group"
+                                                className="flex-1 min-w-[160px] group bg-white text-black border-gray-300 hover:bg-gray-50 hover:text-black"
                                             >
                                                 <span className="inline-flex items-center">
                                                     <Share2 className="mr-2 h-4 w-4" /> Teilen
