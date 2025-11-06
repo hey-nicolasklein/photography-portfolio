@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Share2 } from "lucide-react";
+import { Instagram } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
+import ShareModal from "@/components/share-modal";
 
 interface HeaderProps {
     currentPage?: "home" | "portfolio" | "kontakt" | "pricing";
@@ -137,7 +138,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                     </nav>
                     
                     <div className="flex items-center space-x-2 sm:space-x-4 relative z-[100]">
-                        <motion.div className="hidden sm:block"
+                        <motion.div className="hidden sm:block w-[28px] h-[28px] flex items-center justify-center"
                             whileHover={{
                                 scale: 1.1,
                                 rotate: [0, -5, 5, 0],
@@ -162,7 +163,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                         >
                             <Link
                                 href="https://www.instagram.com/hey.nicolasklein/"
-                                className="text-black transition-colors duration-300"
+                                className="text-black transition-colors duration-300 flex items-center justify-center"
                                 aria-label="Instagram"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -170,7 +171,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                                 <Instagram size={20} />
                             </Link>
                         </motion.div>
-                        <motion.div className="hidden sm:block"
+                        <motion.div className="hidden sm:block w-[28px] h-[28px] flex items-center justify-center"
                             whileHover={{
                                 scale: 1.1,
                                 rotate: [0, -5, 5, 0],
@@ -181,13 +182,7 @@ export default function Header({ currentPage = "home" }: HeaderProps) {
                             }}
                             whileTap={{ scale: 0.9, transition: { duration: 0.1, ease: "easeInOut" } }}
                         >
-                            <Link
-                                href="/share"
-                                className="text-black transition-colors duration-300"
-                                aria-label="Teilen"
-                            >
-                                <Share2 size={20} />
-                            </Link>
+                            <ShareModal />
                         </motion.div>
                         <MobileMenu
                             links={[
