@@ -100,7 +100,7 @@ export default function ShareModal() {
         <>
             <button
                 onClick={toggleModal}
-                className="text-black transition-colors duration-300 focus:outline-none"
+                className="flex items-center justify-center text-black transition-colors duration-300 focus:outline-none"
                 aria-label="Teilen"
             >
                 <Share2 size={20} />
@@ -144,7 +144,7 @@ export default function ShareModal() {
 
                                 {/* Content */}
                                 <div className="flex flex-col items-center gap-6 p-6 pt-12">
-                                    <h2 className="text-2xl font-bold tracking-wider uppercase">Website Teilen</h2>
+                                    <h2 className="text-2xl font-bold tracking-wider uppercase text-black">Website Teilen</h2>
 
                                     <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
                                         <div className="aspect-square min-w-[50px] max-w-[320px] w-[150px] sm:w-[280px]">

@@ -71,14 +71,16 @@ export default function MobileMenu({ links }: MobileMenuProps) {
 
     return (
         <>
-            <div className="md:hidden">
-                <button
-                    onClick={toggleMenu}
-                    className="p-2 text-black focus:outline-none z-[10000] relative mobile-menu-button"
-                    aria-label={isOpen ? "Close menu" : "Open menu"}
-                >
-                    {isOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+            <div className="md:hidden w-[40px] h-[40px] flex items-center justify-center">
+                {!isOpen && (
+                    <button
+                        onClick={toggleMenu}
+                        className="p-2 text-black focus:outline-none z-[10000] relative mobile-menu-button flex items-center justify-center w-[40px] h-[40px]"
+                        aria-label="Open menu"
+                    >
+                        <Menu size={24} />
+                    </button>
+                )}
             </div>
 
             {createPortal(
