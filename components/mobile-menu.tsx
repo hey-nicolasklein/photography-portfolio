@@ -85,7 +85,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
-                            className="fixed inset-0 z-[9999] bg-white/95 backdrop-blur-2xl text-black"
+                            className="fixed z-[9999] bg-white/95 backdrop-blur-2xl text-black"
                             initial="closed"
                             animate="open"
                             exit="closed"
@@ -97,7 +97,8 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                                 right: 0,
                                 bottom: 0,
                                 width: "100vw",
-                                height: "100dvh",
+                                minHeight: "100vh",
+                                minHeight: "100dvh",
                             }}
                         >
                             {/* Header with close button */}
@@ -154,7 +155,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                             </div>
 
                             {/* Footer at bottom */}
-                            <div className="absolute bottom-8 left-0 right-0 pb-[env(safe-area-inset-bottom)]">
+                            <div className="absolute left-0 right-0" style={{ bottom: "max(2rem, calc(2rem + env(safe-area-inset-bottom)))" }}>
                                 <motion.div
                                     className="text-center text-sm text-gray-600"
                                     initial={{ opacity: 0, y: 20 }}

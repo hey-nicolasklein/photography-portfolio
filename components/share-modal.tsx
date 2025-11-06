@@ -110,7 +110,7 @@ export default function ShareModal() {
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
-                            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
+                            className="fixed z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
                             initial="closed"
                             animate="open"
                             exit="closed"
@@ -123,7 +123,9 @@ export default function ShareModal() {
                                 right: 0,
                                 bottom: 0,
                                 width: "100vw",
-                                height: "100dvh",
+                                minHeight: "100vh",
+                                minHeight: "100dvh",
+                                paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
                             }}
                         >
                             <motion.div
