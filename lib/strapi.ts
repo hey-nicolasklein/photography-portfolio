@@ -179,7 +179,7 @@ export async function getStories(): Promise<Story[]> {
         const json: StrapiResponse<StrapiStory> = await res.json();
         const stories = json.data || [];
 
-        return stories.map((story) => ({
+        const transformedStories = stories.map((story) => ({
             id: story.id,
             documentId: story.documentId,
             title: story.title,
@@ -193,6 +193,12 @@ export async function getStories(): Promise<Story[]> {
             })),
             createdAt: story.createdAt,
         }));
+
+        return transformedStories.sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateB - dateA;
+        });
     } catch (error) {
         console.error("Error fetching stories:", error);
         return [];
