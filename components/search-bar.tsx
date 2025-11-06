@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
@@ -37,6 +37,13 @@ export default function SearchBar({
     const [currentHintIndex, setCurrentHintIndex] = useState(0);
     const [isHintVisible, setIsHintVisible] = useState(true);
     const [isFocused, setIsFocused] = useState(false);
+    
+    const { scrollY } = useScroll();
+    const opacity = useTransform(
+        scrollY,
+        [0, 50],
+        [1, 0]
+    );
     
     // Sync with external value prop
     useEffect(() => {
@@ -101,8 +108,9 @@ export default function SearchBar({
     return (
         <motion.div
             className="w-full px-4 md:px-6 py-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: -10 }}
+            animate={{ y: 0 }}
+            style={{ opacity }}
             transition={{ duration: 0.3 }}
         >
             <div className="relative w-full">

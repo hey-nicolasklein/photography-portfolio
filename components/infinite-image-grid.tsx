@@ -100,6 +100,97 @@ const exampleSearchTerms = [
     "festival"
 ];
 
+// Animated SearchX icon component with slingshot interaction
+function NoResultsIcon() {
+    const targetX = useMotionValue(0);
+    const targetY = useMotionValue(0);
+    const mouseDistance = useMotionValue(150);
+    const [isInteracting, setIsInteracting] = useState(false);
+    
+    const springX = useSpring(targetX, { 
+        stiffness: isInteracting ? 150 : 400, 
+        damping: isInteracting ? 15 : 25, 
+        mass: 1.2 
+    });
+    const springY = useSpring(targetY, { 
+        stiffness: isInteracting ? 150 : 400, 
+        damping: isInteracting ? 15 : 25, 
+        mass: 1.2 
+    });
+    const springScale = useSpring(isInteracting ? 1.15 : 1, { 
+        stiffness: 300, 
+        damping: 20, 
+        mass: 0.8 
+    });
+    
+    const smoothDistance = useSpring(mouseDistance, {
+        stiffness: 200,
+        damping: 25,
+        mass: 0.5
+    });
+    
+    const colorIntensity = useTransform(smoothDistance, [0, 120], [1, 0]);
+    const iconColor = useTransform(
+        colorIntensity,
+        [0, 1],
+        ['rgb(234, 179, 8)', 'rgb(0, 0, 0)']
+    );
+    
+    return (
+        <motion.div
+            className="cursor-pointer"
+            style={{
+                x: springX,
+                y: springY,
+                scale: springScale,
+            }}
+            onMouseEnter={() => {
+                setIsInteracting(true);
+            }}
+            onMouseLeave={() => {
+                setIsInteracting(false);
+                targetX.set(0);
+                targetY.set(0);
+                mouseDistance.set(150);
+            }}
+            onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const deltaX = e.clientX - centerX;
+                const deltaY = e.clientY - centerY;
+                
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                mouseDistance.set(Math.min(distance, 150));
+                
+                if (!isInteracting) return;
+                
+                const maxPull = 25;
+                const pullX = Math.max(-maxPull, Math.min(maxPull, deltaX * 0.4));
+                const pullY = Math.max(-maxPull, Math.min(maxPull, deltaY * 0.4));
+                
+                targetX.set(pullX);
+                targetY.set(pullY);
+            }}
+            onMouseDown={() => {
+                setIsInteracting(true);
+            }}
+            onMouseUp={() => {
+                targetX.set(0);
+                targetY.set(0);
+            }}
+        >
+            <motion.div
+                style={{ color: iconColor }}
+                className="drop-shadow-lg"
+            >
+                <SearchX size={48} />
+            </motion.div>
+        </motion.div>
+    );
+}
+
 // Component to display example images when search returns no results
 function ExampleImagesDisplay({ searchTerm }: { searchTerm: string }) {
     const [exampleImages, setExampleImages] = useState<GalleryItem[]>([]);
@@ -122,7 +213,23 @@ function ExampleImagesDisplay({ searchTerm }: { searchTerm: string }) {
         loadExamples();
     }, [searchTerm]);
 
-    if (loadingExamples || exampleImages.length === 0) {
+    if (loadingExamples) {
+        return (
+            <div className="w-full px-2">
+                <Masonry
+                    breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }}
+                    className="flex w-auto gap-2"
+                    columnClassName="bg-clip-padding"
+                >
+                    {Array.from({ length: 8 }).map((_, index) => (
+                        <ImageSkeleton key={`example-skeleton-${index}`} index={index} />
+                    ))}
+                </Masonry>
+            </div>
+        );
+    }
+
+    if (exampleImages.length === 0) {
         return null;
     }
 
@@ -524,20 +631,28 @@ export default function InfiniteImageGrid({ initialImages, bio, stories, searchQ
                 <div className="space-y-12">
                     <motion.div 
                         className="text-center py-16"
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
                     >
-                        <div className="flex flex-col items-center space-y-4">
-                            <div className="flex items-center justify-center gap-3">
-                                <SearchX size={24} className="text-gray-800" />
-                                <h2 className="text-xl font-medium text-gray-800">
+                        <div className="flex flex-col items-center space-y-6">
+                            {/* Animated SearchX Icon with slingshot interaction */}
+                            <NoResultsIcon />
+                            
+                            {/* Message */}
+                            <motion.div 
+                                className="space-y-3"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.3, duration: 0.5 }}
+                            >
+                                <h2 className="text-xl font-bold text-gray-800">
                                     Keine Sucheergebnisse
                                 </h2>
-                            </div>
-                            <p className="text-sm text-gray-600 max-w-md">
-                                Versuche es mit anderen Suchbegriffen oder lösche die Suche, um alle Bilder zu sehen.
-                            </p>
+                                <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
+                                    Versuche es mit anderen Suchbegriffen oder lösche die Suche, um alle Bilder zu sehen.
+                                </p>
+                            </motion.div>
                         </div>
                     </motion.div>
                     
