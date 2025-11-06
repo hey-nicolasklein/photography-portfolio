@@ -26,13 +26,19 @@ export default function StoryCard({
     const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(
         new Set()
     );
+    const [shuffledImages, setShuffledImages] = useState(story.images);
 
     const handleImageError = (imageId: number) => {
         setImageLoadErrors((prev) => new Set(prev).add(imageId));
     };
 
+    useEffect(() => {
+        const shuffled = [...story.images].sort(() => Math.random() - 0.5);
+        setShuffledImages(shuffled);
+    }, [story.images]);
+
     const handleImageClick = (imageIndex: number) => {
-        const storyImages = story.images.map((img) => ({
+        const storyImages = shuffledImages.map((img) => ({
             src: img.url,
             alt: img.alt,
         }));
@@ -79,7 +85,7 @@ export default function StoryCard({
         });
     };
 
-    if (story.images.length === 0) {
+    if (shuffledImages.length === 0) {
         return (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-8 text-center">
@@ -108,7 +114,7 @@ export default function StoryCard({
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                     <div className="flex">
-                        {story.images.map((image, imageIndex) => (
+                        {shuffledImages.map((image, imageIndex) => (
                             <motion.div
                                 key={image.id}
                                 className="min-w-[85vw] md:min-w-[40vw] lg:min-w-[33.33vw] h-[70vh] flex-shrink-0 snap-center px-1"
@@ -156,7 +162,7 @@ export default function StoryCard({
                 </div>
 
                 {/* Navigation Arrows */}
-                {story.images.length > 1 && (
+                {shuffledImages.length > 1 && (
                     <>
                         <button
                             onClick={(e) => {
@@ -225,8 +231,8 @@ export default function StoryCard({
                                 <div className="flex items-center gap-2">
                                     <Eye size={16} />
                                     <span>
-                                        {story.images.length}{" "}
-                                        {story.images.length === 1
+                                        {shuffledImages.length}{" "}
+                                        {shuffledImages.length === 1
                                             ? "Image"
                                             : "Images"}
                                     </span>

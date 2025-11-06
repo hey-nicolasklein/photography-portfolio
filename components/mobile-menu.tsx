@@ -71,21 +71,23 @@ export default function MobileMenu({ links }: MobileMenuProps) {
 
     return (
         <>
-            <div className="md:hidden">
-                <button
-                    onClick={toggleMenu}
-                    className="p-2 text-black focus:outline-none z-[10000] relative mobile-menu-button"
-                    aria-label={isOpen ? "Close menu" : "Open menu"}
-                >
-                    {isOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+            <div className="md:hidden w-[40px] h-[40px] flex items-center justify-center">
+                {!isOpen && (
+                    <button
+                        onClick={toggleMenu}
+                        className="p-2 text-black focus:outline-none z-[10000] relative mobile-menu-button flex items-center justify-center w-[40px] h-[40px]"
+                        aria-label="Open menu"
+                    >
+                        <Menu size={24} />
+                    </button>
+                )}
             </div>
 
             {createPortal(
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
-                            className="fixed inset-0 z-[9999] bg-white/95 backdrop-blur-2xl text-black"
+                            className="fixed z-[9999] bg-white/95 backdrop-blur-2xl text-black"
                             initial="closed"
                             animate="open"
                             exit="closed"
@@ -97,7 +99,8 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                                 right: 0,
                                 bottom: 0,
                                 width: "100vw",
-                                height: "100vh",
+                                minHeight: "100vh",
+                                minHeight: "100dvh",
                             }}
                         >
                             {/* Header with close button */}
@@ -154,7 +157,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                             </div>
 
                             {/* Footer at bottom */}
-                            <div className="absolute bottom-8 left-0 right-0">
+                            <div className="absolute left-0 right-0" style={{ bottom: "max(2rem, calc(2rem + env(safe-area-inset-bottom)))" }}>
                                 <motion.div
                                     className="text-center text-sm text-gray-600"
                                     initial={{ opacity: 0, y: 20 }}
