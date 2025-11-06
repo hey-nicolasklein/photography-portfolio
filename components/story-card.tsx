@@ -117,7 +117,7 @@ export default function StoryCard({
                         {shuffledImages.map((image, imageIndex) => (
                             <motion.div
                                 key={image.id}
-                                className="min-w-[85vw] md:min-w-[40vw] lg:min-w-[33.33vw] h-[50vh] md:h-[70vh] flex-shrink-0 snap-center px-1"
+                                className="min-w-[85vw] md:min-w-[40vw] lg:min-w-[33.33vw] h-[70vh] flex-shrink-0 snap-center px-1"
                             >
                                 <div
                                     className="relative w-full h-full cursor-pointer group overflow-hidden rounded-lg bg-gray-100"

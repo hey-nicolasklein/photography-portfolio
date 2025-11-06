@@ -28,6 +28,37 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
     return () => setIsMounted(false)
   }, [])
 
+  const navigateImage = useCallback(
+    (direction: "next" | "prev") => {
+      setLoading(true)
+
+      if (direction === "next") {
+        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+      } else {
+        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+      }
+    },
+    [images.length],
+  )
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose()
+      } else if (e.key === "ArrowLeft") {
+        navigateImage("prev")
+      } else if (e.key === "ArrowRight") {
+        navigateImage("next")
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen, onClose, navigateImage])
+
   // Reset current index when lightbox opens
   useEffect(() => {
     if (isOpen) {
@@ -65,19 +96,6 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
       }
     }
   }, [isOpen, initialIndex])
-
-  const navigateImage = useCallback(
-    (direction: "next" | "prev") => {
-      setLoading(true)
-
-      if (direction === "next") {
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
-      } else {
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
-      }
-    },
-    [images.length],
-  )
 
   // Touch swipe handling
   const [touchStart, setTouchStart] = useState(0)
