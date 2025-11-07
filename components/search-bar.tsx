@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
@@ -25,6 +26,11 @@ const searchHints = [
     "Kunst, Komposition, Ästhetik, Design..."
 ];
 
+const mobileSearchHints = [
+    "Abend, Sonnenuntergang...",
+    "Portrait, Menschen..."
+];
+
 export default function SearchBar({ 
     onSearch, 
     isLoading = false,
@@ -37,6 +43,9 @@ export default function SearchBar({
     const [currentHintIndex, setCurrentHintIndex] = useState(0);
     const [isHintVisible, setIsHintVisible] = useState(true);
     const [isFocused, setIsFocused] = useState(false);
+    const isMobile = useIsMobile();
+    
+    const hints = isMobile ? mobileSearchHints : searchHints;
     
     const { scrollY } = useScroll();
     const opacity = useTransform(
@@ -85,6 +94,11 @@ export default function SearchBar({
         }
     }, [query, debouncedQuery, onSearch]);
 
+    // Reset hint index when hints array length changes (e.g., on resize)
+    useEffect(() => {
+        setCurrentHintIndex(0);
+    }, [hints.length]);
+
     // Rotate through search hints
     useEffect(() => {
         if (query.length > 0) {
@@ -94,11 +108,11 @@ export default function SearchBar({
         
         setIsHintVisible(true);
         const interval = setInterval(() => {
-            setCurrentHintIndex((prev) => (prev + 1) % searchHints.length);
+            setCurrentHintIndex((prev) => (prev + 1) % hints.length);
         }, 3000); // Change hint every 3 seconds
 
         return () => clearInterval(interval);
-    }, [query]);
+    }, [query, hints.length]);
 
     const handleClear = () => {
         setQuery("");
@@ -172,13 +186,13 @@ export default function SearchBar({
                         {isHintVisible && query.length === 0 && (
                             <motion.div
                                 key={currentHintIndex}
-                                className="absolute left-12 top-0 flex items-center h-14 pointer-events-none text-gray-400 text-base md:text-lg"
+                                className="absolute left-12 top-0 flex items-center h-14 pointer-events-none text-gray-400 text-base md:text-lg whitespace-nowrap overflow-hidden text-ellipsis pr-4"
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.5 }}
                             >
-                                {searchHints[currentHintIndex]}
+                                {hints[currentHintIndex]}
                             </motion.div>
                         )}
                     </AnimatePresence>
