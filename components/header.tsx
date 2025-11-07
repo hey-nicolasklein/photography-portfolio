@@ -91,13 +91,13 @@ export default function Header({ currentPage = "home", onLogoClick }: HeaderProp
 
     return (
         <header
-            className={`sticky top-0 z-[55] transition-all duration-300 ${
+            className={`sticky top-0 z-[55] transition-all duration-300 bg-white/80 backdrop-blur-xl md:bg-white ${
                 scrolled
-                    ? "bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100"
-                    : "bg-white"
+                    ? "md:bg-white/80 md:backdrop-blur-xl md:shadow-lg md:border-b md:border-gray-100"
+                    : ""
             }`}
         >
-            <div className="mx-4 md:mx-8 px-4 py-4 md:py-6 flex justify-between items-center">
+            <div className="mx-4 md:mx-8 px-4 pb-4 md:py-6 flex justify-between items-center pt-[calc(1rem+env(safe-area-inset-top))] md:pt-6">
                 <div className="min-w-0 pr-2 md:pr-8">
                     {currentPage === "home" && onLogoClick ? (
                         <button

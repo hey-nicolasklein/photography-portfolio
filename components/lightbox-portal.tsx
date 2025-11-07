@@ -2,10 +2,11 @@
 
 import type React from "react"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { createPortal } from "react-dom"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface LightboxProps {
   images: {
@@ -21,6 +22,8 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [loading, setLoading] = useState(true)
   const [isMounted, setIsMounted] = useState(false)
+  const [direction, setDirection] = useState<"left" | "right">("right")
+  const isNavigatingRef = useRef(false)
 
   // Mount check for SSR
   useEffect(() => {
@@ -29,14 +32,24 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
   }, [])
 
   const navigateImage = useCallback(
-    (direction: "next" | "prev") => {
+    (navDirection: "next" | "prev") => {
+      // Prevent multiple rapid navigations
+      if (isNavigatingRef.current) return
+      
+      isNavigatingRef.current = true
       setLoading(true)
+      setDirection(navDirection === "next" ? "right" : "left")
 
-      if (direction === "next") {
+      if (navDirection === "next") {
         setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
       } else {
         setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
       }
+
+      // Reset navigation lock after animation completes
+      setTimeout(() => {
+        isNavigatingRef.current = false
+      }, 200)
     },
     [images.length],
   )
@@ -64,6 +77,7 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
     if (isOpen) {
       setCurrentIndex(initialIndex)
       setLoading(true)
+      setDirection("right")
 
       // Lock body scroll
       document.documentElement.style.overflow = "hidden"
@@ -97,6 +111,17 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
     }
   }, [isOpen, initialIndex])
 
+  // Reset loading when image index changes
+  useEffect(() => {
+    setLoading(true)
+    // Fallback timeout to ensure loading always resets
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 5000) // 5 second max loading time
+
+    return () => clearTimeout(timeout)
+  }, [currentIndex])
+
   // Touch swipe handling
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
@@ -111,12 +136,12 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
 
   const handleTouchEnd = () => {
     if (touchStart - touchEnd > 100) {
-      // Swipe left
+      // Swipe left - go to next
       navigateImage("next")
     }
 
     if (touchStart - touchEnd < -100) {
-      // Swipe right
+      // Swipe right - go to previous
       navigateImage("prev")
     }
   }
@@ -128,85 +153,249 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
     onClose()
   }
 
-  if (!isMounted || !isOpen) return null
+  // Handle image click for navigation
+  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Prevent navigation if already navigating
+    if (isNavigatingRef.current) return
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const width = rect.width
+    const middle = width / 2
+    const deadZoneWidth = width * 0.2 // 20% dead zone in the middle
+    const deadZoneStart = middle - deadZoneWidth / 2
+    const deadZoneEnd = middle + deadZoneWidth / 2
+
+    // Ignore clicks in the middle dead zone
+    if (clickX >= deadZoneStart && clickX <= deadZoneEnd) {
+      return
+    }
+
+    // Clear left/right split based on dead zone boundaries
+    if (clickX < deadZoneStart) {
+      // Left of dead zone - go to previous
+      navigateImage("prev")
+    } else if (clickX > deadZoneEnd) {
+      // Right of dead zone - go to next
+      navigateImage("next")
+    }
+  }
+
+  if (!isMounted) return null
+
+  const slideVariants = {
+    enter: (direction: "left" | "right") => ({
+      x: direction === "right" ? 100 : -100,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: "left" | "right") => ({
+      x: direction === "right" ? -100 : 100,
+      opacity: 0,
+    }),
+  }
+
+  const transition = {
+    x: { type: "tween", duration: 0.15, ease: "easeOut" },
+    opacity: { duration: 0.1 },
+  }
 
   // Use createPortal to render outside the normal DOM hierarchy
   return createPortal(
-    <div
-      className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center"
-      onClick={handleClose}
-      style={{ touchAction: "none" }}
-    >
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center"
+          onClick={handleClose}
+          style={{ touchAction: "none" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
       {/* Close button */}
-      <button
-        className="absolute top-4 right-4 z-[10000] p-3 bg-black rounded-full text-white"
+      <motion.button
+        className="absolute top-4 right-4 z-[10000] p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full text-white border border-white/20 transition-all"
         onClick={(e) => {
           e.stopPropagation()
           e.preventDefault()
           onClose()
         }}
         aria-label="Close lightbox"
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 25,
+          mass: 0.8
+        }}
+        initial={{ opacity: 0, scale: 0.6, y: -30, rotate: -180 }}
+        animate={{ 
+          opacity: 1, 
+          scale: 1, 
+          y: 0,
+          rotate: 0,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.1
+          }
+        }}
       >
         <X size={24} />
-      </button>
+      </motion.button>
 
       {/* Navigation - Previous */}
-      <button
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-[10000] p-3 bg-black rounded-full text-white"
+      <motion.button
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-[10000] p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full text-white border border-white/20 transition-all"
         onClick={(e) => {
           e.stopPropagation()
           e.preventDefault()
           navigateImage("prev")
         }}
         aria-label="Previous image"
+        whileHover={{ scale: 1.1, x: -5 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 25,
+          mass: 0.8
+        }}
+        initial={{ opacity: 0, x: -50, scale: 0.6, rotate: -90 }}
+        animate={{ 
+          opacity: 1, 
+          x: 0, 
+          scale: 1,
+          rotate: 0,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.15
+          }
+        }}
       >
         <ChevronLeft size={24} />
-      </button>
+      </motion.button>
 
       {/* Navigation - Next */}
-      <button
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-[10000] p-3 bg-black rounded-full text-white"
+      <motion.button
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-[10000] p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full text-white border border-white/20 transition-all"
         onClick={(e) => {
           e.stopPropagation()
           e.preventDefault()
           navigateImage("next")
         }}
         aria-label="Next image"
+        whileHover={{ scale: 1.1, x: 5 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 25,
+          mass: 0.8
+        }}
+        initial={{ opacity: 0, x: 50, scale: 0.6, rotate: 90 }}
+        animate={{ 
+          opacity: 1, 
+          x: 0, 
+          scale: 1,
+          rotate: 0,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.2
+          }
+        }}
       >
         <ChevronRight size={24} />
-      </button>
+      </motion.button>
 
       {/* Image container */}
-      <div
-        className="w-full h-full flex items-center justify-center"
-        onClick={(e) => e.stopPropagation()}
+      <motion.div
+        className="w-full h-full flex items-center justify-center overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <div className="relative w-full h-full max-w-5xl max-h-[80vh]">
-          {loading && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-            </div>
-          )}
-          <Image
-            src={images[currentIndex].src || "/placeholder.svg"}
-            alt={images[currentIndex].alt}
-            fill
-            className={`object-contain transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
-            sizes="100vw"
-            priority
-            onLoad={() => setLoading(false)}
-          />
+        <div 
+          className="relative w-full h-full max-w-5xl max-h-[80vh] cursor-pointer"
+          onClick={handleImageClick}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentIndex}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={transition}
+              className="absolute inset-0 w-full h-full"
+            >
+              {loading && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+                </div>
+              )}
+              <Image
+                src={images[currentIndex].src || "/placeholder.svg"}
+                alt={images[currentIndex].alt}
+                fill
+                className={`object-contain transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"} pointer-events-none`}
+                sizes="100vw"
+                priority
+                onLoad={() => setLoading(false)}
+                onError={() => setLoading(false)}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
 
       {/* Image counter */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 px-3 py-1 rounded-full text-white text-sm z-[10000]">
-        {currentIndex + 1} / {images.length}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[10000]">
+        <motion.div
+          className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm border border-white/20"
+          key={currentIndex}
+          initial={{ opacity: 0, y: 30, scale: 0.6 }}
+          animate={{ 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            transition: {
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              mass: 0.8,
+              delay: 0.25
+            }
+          }}
+        >
+          {currentIndex + 1} / {images.length}
+        </motion.div>
       </div>
-    </div>,
+    </motion.div>
+      )}
+    </AnimatePresence>,
     document.body,
   )
 }

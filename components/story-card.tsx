@@ -147,12 +147,22 @@ export default function StoryCard({
                                     {/* Subtle hover overlay */}
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <div className="bg-white/90 backdrop-blur-sm rounded-full p-3">
+                                            <motion.div 
+                                                className="bg-white/90 backdrop-blur-sm rounded-full p-3"
+                                                whileHover={{ 
+                                                    scale: 1.2,
+                                                    transition: {
+                                                        type: "spring",
+                                                        stiffness: 400,
+                                                        damping: 17
+                                                    }
+                                                }}
+                                            >
                                                 <Eye
                                                     size={20}
                                                     className="text-gray-700"
                                                 />
-                                            </div>
+                                            </motion.div>
                                         </div>
                                     </div>
                                 </div>

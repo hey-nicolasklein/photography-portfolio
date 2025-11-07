@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 
@@ -12,6 +11,73 @@ interface MobileMenuProps {
         label: string;
         active?: boolean;
     }[];
+}
+
+function AnimatedHamburger({ isOpen }: { isOpen: boolean }) {
+    const topLineVariants = {
+        closed: {
+            rotate: 0,
+            y: -5,
+        },
+        open: {
+            rotate: 45,
+            y: 0,
+        },
+    };
+
+    const middleLineVariants = {
+        closed: {
+            opacity: 1,
+            scaleX: 1,
+        },
+        open: {
+            opacity: 0,
+            scaleX: 0,
+        },
+    };
+
+    const bottomLineVariants = {
+        closed: {
+            rotate: 0,
+            y: 5,
+        },
+        open: {
+            rotate: -45,
+            y: 0,
+        },
+    };
+
+    const transition = {
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+    };
+
+    return (
+        <div className="w-6 h-6 flex flex-col justify-center items-center relative">
+            <motion.span
+                className="absolute w-6 h-[2px] bg-black rounded-full origin-center"
+                style={{ top: "50%", left: "50%", marginLeft: "-12px", marginTop: "-1px" }}
+                variants={topLineVariants}
+                animate={isOpen ? "open" : "closed"}
+                transition={transition}
+            />
+            <motion.span
+                className="absolute w-6 h-[2px] bg-black rounded-full origin-center"
+                style={{ top: "50%", left: "50%", marginLeft: "-12px", marginTop: "-1px" }}
+                variants={middleLineVariants}
+                animate={isOpen ? "open" : "closed"}
+                transition={transition}
+            />
+            <motion.span
+                className="absolute w-6 h-[2px] bg-black rounded-full origin-center"
+                style={{ top: "50%", left: "50%", marginLeft: "-12px", marginTop: "-1px" }}
+                variants={bottomLineVariants}
+                animate={isOpen ? "open" : "closed"}
+                transition={transition}
+            />
+        </div>
+    );
 }
 
 export default function MobileMenu({ links }: MobileMenuProps) {
@@ -64,7 +130,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
     if (!isMounted) return (
         <div className="md:hidden">
             <button className="p-2 text-black">
-                <Menu size={24} />
+                <AnimatedHamburger isOpen={false} />
             </button>
         </div>
     );
@@ -72,15 +138,16 @@ export default function MobileMenu({ links }: MobileMenuProps) {
     return (
         <>
             <div className="md:hidden w-[40px] h-[40px] flex items-center justify-center">
-                {!isOpen && (
-                    <button
-                        onClick={toggleMenu}
-                        className="p-2 text-black focus:outline-none z-[10000] relative mobile-menu-button flex items-center justify-center w-[40px] h-[40px]"
-                        aria-label="Open menu"
-                    >
-                        <Menu size={24} />
-                    </button>
-                )}
+                <motion.button
+                    onClick={toggleMenu}
+                    className="p-2 text-black focus:outline-none z-[10000] relative mobile-menu-button flex items-center justify-center w-[40px] h-[40px]"
+                    aria-label={isOpen ? "Close menu" : "Open menu"}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                    <AnimatedHamburger isOpen={isOpen} />
+                </motion.button>
             </div>
 
             {createPortal(
@@ -100,7 +167,6 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                                 bottom: 0,
                                 width: "100vw",
                                 minHeight: "100vh",
-                                minHeight: "100dvh",
                             }}
                         >
                             {/* Header with close button */}
@@ -110,13 +176,26 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                                         NICOLAS KLEIN
                                     </span>
                                 </div>
-                                <button
+                                <motion.button
                                     onClick={toggleMenu}
-                                    className="p-2 text-black focus:outline-none z-[10000] relative"
+                                    className="p-2 text-black focus:outline-none z-[10000] relative w-[40px] h-[40px] flex items-center justify-center"
                                     aria-label="Close menu"
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ 
+                                        opacity: 0, 
+                                        scale: 0.8,
+                                        transition: { 
+                                            duration: 0.25,
+                                            ease: "easeInOut"
+                                        } 
+                                    }}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
                                 >
-                                    <X size={24} />
-                                </button>
+                                    <AnimatedHamburger isOpen={isOpen} />
+                                </motion.button>
                             </div>
 
                             {/* Main content centered */}
