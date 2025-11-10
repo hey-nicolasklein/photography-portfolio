@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { X, ChevronLeft, ChevronRight, HelpCircle, Share2 } from "lucide-react"
 import Image from "next/image"
 
 interface LightboxProps {
@@ -21,6 +21,8 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [loading, setLoading] = useState(true)
   const [direction, setDirection] = useState(0)
+  const [showHelp, setShowHelp] = useState(false)
+  const [showShareSuccess, setShowShareSuccess] = useState(false)
   const lightboxRef = useRef<HTMLDivElement>(null)
 
   // Store original body overflow style
@@ -31,14 +33,21 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
     if (!isOpen) return
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
-      if (e.key === "ArrowLeft") navigateImage("prev")
-      if (e.key === "ArrowRight") navigateImage("next")
+      if (e.key === "Escape") {
+        if (showHelp) {
+          setShowHelp(false)
+        } else {
+          onClose()
+        }
+      }
+      if (e.key === "ArrowLeft" && !showHelp) navigateImage("prev")
+      if (e.key === "ArrowRight" && !showHelp) navigateImage("next")
+      if (e.key === "?" || e.key === "h") setShowHelp((prev) => !prev)
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, showHelp])
 
   // Prevent body scrolling when lightbox is open
   useEffect(() => {
@@ -133,6 +142,33 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
     onClose()
   }
 
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    const currentImage = images[currentIndex]
+    const shareData = {
+      title: currentImage.alt || 'Nicolas Klein Photography',
+      text: `Check out this photo: ${currentImage.alt || 'Beautiful photograph'}`,
+      url: window.location.href,
+    }
+
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData)
+      } else {
+        // Fallback: copy URL to clipboard
+        await navigator.clipboard.writeText(window.location.href)
+        setShowShareSuccess(true)
+        setTimeout(() => setShowShareSuccess(false), 2000)
+      }
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        console.error('Error sharing:', error)
+      }
+    }
+  }
+
   const variants = {
     enter: (direction: number) => {
       return {
@@ -168,13 +204,89 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
           >
             {/* Close button */}
             <button
-              className="absolute top-4 right-4 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              className="absolute top-6 right-6 md:top-8 md:right-8 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
               onClick={handleCloseClick}
               aria-label="Close lightbox"
               style={{ touchAction: "manipulation" }}
             >
               <X size={24} />
             </button>
+
+            {/* Help button - only visible on desktop */}
+            <button
+              className="hidden md:block absolute top-8 right-24 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                setShowHelp((prev) => !prev)
+              }}
+              aria-label="Show keyboard shortcuts"
+              style={{ touchAction: "manipulation" }}
+            >
+              <HelpCircle size={24} />
+            </button>
+
+            {/* Share button - positioned differently on mobile */}
+            <button
+              className="absolute top-6 right-20 md:top-8 md:right-40 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              onClick={handleShare}
+              aria-label="Share image"
+              style={{ touchAction: "manipulation" }}
+            >
+              <Share2 size={24} />
+            </button>
+
+            {/* Share success message */}
+            <AnimatePresence>
+              {showShareSuccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="absolute top-24 right-6 md:top-28 md:right-8 z-[10000] bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
+                >
+                  Link kopiert!
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Help modal */}
+            <AnimatePresence>
+              {showHelp && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10001] bg-black/90 text-white p-6 rounded-lg shadow-2xl max-w-sm"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <h3 className="text-lg font-semibold mb-4">Tastenkombinationen</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">←/→</span>
+                      <span>Vorheriges/Nächstes Bild</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Esc</span>
+                      <span>Schließen</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">? / H</span>
+                      <span>Diese Hilfe</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowHelp(false)
+                    }}
+                    className="mt-4 w-full bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded"
+                  >
+                    Schließen
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Navigation - Previous */}
             <button

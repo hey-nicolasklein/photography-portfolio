@@ -2,6 +2,7 @@ import { Camera, Users, Clock, CheckCircle, ArrowRight } from "lucide-react";
 import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
 import ContactActionButton from "@/components/contact-action-button";
+import BackToTop from "@/components/back-to-top";
 import { generateMetadata } from "@/lib/og";
 
 export const metadata = generateMetadata({
@@ -219,6 +220,7 @@ export default function Pricing() {
                     </div>
                 </AnimatedSection>
             </section>
+            <BackToTop />
         </main>
     );
 } 

@@ -20,6 +20,7 @@ interface InfiniteImageGridProps {
     stories: Story[];
     searchQuery?: string;
     onLoadingChange?: (loading: boolean) => void;
+    onResultCountChange?: (count: number) => void;
 }
 
 // Skeleton component for loading states
@@ -283,18 +284,27 @@ function ExampleImagesDisplay({ searchTerm }: { searchTerm: string }) {
     );
 }
 
-export default function InfiniteImageGrid({ initialImages, bio, stories, searchQuery = "", onLoadingChange }: InfiniteImageGridProps) {
+export default function InfiniteImageGrid({ initialImages, bio, stories, searchQuery = "", onLoadingChange, onResultCountChange }: InfiniteImageGridProps) {
     const [images, setImages] = useState<GalleryItem[]>(initialImages);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
     const [exampleSearchTerm, setExampleSearchTerm] = useState<string>("");
-    
+
     // Notify parent of loading state changes
     useEffect(() => {
         onLoadingChange?.(loading);
     }, [loading, onLoadingChange]);
+
+    // Notify parent of result count changes (only for active searches)
+    useEffect(() => {
+        if (searchQuery.trim().length > 0) {
+            onResultCountChange?.(images.length);
+        } else {
+            onResultCountChange?.(0);
+        }
+    }, [images.length, searchQuery, onResultCountChange]);
     
     const { lightboxOpen, currentIndex, openLightbox, closeLightbox } = useLightbox();
     
