@@ -228,7 +228,7 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
 
             {/* Share button - positioned differently on mobile */}
             <button
-              className="absolute top-6 right-24 md:top-8 md:right-40 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              className="absolute top-6 right-20 md:top-8 md:right-40 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
               onClick={handleShare}
               aria-label="Share image"
               style={{ touchAction: "manipulation" }}
