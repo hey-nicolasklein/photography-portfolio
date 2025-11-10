@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
 import LightboxPortal from "@/components/lightbox-portal";
 import StoryCard from "@/components/story-card";
+import BackToTop from "@/components/back-to-top";
 import type { Story } from "@/types";
 
 export default function PortfolioClient({ stories }: { stories: Story[] }) {
@@ -105,6 +106,7 @@ export default function PortfolioClient({ stories }: { stories: Story[] }) {
                 isOpen={lightboxOpen}
                 onClose={closeLightbox}
             />
+            <BackToTop />
         </main>
     );
 }
