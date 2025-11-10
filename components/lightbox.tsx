@@ -204,7 +204,7 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
           >
             {/* Close button */}
             <button
-              className="absolute top-4 right-4 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              className="absolute top-6 right-6 md:top-8 md:right-8 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
               onClick={handleCloseClick}
               aria-label="Close lightbox"
               style={{ touchAction: "manipulation" }}
@@ -212,9 +212,9 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
               <X size={24} />
             </button>
 
-            {/* Help button */}
+            {/* Help button - only visible on desktop */}
             <button
-              className="absolute top-4 right-20 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              className="hidden md:block absolute top-8 right-24 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
               onClick={(e) => {
                 e.stopPropagation()
                 e.preventDefault()
@@ -226,9 +226,9 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
               <HelpCircle size={24} />
             </button>
 
-            {/* Share button */}
+            {/* Share button - positioned differently on mobile */}
             <button
-              className="absolute top-4 right-36 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
+              className="absolute top-6 right-24 md:top-8 md:right-40 z-[10000] p-3 bg-black/70 rounded-full text-white hover:bg-black/90 transition-colors"
               onClick={handleShare}
               aria-label="Share image"
               style={{ touchAction: "manipulation" }}
@@ -243,7 +243,7 @@ export default function Lightbox({ images, initialIndex, isOpen, onClose }: Ligh
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="absolute top-20 right-4 z-[10000] bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
+                  className="absolute top-24 right-6 md:top-28 md:right-8 z-[10000] bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
                 >
                   Link kopiert!
                 </motion.div>
