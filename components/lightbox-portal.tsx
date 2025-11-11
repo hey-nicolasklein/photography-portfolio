@@ -247,18 +247,19 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
         initial={{
           opacity: 0,
           scale: 0,
-          x: 20,
-          y: -20
+          x: 30,
+          y: -30
         }}
         animate={{
           opacity: 1,
-          scale: [0, 1.3, 0.9, 1.1, 1],
+          scale: 1,
           x: 0,
           y: 0,
           transition: {
-            duration: 0.6,
-            times: [0, 0.3, 0.5, 0.7, 1],
-            ease: "easeOut",
+            type: "spring",
+            stiffness: 300,
+            damping: 20,
+            mass: 0.8,
             delay: 0.05
           }
         }}
@@ -294,17 +295,18 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
         }}
         initial={{
           opacity: 0,
-          x: -120,
-          scale: 0.3
+          x: -80,
+          scale: 0.5
         }}
         animate={{
           opacity: 1,
-          x: [-120, 10, -5, 0],
-          scale: [0.3, 1.15, 0.95, 1],
+          x: 0,
+          scale: 1,
           transition: {
-            duration: 0.7,
-            times: [0, 0.5, 0.75, 1],
-            ease: [0.34, 1.56, 0.64, 1],
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+            mass: 0.9,
             delay: 0.1
           }
         }}
@@ -340,17 +342,18 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
         }}
         initial={{
           opacity: 0,
-          x: 120,
-          scale: 0.3
+          x: 80,
+          scale: 0.5
         }}
         animate={{
           opacity: 1,
-          x: [120, -10, 5, 0],
-          scale: [0.3, 1.15, 0.95, 1],
+          x: 0,
+          scale: 1,
           transition: {
-            duration: 0.7,
-            times: [0, 0.5, 0.75, 1],
-            ease: [0.34, 1.56, 0.64, 1],
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+            mass: 0.9,
             delay: 0.15
           }
         }}
@@ -410,20 +413,17 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
         <motion.div
           className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm border border-white/20"
           key={currentIndex}
-          initial={{
-            opacity: 0,
-            y: 80,
-            scale: 0.5
-          }}
+          initial={{ opacity: 0, y: 30, scale: 0.6 }}
           animate={{
             opacity: 1,
-            y: [80, -15, 5, -3, 0],
-            scale: [0.5, 1.2, 0.9, 1.05, 1],
+            y: 0,
+            scale: 1,
             transition: {
-              duration: 0.8,
-              times: [0, 0.4, 0.6, 0.8, 1],
-              ease: [0.34, 1.56, 0.64, 1],
-              delay: 0.2
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              mass: 0.8,
+              delay: 0.25
             }
           }}
         >
