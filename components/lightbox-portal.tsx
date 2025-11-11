@@ -228,16 +228,25 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           onClose()
         }}
         aria-label="Close lightbox"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{
+          scale: 1.1,
+          transition: { type: "spring", stiffness: 400, damping: 20 }
+        }}
+        whileTap={{
+          scale: 0.9,
+          transition: { type: "spring", stiffness: 400, damping: 20 }
+        }}
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-          mass: 0.8,
-          delay: 0.1
+        animate={{
+          opacity: 1,
+          scale: 1,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.1
+          }
         }}
       >
         <X size={24} />
@@ -252,16 +261,27 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           navigateImage("prev")
         }}
         aria-label="Previous image"
-        whileHover={{ scale: 1.1, x: -5 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{
+          scale: 1.1,
+          x: -5,
+          transition: { type: "spring", stiffness: 400, damping: 20 }
+        }}
+        whileTap={{
+          scale: 0.9,
+          transition: { type: "spring", stiffness: 400, damping: 20 }
+        }}
         initial={{ opacity: 0, x: -30, scale: 0.8 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-          mass: 0.8,
-          delay: 0.15
+        animate={{
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.15
+          }
         }}
       >
         <ChevronLeft size={24} />
@@ -276,16 +296,27 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           navigateImage("next")
         }}
         aria-label="Next image"
-        whileHover={{ scale: 1.1, x: 5 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{
+          scale: 1.1,
+          x: 5,
+          transition: { type: "spring", stiffness: 400, damping: 20 }
+        }}
+        whileTap={{
+          scale: 0.9,
+          transition: { type: "spring", stiffness: 400, damping: 20 }
+        }}
         initial={{ opacity: 0, x: 30, scale: 0.8 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-          mass: 0.8,
-          delay: 0.2
+        animate={{
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.2
+          }
         }}
       >
         <ChevronRight size={24} />
@@ -344,13 +375,17 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm border border-white/20"
           key={currentIndex}
           initial={{ opacity: 0, y: 20, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 300,
-            damping: 25,
-            mass: 0.8,
-            delay: 0.25
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            transition: {
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              mass: 0.8,
+              delay: 0.25
+            }
           }}
         >
           {currentIndex + 1} / {images.length}
