@@ -228,40 +228,16 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           onClose()
         }}
         aria-label="Close lightbox"
-        whileHover={{
-          scale: 1.2,
-          transition: {
-            type: "spring",
-            stiffness: 400,
-            damping: 10
-          }
-        }}
-        whileTap={{
-          scale: 0.85,
-          transition: {
-            type: "spring",
-            stiffness: 500,
-            damping: 15
-          }
-        }}
-        initial={{
-          opacity: 0,
-          scale: 0,
-          x: 30,
-          y: -30
-        }}
-        animate={{
-          opacity: 1,
-          scale: 1,
-          x: 0,
-          y: 0,
-          transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 20,
-            mass: 0.8,
-            delay: 0.05
-          }
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8,
+          delay: 0.1
         }}
       >
         <X size={24} />
@@ -276,39 +252,16 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           navigateImage("prev")
         }}
         aria-label="Previous image"
-        whileHover={{
-          scale: 1.15,
-          x: -8,
-          transition: {
-            type: "spring",
-            stiffness: 400,
-            damping: 10
-          }
-        }}
-        whileTap={{
-          scale: 0.85,
-          transition: {
-            type: "spring",
-            stiffness: 500,
-            damping: 15
-          }
-        }}
-        initial={{
-          opacity: 0,
-          x: -80,
-          scale: 0.5
-        }}
-        animate={{
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          transition: {
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-            mass: 0.9,
-            delay: 0.1
-          }
+        whileHover={{ scale: 1.1, x: -5 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, x: -30, scale: 0.8 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8,
+          delay: 0.15
         }}
       >
         <ChevronLeft size={24} />
@@ -323,39 +276,16 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           navigateImage("next")
         }}
         aria-label="Next image"
-        whileHover={{
-          scale: 1.15,
-          x: 8,
-          transition: {
-            type: "spring",
-            stiffness: 400,
-            damping: 10
-          }
-        }}
-        whileTap={{
-          scale: 0.85,
-          transition: {
-            type: "spring",
-            stiffness: 500,
-            damping: 15
-          }
-        }}
-        initial={{
-          opacity: 0,
-          x: 80,
-          scale: 0.5
-        }}
-        animate={{
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          transition: {
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-            mass: 0.9,
-            delay: 0.15
-          }
+        whileHover={{ scale: 1.1, x: 5 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, x: 30, scale: 0.8 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8,
+          delay: 0.2
         }}
       >
         <ChevronRight size={24} />
@@ -413,18 +343,14 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
         <motion.div
           className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm border border-white/20"
           key={currentIndex}
-          initial={{ opacity: 0, y: 30, scale: 0.6 }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            transition: {
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-              mass: 0.8,
-              delay: 0.25
-            }
+          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+            mass: 0.8,
+            delay: 0.25
           }}
         >
           {currentIndex + 1} / {images.length}
