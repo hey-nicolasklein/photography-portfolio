@@ -228,26 +228,35 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           onClose()
         }}
         aria-label="Close lightbox"
-        whileHover={{ scale: 1.1, rotate: 90 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 25,
-          mass: 0.8
+        whileHover={{
+          scale: 1.2,
+          rotate: 90,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 15
+          }
         }}
-        initial={{ opacity: 0, scale: 0.6, y: -30, rotate: -180 }}
-        animate={{ 
-          opacity: 1, 
-          scale: 1, 
+        whileTap={{
+          scale: 0.85,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 15
+          }
+        }}
+        initial={{ opacity: 0, scale: 0, y: -50, rotate: -360 }}
+        animate={{
+          opacity: 1,
+          scale: 1,
           y: 0,
           rotate: 0,
           transition: {
             type: "spring",
-            stiffness: 300,
-            damping: 25,
-            mass: 0.8,
-            delay: 0.1
+            stiffness: 250,
+            damping: 18,
+            mass: 0.9,
+            delay: 0.05
           }
         }}
       >
@@ -263,26 +272,35 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           navigateImage("prev")
         }}
         aria-label="Previous image"
-        whileHover={{ scale: 1.1, x: -5 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 25,
-          mass: 0.8
+        whileHover={{
+          scale: 1.15,
+          x: -8,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 15
+          }
         }}
-        initial={{ opacity: 0, x: -50, scale: 0.6, rotate: -90 }}
-        animate={{ 
-          opacity: 1, 
-          x: 0, 
+        whileTap={{
+          scale: 0.85,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 15
+          }
+        }}
+        initial={{ opacity: 0, x: -80, scale: 0, rotate: -180 }}
+        animate={{
+          opacity: 1,
+          x: 0,
           scale: 1,
           rotate: 0,
           transition: {
             type: "spring",
-            stiffness: 300,
-            damping: 25,
-            mass: 0.8,
-            delay: 0.15
+            stiffness: 250,
+            damping: 18,
+            mass: 0.9,
+            delay: 0.1
           }
         }}
       >
@@ -298,26 +316,35 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
           navigateImage("next")
         }}
         aria-label="Next image"
-        whileHover={{ scale: 1.1, x: 5 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 25,
-          mass: 0.8
+        whileHover={{
+          scale: 1.15,
+          x: 8,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 15
+          }
         }}
-        initial={{ opacity: 0, x: 50, scale: 0.6, rotate: 90 }}
-        animate={{ 
-          opacity: 1, 
-          x: 0, 
+        whileTap={{
+          scale: 0.85,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 15
+          }
+        }}
+        initial={{ opacity: 0, x: 80, scale: 0, rotate: 180 }}
+        animate={{
+          opacity: 1,
+          x: 0,
           scale: 1,
           rotate: 0,
           transition: {
             type: "spring",
-            stiffness: 300,
-            damping: 25,
-            mass: 0.8,
-            delay: 0.2
+            stiffness: 250,
+            damping: 18,
+            mass: 0.9,
+            delay: 0.15
           }
         }}
       >
@@ -376,17 +403,17 @@ export default function LightboxPortal({ images, initialIndex, isOpen, onClose }
         <motion.div
           className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm border border-white/20"
           key={currentIndex}
-          initial={{ opacity: 0, y: 30, scale: 0.6 }}
-          animate={{ 
-            opacity: 1, 
-            y: 0, 
+          initial={{ opacity: 0, y: 60, scale: 0 }}
+          animate={{
+            opacity: 1,
+            y: 0,
             scale: 1,
             transition: {
               type: "spring",
-              stiffness: 300,
-              damping: 25,
-              mass: 0.8,
-              delay: 0.25
+              stiffness: 250,
+              damping: 18,
+              mass: 0.9,
+              delay: 0.2
             }
           }}
         >
