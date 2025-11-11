@@ -90,12 +90,26 @@ export default function Header({ currentPage = "home", onLogoClick }: HeaderProp
     }, []);
 
     return (
-        <header
-            className={`sticky top-0 z-[55] transition-all duration-300 bg-white/80 backdrop-blur-xl md:bg-white ${
-                scrolled
-                    ? "md:bg-white/80 md:backdrop-blur-xl md:shadow-lg md:border-b md:border-gray-100"
-                    : ""
-            }`}
+        <motion.header
+            className="sticky top-0 z-[55] bg-white/80 backdrop-blur-xl md:bg-white"
+            initial={false}
+            animate={scrolled ? {
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(20px)",
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                borderBottom: "1px solid rgba(229, 231, 235, 1)"
+            } : {
+                backgroundColor: "rgba(255, 255, 255, 1)",
+                backdropFilter: "blur(0px)",
+                boxShadow: "0 0 0 0 rgba(0, 0, 0, 0)",
+                borderBottom: "1px solid rgba(229, 231, 235, 0)"
+            }}
+            transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                mass: 0.8
+            }}
         >
             <div className="mx-4 md:mx-8 px-4 pb-4 md:py-6 flex justify-between items-center pt-[calc(1rem+env(safe-area-inset-top))] md:pt-6">
                 <div className="min-w-0 pr-2 md:pr-8">
@@ -221,6 +235,6 @@ export default function Header({ currentPage = "home", onLogoClick }: HeaderProp
                     </div>
                 </div>
             </div>
-        </header>
+        </motion.header>
     );
 }
