@@ -180,19 +180,8 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                                     onClick={toggleMenu}
                                     className="p-2 text-black focus:outline-none z-[10000] relative w-[40px] h-[40px] flex items-center justify-center"
                                     aria-label="Close menu"
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ 
-                                        opacity: 0, 
-                                        scale: 0.8,
-                                        transition: { 
-                                            duration: 0.25,
-                                            ease: "easeInOut"
-                                        } 
-                                    }}
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
-                                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
                                 >
                                     <AnimatedHamburger isOpen={isOpen} />
                                 </motion.button>
