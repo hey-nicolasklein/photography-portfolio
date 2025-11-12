@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import InfiniteImageGrid from "@/components/infinite-image-grid";
@@ -14,9 +15,18 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ galleryItems, bio, stories }: HomeClientProps) {
+    const searchParams = useSearchParams();
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearchLoading, setIsSearchLoading] = useState(false);
     const [resultCount, setResultCount] = useState(0);
+
+    // Initialize search from URL parameter
+    useEffect(() => {
+        const query = searchParams.get("q");
+        if (query) {
+            setSearchQuery(query);
+        }
+    }, [searchParams]);
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
