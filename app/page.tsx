@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getGalleryItems, getPortfolioItems, getBio, getStories } from "@/lib/strapi";
 import HomeClient from "./home-client";
 
@@ -97,7 +98,9 @@ export default async function Home() {
                     __html: JSON.stringify(structuredData),
                 }}
             />
-            <HomeClient galleryItems={galleryItems} bio={bio} stories={stories} />
+            <Suspense fallback={<div className="min-h-screen bg-white" />}>
+                <HomeClient galleryItems={galleryItems} bio={bio} stories={stories} />
+            </Suspense>
         </>
     );
 }
