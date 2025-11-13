@@ -134,7 +134,7 @@ export default async function Kontakt() {
                                     Spezialisierungen
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-                                    <div className="text-center group">
+                                    <Link href="/?q=Porträts" className="text-center group cursor-pointer">
                                         <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gradient-to-br from-black to-gray-700 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:-rotate-1 group-hover:shadow-lg group-active:scale-95 group-active:translate-y-0.5 group-active:brightness-95 group-active:from-gray-900 group-active:to-black">
                                             <Aperture size={22} />
                                         </div>
@@ -142,9 +142,9 @@ export default async function Kontakt() {
                                         <p className="text-sm font-light text-gray-600">
                                             Authentische & natürliche Porträtfotografie
                                         </p>
-                                    </div>
-                                    
-                                    <div className="text-center group">
+                                    </Link>
+
+                                    <Link href="/?q=Events" className="text-center group cursor-pointer">
                                         <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gradient-to-br from-black to-gray-700 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:rotate-1 group-hover:shadow-lg group-active:scale-95 group-active:translate-y-0.5 group-active:brightness-95 group-active:from-gray-900 group-active:to-black">
                                             <PartyPopper size={22} />
                                         </div>
@@ -152,9 +152,9 @@ export default async function Kontakt() {
                                         <p className="text-sm font-light text-gray-600">
                                             Hochzeiten, Feiern & besondere Momente
                                         </p>
-                                    </div>
-                                    
-                                    <div className="text-center group">
+                                    </Link>
+
+                                    <Link href="/?q=Sport" className="text-center group cursor-pointer">
                                         <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gradient-to-br from-black to-gray-700 text-white flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110 group-hover:-rotate-1 group-hover:shadow-lg group-active:scale-95 group-active:translate-y-0.5 group-active:brightness-95 group-active:from-gray-900 group-active:to-black">
                                             <Trophy size={22} />
                                         </div>
@@ -162,7 +162,7 @@ export default async function Kontakt() {
                                         <p className="text-sm font-light text-gray-600">
                                             Mannschafts- & Vereinsfotos
                                         </p>
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                         </AnimatedSection>
