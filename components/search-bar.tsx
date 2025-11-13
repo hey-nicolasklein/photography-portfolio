@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
@@ -31,40 +31,41 @@ const mobileSearchHints = [
     "Portrait, Menschen..."
 ];
 
-export default function SearchBar({ 
-    onSearch, 
+export default function SearchBar({
+    onSearch,
     isLoading = false,
     placeholder,
     value = ""
 }: SearchBarProps) {
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState(value);
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [currentHintIndex, setCurrentHintIndex] = useState(0);
     const [isHintVisible, setIsHintVisible] = useState(true);
     const [isFocused, setIsFocused] = useState(false);
     const isMobile = useIsMobile();
-    
+    const prevValueRef = useRef(value);
+
     const hints = isMobile ? mobileSearchHints : searchHints;
-    
+
     const { scrollY } = useScroll();
     const opacity = useTransform(
         scrollY,
         [0, 50],
         [1, 0]
     );
-    
-    // Sync with external value prop (e.g., from URL parameter)
+
+    // Sync with external value prop only when it changes from outside
     useEffect(() => {
-        // Only sync if the external value is different from our current state
-        // This prevents infinite loops while allowing external updates
-        if (value !== undefined && value !== query) {
+        // Only update if the value prop changed externally (not from our own state)
+        if (value !== prevValueRef.current) {
             setQuery(value);
+            prevValueRef.current = value;
             if (value.length === 0) {
                 setDebouncedQuery("");
             }
         }
-    }, [value, query]);
+    }, [value]);
 
     // Debounce search query
     useEffect(() => {
