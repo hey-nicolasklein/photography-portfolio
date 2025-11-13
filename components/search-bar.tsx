@@ -54,13 +54,17 @@ export default function SearchBar({
         [1, 0]
     );
     
-    // Sync with external value prop
+    // Sync with external value prop (e.g., from URL parameter)
     useEffect(() => {
-        if (value !== query) {
+        // Only sync if the external value is different from our current state
+        // This prevents infinite loops while allowing external updates
+        if (value !== undefined && value !== query) {
             setQuery(value);
-            setDebouncedQuery(value);
+            if (value.length === 0) {
+                setDebouncedQuery("");
+            }
         }
-    }, [value]);
+    }, [value, query]);
 
     // Debounce search query
     useEffect(() => {

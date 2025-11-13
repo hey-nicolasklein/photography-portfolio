@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -28,9 +28,9 @@ export default function HomeClient({ galleryItems, bio, stories }: HomeClientPro
         }
     }, [searchParams]);
 
-    const handleSearch = (query: string) => {
+    const handleSearch = useCallback((query: string) => {
         setSearchQuery(query);
-    };
+    }, []);
 
     return (
         <main className="min-h-screen bg-white">
