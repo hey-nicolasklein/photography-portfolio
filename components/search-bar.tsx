@@ -56,9 +56,9 @@ export default function SearchBar({
     
     // Sync with external value prop
     useEffect(() => {
-        if (value === "" && query.length > 0) {
-            setQuery("");
-            setDebouncedQuery("");
+        if (value !== query) {
+            setQuery(value);
+            setDebouncedQuery(value);
         }
     }, [value]);
 
