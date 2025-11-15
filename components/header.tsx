@@ -205,6 +205,6 @@ export default function Header({ currentPage = "home", onLogoClick }: HeaderProp
                     </div>
                 </div>
             </div>
-        </motion.header>
+        </header>
     );
 }
