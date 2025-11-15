@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Instagram } from "lucide-react";
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MobileMenu from "@/components/mobile-menu";
 import ShareModal from "@/components/share-modal";
@@ -78,38 +77,9 @@ function AnimatedNavLink({ href, children, isActive }: NavLinkProps) {
 }
 
 export default function Header({ currentPage = "home", onLogoClick }: HeaderProps) {
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
     return (
-        <motion.header
-            className="sticky top-0 z-[55] bg-white/80 backdrop-blur-xl md:bg-white"
-            initial={false}
-            animate={scrolled ? {
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-                borderBottom: "1px solid rgba(229, 231, 235, 1)"
-            } : {
-                backgroundColor: "rgba(255, 255, 255, 1)",
-                backdropFilter: "blur(0px)",
-                boxShadow: "0 0 0 0 rgba(0, 0, 0, 0)",
-                borderBottom: "1px solid rgba(229, 231, 235, 0)"
-            }}
-            transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                mass: 0.8
-            }}
+        <header
+            className="sticky top-0 z-[55] bg-white/80 backdrop-blur-xl md:bg-white border-b border-gray-200"
         >
             <div className="mx-4 md:mx-8 px-4 pb-4 md:py-6 flex justify-between items-center pt-[calc(1rem+env(safe-area-inset-top))] md:pt-6">
                 <div className="min-w-0 pr-2 md:pr-8">
