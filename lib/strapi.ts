@@ -38,7 +38,7 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
                 headers: {
                     Authorization: `Bearer ${STRAPI_TOKEN}`,
                 },
-                next: { revalidate: 300 }, // Cache for 5 minutes
+                next: { revalidate: 86400 }, // Cache for 24 hours
             }
         );
 
@@ -88,7 +88,7 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
                 headers: {
                     Authorization: `Bearer ${STRAPI_TOKEN}`,
                 },
-                next: { revalidate: 300 }, // Cache for 5 minutes
+                next: { revalidate: 86400 }, // Cache for 24 hours
             }
         );
 
@@ -124,7 +124,7 @@ export async function getBio(): Promise<BioItem | null> {
             headers: {
                 Authorization: `Bearer ${STRAPI_TOKEN}`,
             },
-            next: { revalidate: 600 }, // Cache for 10 minutes (bio changes less frequently)
+            next: { revalidate: 86400 }, // Cache for 24 hours
         });
 
         if (!res.ok) {
@@ -168,7 +168,7 @@ export async function getStories(): Promise<Story[]> {
             headers: {
                 Authorization: `Bearer ${STRAPI_TOKEN}`,
             },
-            next: { revalidate: 300 }, // Cache for 5 minutes
+            next: { revalidate: 86400 }, // Cache for 24 hours
         });
 
         if (!res.ok) {

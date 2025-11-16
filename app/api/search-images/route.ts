@@ -8,7 +8,7 @@ export const maxDuration = 30;
 // Simple in-memory cache to avoid fetching same data repeatedly
 let cachedAllImages: ImageMetadata[] | null = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 60000; // 1 minute
+const CACHE_DURATION = 86400000; // 24 hours
 
 async function getAllImages() {
     const now = Date.now();
