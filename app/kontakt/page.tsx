@@ -7,6 +7,7 @@ import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
 import KontaktHero from "@/components/kontakt-hero";
 import { getNicolasAge } from "@/lib/age";
+import LocationMap from "@/components/location-map";
 
 export const metadata = generateMetadata({
     title: "Kontakt",
@@ -127,8 +128,18 @@ export default async function Kontakt() {
                             </div>
                         </AnimatedSection>
 
-                        {/* Services Section */}
+                        {/* Location Map Section */}
                         <AnimatedSection animation="slide-up" delay={0.4}>
+                            <div className="mb-16">
+                                <h2 className="text-2xl font-bold uppercase tracking-wider mb-8 text-center">
+                                    Standort
+                                </h2>
+                                <LocationMap />
+                            </div>
+                        </AnimatedSection>
+
+                        {/* Services Section */}
+                        <AnimatedSection animation="slide-up" delay={0.5}>
                             <div className="text-center mb-16">
                                 <h3 className="text-xl font-semibold uppercase tracking-wider mb-6">
                                     Spezialisierungen
@@ -168,7 +179,7 @@ export default async function Kontakt() {
                         </AnimatedSection>
 
                         {/* Call to Action */}
-                        <AnimatedSection animation="fade" delay={0.5}>
+                        <AnimatedSection animation="fade" delay={0.6}>
                             <div className="text-center">
                                 <p className="text-lg font-light mb-8 text-gray-600">
                                     Bereit für dein nächstes Fotoshooting?
