@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, useSpring, useMotionValue, useTransform, useScroll } from "framer-motion";
+import { motion, AnimatePresence, useSpring, useMotionValue, useTransform, useScroll } from "framer-motion";
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
-import { Sun, Camera, Heart, SearchX } from "lucide-react";
+import { Sun, Camera, Heart, SearchX, X } from "lucide-react";
 import { useLightbox } from "@/hooks/use-lightbox";
 import LightboxPortal from "./lightbox-portal";
 import ContactCard from "./contact-card";
 import IntroCard from "./intro-card";
 import StoriesCard from "./stories-card";
 import AnimatedButton from "./animated-button";
+import ColorPalette from "./color-palette";
 import type { GalleryItem, BioItem, Story } from "@/types";
 
 interface InfiniteImageGridProps {
@@ -291,6 +292,8 @@ export default function InfiniteImageGrid({ initialImages, bio, stories, searchQ
     const [hasMore, setHasMore] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
     const [exampleSearchTerm, setExampleSearchTerm] = useState<string>("");
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [hoveredImageId, setHoveredImageId] = useState<number | null>(null);
 
     // Notify parent of loading state changes
     useEffect(() => {
@@ -498,120 +501,129 @@ export default function InfiniteImageGrid({ initialImages, bio, stories, searchQ
         category: item.category,
     }));
 
+    // Helper function to check color similarity
+    const isColorSimilar = (color1: string, color2: string, threshold = 60): boolean => {
+        // Convert hex to RGB
+        const hexToRgb = (hex: string) => {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        };
+
+        const rgb1 = hexToRgb(color1);
+        const rgb2 = hexToRgb(color2);
+
+        if (!rgb1 || !rgb2) return false;
+
+        // Calculate Euclidean distance
+        const distance = Math.sqrt(
+            Math.pow(rgb1.r - rgb2.r, 2) +
+            Math.pow(rgb1.g - rgb2.g, 2) +
+            Math.pow(rgb1.b - rgb2.b, 2)
+        );
+
+        return distance <= threshold;
+    };
+
+    // Filter images by selected color
+    const filteredImages = selectedColor
+        ? images.filter(image =>
+            image.colors?.some(color => isColorSimilar(color, selectedColor))
+          )
+        : images;
+
+    // Handle color click
+    const handleColorClick = (color: string) => {
+        if (selectedColor === color) {
+            setSelectedColor(null); // Deselect if clicking the same color
+        } else {
+            setSelectedColor(color);
+        }
+    };
+
+    // Helper function to render a single image item
+    const renderImageItem = (image: GalleryItem, index: number, actualIndex: number) => {
+        const isHovered = hoveredImageId === image.id;
+
+        return (
+            <motion.div
+                key={image.id}
+                className="mb-2 cursor-pointer group break-inside-avoid relative"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                    duration: 0.4,
+                    delay: Math.min(index * 0.05, 0.5),
+                    ease: "easeOut"
+                }}
+                onClick={() => openLightbox(actualIndex)}
+                onMouseEnter={() => setHoveredImageId(image.id)}
+                onMouseLeave={() => setHoveredImageId(null)}
+            >
+                <div className="relative overflow-hidden">
+                    <Image
+                        src={image.src}
+                        alt={image.alt}
+                        width={400}
+                        height={600}
+                        className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
+                        priority={actualIndex < 6}
+                    />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+
+                    {/* Color Palette - shown at bottom on hover */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <ColorPalette
+                            imageUrl={image.src}
+                            onColorClick={handleColorClick}
+                            visible={isHovered}
+                        />
+                    </div>
+                </div>
+            </motion.div>
+        );
+    };
+
     // Function to render grid items with intro, stories, and contact cards inserted
     const renderGridItems = () => {
         const items = [];
-        const hasActiveSearch = searchQuery.trim().length > 0;
-        
-        // Only show special cards when not actively searching (includes example results)
+        const hasActiveSearch = searchQuery.trim().length > 0 || selectedColor !== null;
+
+        // Only show special cards when not actively searching/filtering
         if (!hasActiveSearch) {
             // Insert intro card as the very first item (index 0)
             items.push(<IntroCard key="intro-card" bio={bio} />);
         }
-        
+
         // Add first 4 images (after intro card when not searching, from start when searching)
-        images.slice(0, 4).forEach((image, index) => {
-            items.push(
-                <motion.div
-                    key={image.id}
-                    className="mb-2 cursor-pointer group break-inside-avoid"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                        duration: 0.4, 
-                        delay: Math.min(index * 0.05, 0.5),
-                        ease: "easeOut"
-                    }}
-                    onClick={() => openLightbox(index)}
-                >
-                    <div className="relative overflow-hidden">
-                        <Image
-                            src={image.src}
-                            alt={image.alt}
-                            width={400}
-                            height={600}
-                            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
-                            priority={index < 6}
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                    </div>
-                </motion.div>
-            );
+        filteredImages.slice(0, 4).forEach((image, index) => {
+            items.push(renderImageItem(image, index, index));
         });
-        
+
         // Insert stories card after first 4 images (only when not actively searching)
-        if (!hasActiveSearch && images.length > 4) {
+        if (!hasActiveSearch && filteredImages.length > 4) {
             items.push(<StoriesCard key="stories-card" stories={stories} />);
         }
-        
+
         // Add next 8 images (5-12)
-        images.slice(4, 12).forEach((image, index) => {
+        filteredImages.slice(4, 12).forEach((image, index) => {
             const actualIndex = index + 4;
-            items.push(
-                <motion.div
-                    key={image.id}
-                    className="mb-2 cursor-pointer group break-inside-avoid"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                        duration: 0.4, 
-                        delay: Math.min(actualIndex * 0.05, 0.5),
-                        ease: "easeOut"
-                    }}
-                    onClick={() => openLightbox(actualIndex)}
-                >
-                    <div className="relative overflow-hidden">
-                        <Image
-                            src={image.src}
-                            alt={image.alt}
-                            width={400}
-                            height={600}
-                            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
-                            priority={actualIndex < 6}
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                    </div>
-                </motion.div>
-            );
+            items.push(renderImageItem(image, index, actualIndex));
         });
-        
+
         // Insert contact card after more images (only when not actively searching)
-        if (!hasActiveSearch && images.length > 12) {
+        if (!hasActiveSearch && filteredImages.length > 12) {
             items.push(<ContactCard key="contact-card" />);
         }
-        
+
         // Add remaining images
-        images.slice(12).forEach((image, index) => {
+        filteredImages.slice(12).forEach((image, index) => {
             const actualIndex = index + 12;
-            items.push(
-                <motion.div
-                    key={image.id}
-                    className="mb-2 cursor-pointer group break-inside-avoid"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                        duration: 0.4, 
-                        delay: Math.min(actualIndex * 0.05, 0.5),
-                        ease: "easeOut"
-                    }}
-                    onClick={() => openLightbox(actualIndex)}
-                >
-                    <div className="relative overflow-hidden">
-                        <Image
-                            src={image.src}
-                            alt={image.alt}
-                            width={400}
-                            height={600}
-                            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(max-width: 500px) 100vw, (max-width: 700px) 50vw, 33vw"
-                            priority={actualIndex < 6}
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                    </div>
-                </motion.div>
-            );
+            items.push(renderImageItem(image, index, actualIndex));
         });
         
         return items;
@@ -619,6 +631,67 @@ export default function InfiniteImageGrid({ initialImages, bio, stories, searchQ
 
     return (
         <div className="w-full px-2">
+            {/* Color Filter Indicator */}
+            <AnimatePresence>
+                {selectedColor && (
+                    <motion.div
+                        className="mb-6 flex items-center justify-center gap-3 bg-gradient-to-r from-gray-50 via-white to-gray-50 py-4 px-6 rounded-lg shadow-md border border-gray-100"
+                        initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                        transition={{
+                            duration: 0.4,
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 25
+                        }}
+                    >
+                        <span className="text-sm font-medium text-gray-700 tracking-wide uppercase">
+                            Filtered by color:
+                        </span>
+                        <motion.div
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-lg"
+                            style={{ backgroundColor: selectedColor }}
+                            whileHover={{ scale: 1.1 }}
+                            animate={{
+                                boxShadow: [
+                                    "0 4px 12px rgba(0,0,0,0.1)",
+                                    "0 6px 20px rgba(0,0,0,0.15)",
+                                    "0 4px 12px rgba(0,0,0,0.1)"
+                                ]
+                            }}
+                            transition={{
+                                boxShadow: {
+                                    duration: 2,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }
+                            }}
+                        />
+                        <span className="text-sm font-mono text-gray-600">
+                            {selectedColor.toUpperCase()}
+                        </span>
+                        <motion.button
+                            onClick={() => setSelectedColor(null)}
+                            className="ml-2 p-1.5 rounded-full bg-black text-white hover:bg-gray-800 transition-colors"
+                            whileHover={{ scale: 1.1, rotate: 90 }}
+                            whileTap={{ scale: 0.9 }}
+                            aria-label="Clear color filter"
+                        >
+                            <X size={16} />
+                        </motion.button>
+                        <motion.div
+                            className="ml-2 text-xs text-gray-500"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            ({filteredImages.length} {filteredImages.length === 1 ? 'Bild' : 'Bilder'})
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <Masonry
                 breakpointCols={breakpointColumnsObj}
                 className="flex w-auto gap-2"

@@ -71,6 +71,7 @@ export type GalleryItem = {
     caption?: string; // legacy: semantic tags stored in media caption
     category: string;
     embeddingDescription?: string; // long semantic description for embeddings/search
+    colors?: string[]; // Extracted color palette (hex values)
 };
 
 export type PortfolioItem = {
