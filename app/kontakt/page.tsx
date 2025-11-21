@@ -1,5 +1,4 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { Instagram, Camera, MapPin, Mail, Aperture, PartyPopper, Trophy } from "lucide-react";
 import Header from "@/components/header";
 import AnimatedSection from "@/components/animated-section";
@@ -8,16 +7,7 @@ import { generateMetadata } from "@/lib/og";
 import { getBio } from "@/lib/strapi";
 import KontaktHero from "@/components/kontakt-hero";
 import { getNicolasAge } from "@/lib/age";
-
-// Dynamically import LocationMap with no SSR to avoid window errors
-const LocationMap = dynamic(() => import("@/components/location-map"), {
-    ssr: false,
-    loading: () => (
-        <div className="w-full h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-lg border border-gray-200 bg-gray-100 animate-pulse flex items-center justify-center">
-            <div className="text-gray-400 text-sm">Karte wird geladen...</div>
-        </div>
-    ),
-});
+import LocationMapWrapper from "@/components/location-map-wrapper";
 
 export const metadata = generateMetadata({
     title: "Kontakt",
@@ -144,7 +134,7 @@ export default async function Kontakt() {
                                 <h2 className="text-2xl font-bold uppercase tracking-wider mb-8 text-center">
                                     Standort
                                 </h2>
-                                <LocationMap />
+                                <LocationMapWrapper />
                             </div>
                         </AnimatedSection>
 
