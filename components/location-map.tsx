@@ -47,14 +47,12 @@ interface LocationMapProps {
     latitude?: number;
     longitude?: number;
     locationName?: string;
-    address?: string;
 }
 
 export default function LocationMap({
     latitude = 49.2401,
     longitude = 6.9969,
-    locationName = "Nicolas Klein Photography",
-    address = "Heinrich-Köhl-Str. 41, 66113 Saarbrücken"
+    locationName = "Saarbrücken"
 }: LocationMapProps) {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
@@ -62,10 +60,10 @@ export default function LocationMap({
     useEffect(() => {
         if (!mapRef.current || mapInstanceRef.current) return;
 
-        // Initialize the map
+        // Initialize the map with wider zoom to show Saarland region
         const map = L.map(mapRef.current, {
             center: [latitude, longitude],
-            zoom: 13,
+            zoom: 10,
             scrollWheelZoom: false,
             zoomControl: true,
         });
@@ -90,13 +88,12 @@ export default function LocationMap({
             ">
                 <strong style="
                     display: block;
-                    margin-bottom: 4px;
                     font-size: 14px;
                 ">${locationName}</strong>
                 <span style="
                     font-size: 12px;
                     color: #666;
-                ">${address}</span>
+                ">Saarland, Deutschland</span>
             </div>
         `);
 
@@ -107,7 +104,7 @@ export default function LocationMap({
                 mapInstanceRef.current = null;
             }
         };
-    }, [latitude, longitude, locationName, address]);
+    }, [latitude, longitude, locationName]);
 
     return (
         <div className="w-full">
@@ -119,10 +116,10 @@ export default function LocationMap({
             <div className="mt-4 text-center text-sm text-gray-600">
                 <div className="flex items-center justify-center gap-2">
                     <MapPin size={16} />
-                    <span>Saarbrücken, Deutschland</span>
+                    <span>Saarbrücken, Saarland</span>
                 </div>
                 <p className="mt-2 text-xs">
-                    Klicke auf den Marker für mehr Informationen
+                    Im Herzen des Saarlands – Klicke auf den Marker für Details
                 </p>
             </div>
         </div>
