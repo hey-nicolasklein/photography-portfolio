@@ -5,7 +5,11 @@ import "./globals.css";
 import ScrollProgress from "@/components/scroll-progress";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { generatePhotographerStructuredData } from "@/lib/og";
+import {
+    generatePhotographerStructuredData,
+    siteMetadataBase,
+    siteUrl,
+} from "@/lib/og";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -22,6 +26,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+    metadataBase: siteMetadataBase,
     title: {
         default:
             "Nicolas Klein Photography - Professionelle Fotografie in Saarbrücken",
@@ -56,7 +61,7 @@ export const metadata: Metadata = {
     openGraph: {
         type: "website",
         locale: "de_DE",
-        url: "https://nicolasklein.photography",
+        url: siteUrl,
         siteName: "Nicolas Klein Photography",
         title: "Nicolas Klein Photography - Professionelle Fotografie in Saarbrücken",
         description:
@@ -106,7 +111,7 @@ export const metadata: Metadata = {
     },
     manifest: "/site.webmanifest",
     alternates: {
-        canonical: "https://nicolasklein.photography",
+        canonical: siteUrl,
     },
     verification: {
         google: "your-google-verification-code", // You'll need to add this when setting up Google Search Console

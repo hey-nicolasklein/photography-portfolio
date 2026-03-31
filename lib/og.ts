@@ -9,7 +9,10 @@ interface OpenGraphConfig {
   noIndex?: boolean;
 }
 
-const baseUrl = 'https://nicolasklein.photography';
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://nicolasklein.photography');
+export const siteMetadataBase = new URL(siteUrl);
 const defaultOgImage = '/og_hero.png';
 const fallbackOgImage = '/og-default.svg';
 
@@ -22,7 +25,7 @@ export function generateMetadata({
   noIndex = false,
 }: OpenGraphConfig): Metadata {
   const fullTitle = path === '' ? title : `${title} | Nicolas Klein Photography`;
-  const url = `${baseUrl}${path}`;
+  const url = `${siteUrl}${path}`;
   
   // Use custom image, default to static hero image, or generate dynamic one as fallback
   const ogImageUrl = image || defaultOgImage;
@@ -117,8 +120,8 @@ export function generatePhotographerStructuredData() {
     '@type': 'Person',
     name: 'Nicolas Klein',
     jobTitle: 'Professional Photographer',
-    url: 'https://nicolasklein.photography',
-    image: `${baseUrl}${defaultOgImage}`,
+    url: siteUrl,
+    image: `${siteUrl}${defaultOgImage}`,
     description: 'Professioneller Fotograf in Saarbrücken. Spezialisiert auf Porträts und Event-Fotografie.',
     address: {
       '@type': 'PostalAddress',
