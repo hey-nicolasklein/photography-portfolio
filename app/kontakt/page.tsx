@@ -17,8 +17,6 @@ export const metadata = generateMetadata({
 export default async function Kontakt() {
     const bio = await getBio();
     const age = getNicolasAge();
-
-    console.log(age);
     
     return (
         <main className="min-h-screen bg-white text-black">

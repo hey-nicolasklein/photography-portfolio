@@ -9,9 +9,12 @@ import type {
     Story,
     StrapiResponse,
 } from "@/types";
+import { unstable_noStore as noStore } from "next/cache";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
+const CONTENT_REVALIDATE_SECONDS = 300;
+const BIO_REVALIDATE_SECONDS = 600;
 
 if (!STRAPI_URL) {
     throw new Error("NEXT_PUBLIC_STRAPI_URL environment variable is required");
@@ -29,29 +32,34 @@ function getFullImageUrl(url: string): string {
     return `${STRAPI_URL}${url}`;
 }
 
+async function fetchStrapiJson<T>(
+    path: string,
+    revalidate: number
+): Promise<T> {
+    const res = await fetch(`${STRAPI_URL}${path}`, {
+        headers: {
+            Authorization: `Bearer ${STRAPI_TOKEN}`,
+        },
+        next: { revalidate },
+    });
+
+    if (!res.ok) {
+        noStore();
+        throw new Error(
+            `Strapi request failed for ${path}: ${res.status} ${res.statusText}`
+        );
+    }
+
+    return res.json() as Promise<T>;
+}
+
 // Fetch gallery items from Strapi
 export async function getGalleryItems(): Promise<GalleryItem[]> {
     try {
-        const res = await fetch(
-            `${STRAPI_URL}/api/gallery-items?populate=image`,
-            {
-                headers: {
-                    Authorization: `Bearer ${STRAPI_TOKEN}`,
-                },
-                next: { revalidate: 86400 }, // Cache for 24 hours
-            }
+        const json = await fetchStrapiJson<StrapiResponse<StrapiGalleryItem>>(
+            "/api/gallery-items?populate=image",
+            CONTENT_REVALIDATE_SECONDS
         );
-
-        if (!res.ok) {
-            console.error(
-                "Failed to fetch gallery items:",
-                res.status,
-                res.statusText
-            );
-            return [];
-        }
-
-        const json: StrapiResponse<StrapiGalleryItem> = await res.json();
         const galleryItems = json.data || [];
 
         // Transform and construct full URLs
@@ -75,6 +83,7 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
         });
     } catch (error) {
         console.error("Error fetching gallery items:", error);
+        noStore();
         return [];
     }
 }
@@ -82,26 +91,10 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
 // Fetch portfolio items from Strapi
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
     try {
-        const res = await fetch(
-            `${STRAPI_URL}/api/portfolio-items?populate=FullImage`,
-            {
-                headers: {
-                    Authorization: `Bearer ${STRAPI_TOKEN}`,
-                },
-                next: { revalidate: 86400 }, // Cache for 24 hours
-            }
+        const json = await fetchStrapiJson<StrapiResponse<StrapiPortfolioItem>>(
+            "/api/portfolio-items?populate=FullImage",
+            CONTENT_REVALIDATE_SECONDS
         );
-
-        if (!res.ok) {
-            console.error(
-                "Failed to fetch portfolio items:",
-                res.status,
-                res.statusText
-            );
-            return [];
-        }
-
-        const json: StrapiResponse<StrapiPortfolioItem> = await res.json();
         const portfolioItems = json.data || [];
 
         return portfolioItems.map((item) => ({
@@ -113,6 +106,7 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
         }));
     } catch (error) {
         console.error("Error fetching portfolio items:", error);
+        noStore();
         return [];
     }
 }
@@ -120,19 +114,10 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
 // Fetch bio item from Strapi
 export async function getBio(): Promise<BioItem | null> {
     try {
-        const res = await fetch(`${STRAPI_URL}/api/bio?populate=profileImage`, {
-            headers: {
-                Authorization: `Bearer ${STRAPI_TOKEN}`,
-            },
-            next: { revalidate: 86400 }, // Cache for 24 hours
-        });
-
-        if (!res.ok) {
-            console.error("Failed to fetch bio:", res.status, res.statusText);
-            return null;
-        }
-
-        const json: { data: StrapiBioItem } = await res.json();
+        const json = await fetchStrapiJson<{ data: StrapiBioItem | null }>(
+            "/api/bio?populate=profileImage",
+            BIO_REVALIDATE_SECONDS
+        );
         const bioItem = json.data;
 
         if (!bioItem) {
@@ -157,6 +142,7 @@ export async function getBio(): Promise<BioItem | null> {
         };
     } catch (error) {
         console.error("Error fetching bio:", error);
+        noStore();
         return null;
     }
 }
@@ -164,23 +150,10 @@ export async function getBio(): Promise<BioItem | null> {
 // Fetch stories from Strapi
 export async function getStories(): Promise<Story[]> {
     try {
-        const res = await fetch(`${STRAPI_URL}/api/stories?populate=images&pagination[pageSize]=100`, {
-            headers: {
-                Authorization: `Bearer ${STRAPI_TOKEN}`,
-            },
-            next: { revalidate: 86400 }, // Cache for 24 hours
-        });
-
-        if (!res.ok) {
-            console.error(
-                "Failed to fetch stories:",
-                res.status,
-                res.statusText
-            );
-            return [];
-        }
-
-        const json: StrapiResponse<StrapiStory> = await res.json();
+        const json = await fetchStrapiJson<StrapiResponse<StrapiStory>>(
+            "/api/stories?populate=images&pagination[pageSize]=100",
+            CONTENT_REVALIDATE_SECONDS
+        );
         const stories = json.data || [];
 
         const transformedStories = stories.map((story) => ({
@@ -205,6 +178,7 @@ export async function getStories(): Promise<Story[]> {
         });
     } catch (error) {
         console.error("Error fetching stories:", error);
+        noStore();
         return [];
     }
 }
