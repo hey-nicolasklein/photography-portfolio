@@ -9,7 +9,6 @@ import type {
     Story,
     StrapiResponse,
 } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
@@ -44,7 +43,6 @@ async function fetchStrapiJson<T>(
     });
 
     if (!res.ok) {
-        noStore();
         throw new Error(
             `Strapi request failed for ${path}: ${res.status} ${res.statusText}`
         );
@@ -83,7 +81,6 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
         });
     } catch (error) {
         console.error("Error fetching gallery items:", error);
-        noStore();
         return [];
     }
 }
@@ -106,7 +103,6 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
         }));
     } catch (error) {
         console.error("Error fetching portfolio items:", error);
-        noStore();
         return [];
     }
 }
@@ -142,7 +138,6 @@ export async function getBio(): Promise<BioItem | null> {
         };
     } catch (error) {
         console.error("Error fetching bio:", error);
-        noStore();
         return null;
     }
 }
@@ -178,7 +173,6 @@ export async function getStories(): Promise<Story[]> {
         });
     } catch (error) {
         console.error("Error fetching stories:", error);
-        noStore();
         return [];
     }
 }
