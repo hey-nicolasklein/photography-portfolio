@@ -123,7 +123,6 @@ export default function ShareModal() {
                                 right: 0,
                                 bottom: 0,
                                 width: "100vw",
-                                minHeight: "100vh",
                                 minHeight: "100dvh",
                                 paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
                             }}

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 interface AnimatedButtonProps {
@@ -8,13 +9,15 @@ interface AnimatedButtonProps {
     children: React.ReactNode;
     variant?: "light" | "dark";
     className?: string;
+    icon?: LucideIcon;
 }
 
 export default function AnimatedButton({ 
     href, 
     children, 
     variant = "light",
-    className = "" 
+    className = "",
+    icon: Icon
 }: AnimatedButtonProps) {
     const baseClasses = "relative inline-block px-4 py-2 text-xs sm:text-sm uppercase tracking-wider font-medium overflow-hidden group transition-all duration-300";
     
@@ -64,8 +67,9 @@ export default function AnimatedButton({
                     }}
                 />
                 
-                <span className="relative z-10">
+                <span className="relative z-10 inline-flex items-center gap-2">
                     {children}
+                    {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}
                 </span>
             </Link>
         </motion.div>

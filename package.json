@@ -2,6 +2,7 @@
     "name": "my-v0-project",
     "version": "0.1.0",
     "private": true,
+    "packageManager": "pnpm@10.6.5",
     "scripts": {
         "dev": "next dev",
         "build": "next build",
@@ -14,7 +15,7 @@
     "dependencies": {
         "@ai-sdk/openai": "^2.0.56",
         "@ai-sdk/react": "^2.0.82",
-        "@emotion/is-prop-valid": "latest",
+        "@emotion/is-prop-valid": "1.3.1",
         "@hookform/resolvers": "^3.9.1",
         "@radix-ui/react-accordion": "1.2.2",
         "@radix-ui/react-alert-dialog": "1.1.4",
@@ -53,15 +54,15 @@
         "date-fns": "4.1.0",
         "embla-carousel-react": "8.5.1",
         "formdata-node": "^6.0.3",
-        "framer-motion": "latest",
+        "framer-motion": "12.12.1",
         "input-otp": "1.4.1",
         "lucide-react": "^0.454.0",
-        "next": "^15.2.6",
+        "next": "15.5.18",
         "next-themes": "^0.4.4",
         "qr-code-styling": "^1.9.2",
-        "react": "^19",
+        "react": "19.1.7",
         "react-day-picker": "8.10.1",
-        "react-dom": "^19",
+        "react-dom": "19.1.7",
         "react-hook-form": "^7.54.1",
         "react-intersection-observer": "^9.16.0",
         "react-masonry-css": "^1.0.16",
@@ -73,9 +74,10 @@
         "tailwind-merge": "^2.5.5",
         "tailwindcss-animate": "^1.0.7",
         "vaul": "^0.9.6",
-        "zod": "latest"
+        "zod": "4.1.12"
     },
     "devDependencies": {
+        "@next/swc-wasm-nodejs": "15.5.18",
         "@playwright/test": "^1.56.1",
         "@types/node": "^22",
         "@types/react": "^19",

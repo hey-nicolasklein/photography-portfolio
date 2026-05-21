@@ -9,6 +9,7 @@ export const maxDuration = 30;
 let cachedAllImages: ImageMetadata[] | null = null;
 let lastFetchTime = 0;
 const CACHE_DURATION = 86400000; // 24 hours
+type SearchGalleryItem = Omit<GalleryItem, "id"> & { id: string };
 
 async function getAllImages() {
     const now = Date.now();
@@ -118,7 +119,7 @@ function performSemanticSearch(images: ImageMetadata[], query: string): ImageMet
     return filteredImages;
 }
 
-function convertToGalleryItem(image: ImageMetadata): GalleryItem {
+function convertToGalleryItem(image: ImageMetadata): SearchGalleryItem {
     return {
         id: image.id,
         src: image.url,
@@ -167,4 +168,3 @@ export async function GET(request: Request) {
         return NextResponse.json([], { status: 500 });
     }
 }
-
