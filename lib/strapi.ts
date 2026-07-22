@@ -38,24 +38,33 @@ export async function getStories(): Promise<Story[]> {
     return storiesData as Story[];
 }
 
-// Filename of an image path — used to match the same photo across the
-// per-category folders (gallery/ vs stories/) it was exported into.
+// Filename of an image path.
 export function imageBasename(path: string): string {
     return (path || "").split("/").pop() || path;
 }
 
-// Set of image filenames that already appear inside a story. The gallery grid
+// Camera-frame identity: strip the folder and Strapi's 10-char hash suffix, so
+// the same shot is recognized as one photo even when it was uploaded to Strapi
+// more than once (different hashes) or exported into different category folders.
+// e.g. "/images/portfolio/DSCF_3305_4d11f1c72c.webp" -> "DSCF_3305"
+export function imageFrameId(path: string): string {
+    return imageBasename(path)
+        .replace(/_[0-9a-f]{10}\.webp$/i, "")
+        .replace(/\.webp$/i, "");
+}
+
+// Set of camera-frame ids that already appear inside a story. The gallery grid
 // uses this to avoid showing the same photo twice on pages that also render
-// stories (15 of the gallery photos are also part of stories).
-export async function getStoryImageNames(): Promise<Set<string>> {
+// stories (many gallery/portfolio photos are re-uploads of story images).
+export async function getStoryImageFrames(): Promise<Set<string>> {
     const stories = await getStories();
-    const names = new Set<string>();
+    const frames = new Set<string>();
     for (const story of stories) {
         for (const image of story.images) {
-            names.add(imageBasename(image.url));
+            frames.add(imageFrameId(image.url));
         }
     }
-    return names;
+    return frames;
 }
 
 // Get all images with metadata for semantic search
