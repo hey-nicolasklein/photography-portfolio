@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getGalleryItems, getPortfolioItems } from "@/lib/strapi";
+import { getGalleryItems, getPortfolioItems, getStoryImageNames, imageBasename } from "@/lib/strapi";
 
 // Simple in-memory cache to avoid fetching same data repeatedly
 let cachedAllItems: any[] | null = null;
@@ -15,9 +15,10 @@ async function getAllItems() {
     }
     
     // Fetch fresh data
-    const [galleryItems, portfolioItems] = await Promise.all([
+    const [galleryItems, portfolioItems, storyImageNames] = await Promise.all([
         getGalleryItems(),
-        getPortfolioItems()
+        getPortfolioItems(),
+        getStoryImageNames()
     ]);
 
     // Combine items with simple ID strategy
@@ -36,10 +37,12 @@ async function getAllItems() {
         }))
     ];
 
-    // Remove duplicates based on src URL
-    const uniqueItems = allItems.filter((item, index, self) => 
-        index === self.findIndex(i => i.src === item.src)
-    );
+    // Drop photos already shown in stories, then remove duplicates based on src URL
+    const uniqueItems = allItems
+        .filter(item => !storyImageNames.has(imageBasename(item.src)))
+        .filter((item, index, self) =>
+            index === self.findIndex(i => i.src === item.src)
+        );
 
     // Simple shuffle - no need for seeded complexity
     const shuffledItems = [...uniqueItems].sort(() => Math.random() - 0.5);

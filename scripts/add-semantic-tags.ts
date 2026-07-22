@@ -1,42 +1,58 @@
 #!/usr/bin/env tsx
 /**
- * Script to generate and save embeddingDescription for gallery items in Strapi
- * Uses AI to analyze existing metadata (and optionally vision) to produce a long description
- * 
- * Usage: 
- *   pnpm tsx scripts/add-semantic-tags.ts [--vision] [--dry-run]
- * 
+ * Generate and save `embeddingDescription` for gallery items in the local
+ * content store (content/gallery.json). Uses AI to analyze existing metadata
+ * (and optionally the actual image via vision) to produce a short description
+ * used for semantic search.
+ *
+ * This used to write back to Strapi; after the migration to git-based content
+ * it reads and writes content/gallery.json directly, and vision reads the
+ * downsized local images from public/images/**.
+ *
+ * Usage:
+ *   pnpm tsx scripts/add-semantic-tags.ts [--vision] [--dry-run] [--force]
+ *
  * Options:
- *   --vision: Use GPT-4 Vision to analyze actual images (slower, more accurate)
- *   --dry-run: Show what would be updated without actually updating Strapi
+ *   --vision:  Use vision to analyze the actual image (slower, more accurate)
+ *   --dry-run: Show what would change without writing content/gallery.json
+ *   --force:   Regenerate even for items that already have an embeddingDescription
  */
 
 // Load environment variables FIRST before any other imports
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import { readFile, writeFile } from 'fs/promises';
 
 // Load .env.local first, then .env (local takes precedence)
-const envPath = resolve(process.cwd(), '.env.local');
-const envDefaultPath = resolve(process.cwd(), '.env');
-config({ path: envPath });
-config({ path: envDefaultPath });
+config({ path: resolve(process.cwd(), '.env.local') });
+config({ path: resolve(process.cwd(), '.env') });
 
 import { openai } from '@ai-sdk/openai';
 import { generateObject, generateText } from 'ai';
 import { z } from 'zod/v4';
 
-// We'll use dynamic import in main() to ensure env vars are loaded first
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
-const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
-
 const USE_VISION = process.argv.includes('--vision');
 const DRY_RUN = process.argv.includes('--dry-run');
+const FORCE = process.argv.includes('--force');
 
-if (!STRAPI_URL || !STRAPI_TOKEN) {
-    console.error('Missing required environment variables: NEXT_PUBLIC_STRAPI_URL, STRAPI_API_TOKEN');
+if (!process.env.OPENAI_API_KEY) {
+    console.error('Missing required environment variable: OPENAI_API_KEY');
     process.exit(1);
 }
+
+const GALLERY_PATH = resolve(process.cwd(), 'content', 'gallery.json');
+const PUBLIC_DIR = resolve(process.cwd(), 'public');
+
+// Shape of a gallery item in content/gallery.json
+type GalleryItem = {
+    id: number;
+    documentId?: string;
+    src: string;
+    alt: string;
+    caption?: string;
+    category: string;
+    embeddingDescription?: string;
+};
 
 // Schema for concise, mappable description
 const EmbeddingDescriptionSchema = z.object({
@@ -53,7 +69,16 @@ function compactAndLimit(input: string, maxLen = 200): string {
     return cut.replace(/[.,;:!?\-\s]*$/, '');
 }
 
-async function generateDescriptionFromMetadata(metadata: { title?: string; description?: string; alt?: string; category?: string }): Promise<string> {
+type GenMetadata = { title?: string; description?: string; alt?: string; category?: string };
+
+function metadataBlock(metadata: GenMetadata): string {
+    return `- Title: ${metadata.title || 'N/A'}
+- Alt: ${metadata.alt || 'N/A'}
+- Category: ${metadata.category || 'N/A'}
+- Tags/Caption: ${metadata.description || 'N/A'}`;
+}
+
+async function generateDescriptionFromMetadata(metadata: GenMetadata): Promise<string> {
     try {
         const result = await generateObject({
             model: openai('gpt-5-nano'),
@@ -61,12 +86,11 @@ async function generateDescriptionFromMetadata(metadata: { title?: string; descr
             prompt: `Write ONE sentence (120-200 characters) that clearly describes the photo for semantic search.
 
 Metadata:
-- Title: ${metadata.title || 'N/A'}
-- Alt: ${metadata.alt || 'N/A'}
-- Category: ${metadata.category || 'N/A'}
+${metadataBlock(metadata)}
 
 Rules:
 - Include: key subject(s), setting/location, time of day or lighting, mood.
+- Draw on the Tags/Caption for concrete details (subjects, colors, location).
 - No lists. No line breaks. No prefixes. No hashtags.
 - Prefer concise, concrete wording.`,
         });
@@ -75,7 +99,7 @@ Rules:
         // Fallback: attempt text-based generation if object missing
         const textRes = await generateText({
             model: openai('gpt-5-nano'),
-            prompt: `ONE sentence (120-200 chars) clear image description for semantic search. Include subject, setting, time/lighting, mood. No line breaks.\nTitle: ${metadata.title || 'N/A'}\nAlt: ${metadata.alt || 'N/A'}\nCategory: ${metadata.category || 'N/A'}`,
+            prompt: `ONE sentence (120-200 chars) clear image description for semantic search. Include subject, setting, time/lighting, mood. No line breaks.\n${metadataBlock(metadata)}`,
         });
         return compactAndLimit(textRes.text, 200);
     } catch (error) {
@@ -83,7 +107,7 @@ Rules:
         try {
             const textRes = await generateText({
                 model: openai('gpt-5-nano'),
-                prompt: `ONE sentence (120-200 chars) clear image description. Include subject, setting, time/lighting, mood. No line breaks.\nTitle: ${metadata.title || 'N/A'}\nAlt: ${metadata.alt || 'N/A'}\nCategory: ${metadata.category || 'N/A'}`,
+                prompt: `ONE sentence (120-200 chars) clear image description. Include subject, setting, time/lighting, mood. No line breaks.\n${metadataBlock(metadata)}`,
             });
             return compactAndLimit(textRes.text, 200);
         } catch (e) {
@@ -94,7 +118,7 @@ Rules:
     }
 }
 
-async function generateDescriptionFromVision(imageUrl: string, metadata: { title?: string; description?: string; alt?: string; category?: string }): Promise<string> {
+async function generateDescriptionFromVision(imageData: Uint8Array, metadata: GenMetadata): Promise<string> {
     try {
         // Vision-based description
         const result = await generateObject({
@@ -109,9 +133,7 @@ async function generateDescriptionFromVision(imageUrl: string, metadata: { title
                             text: `Analyze this photograph and write ONE sentence (120-200 characters) that clearly describes it for semantic search.
 
 Existing metadata:
-- Title: ${metadata.title || 'N/A'}
-- Alt: ${metadata.alt || 'N/A'}
-- Category: ${metadata.category || 'N/A'}
+${metadataBlock(metadata)}
 
 Rules:
 - Include: key subject(s), setting/location, time of day or lighting, mood.
@@ -119,7 +141,7 @@ Rules:
                         },
                         ({
                             type: 'image',
-                            image: imageUrl,
+                            image: imageData,
                             detail: 'low',
                         } as any),
                     ],
@@ -128,12 +150,8 @@ Rules:
         });
         const value = (result as any)?.object?.embeddingDescription;
         if (typeof value === 'string' && value.trim().length > 0) return compactAndLimit(value, 200);
-        // Fallback to text-only if parsing failed
-        const textRes = await generateText({
-            model: openai('gpt-5-nano'),
-            prompt: `ONE sentence (120-200 chars) clear image description for semantic search. Include subject, setting, time/lighting, mood. No line breaks.\nImage URL: ${imageUrl}\nTitle: ${metadata.title || 'N/A'}\nAlt: ${metadata.alt || 'N/A'}\nCategory: ${metadata.category || 'N/A'}`,
-        });
-        return compactAndLimit(textRes.text, 200);
+        // Fallback to metadata-only if parsing failed
+        return compactAndLimit(await generateDescriptionFromMetadata(metadata), 200);
     } catch (error) {
         console.error(`Error generating description from vision:`, error);
         // Fallback to metadata-based generation
@@ -148,172 +166,92 @@ Rules:
     }
 }
 
-type GalleryItemForUpdate = { id: number; documentId?: string; tag: string; image: Array<{ id: number; name: string; url: string; alternativeText?: string }>; embeddingDescription?: string };
-
-async function fetchAllGalleryItems(): Promise<Array<GalleryItemForUpdate>> {
-    const items: Array<GalleryItemForUpdate> = [];
-    let page = 1;
-    const pageSize = 100;
-    while (true) {
-        const res = await fetch(`${STRAPI_URL}/api/gallery-items?populate=image&fields[0]=documentId&fields[1]=tag&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
-            { headers: { Authorization: `Bearer ${STRAPI_TOKEN}` } });
-        if (!res.ok) break;
-        const json = await res.json();
-        const data = Array.isArray(json?.data) ? json.data : [];
-        if (data.length === 0) break;
-        for (const raw of data) {
-            // Support both flat and nested shapes (Strapi v5 returns nested under attributes)
-            const attrs = raw.attributes || raw;
-            const imageData = attrs.image?.data
-                ? Array.isArray(attrs.image.data)
-                    ? attrs.image.data.map((n: any) => ({ id: n.id, ...n.attributes }))
-                    : [{ id: attrs.image.data.id, ...(attrs.image.data.attributes || {}) }]
-                : (Array.isArray(raw.image) ? raw.image : []);
-
-            items.push({
-                id: raw.id,
-                documentId: raw.documentId || attrs.documentId,
-                tag: attrs.tag ?? raw.tag,
-                embeddingDescription: attrs.embeddingDescription ?? raw.embeddingDescription,
-                image: (imageData || []).map((img: any) => ({
-                    id: img.id,
-                    name: img.name,
-                    url: img.url,
-                    alternativeText: img.alternativeText,
-                })),
-            });
-        }
-        if (data.length < pageSize) break;
-        page++;
-        if (page > 1000) break;
-    }
-    return items;
+async function readGallery(): Promise<GalleryItem[]> {
+    const raw = await readFile(GALLERY_PATH, 'utf8');
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) throw new Error('content/gallery.json is not an array');
+    return data as GalleryItem[];
 }
 
-async function updateGalleryItemEmbeddingDescription(identifier: string | number, text: string): Promise<boolean> {
+async function writeGallery(items: GalleryItem[]): Promise<void> {
+    await writeFile(GALLERY_PATH, `${JSON.stringify(items, null, 2)}\n`, 'utf8');
+}
+
+async function loadLocalImage(src: string): Promise<Uint8Array | null> {
     try {
-        const url = `${STRAPI_URL}/api/gallery-items/${encodeURIComponent(String(identifier))}`;
-        console.log(`   🔗 Updating: ${url}`);
-        // Use PUT with documentId for Strapi v5 partial update on collection type
-        const res = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${STRAPI_TOKEN}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ data: { embeddingDescription: text } }),
-        });
-        if (!res.ok) {
-            const msg = await res.text();
-            console.error(`   ❌ Failed to update gallery-item ${String(identifier)}: ${res.status} ${msg.substring(0, 200)}`);
-            return false;
-        }
-        console.log(`   ✅ Saved embeddingDescription on gallery-item ${String(identifier)}`);
-        return true;
+        // src looks like "/images/gallery/foo.webp" → public/images/gallery/foo.webp
+        const filePath = resolve(PUBLIC_DIR, src.replace(/^\//, ''));
+        return new Uint8Array(await readFile(filePath));
     } catch (e) {
-        console.error(`   ❌ Network error updating gallery-item ${String(identifier)}:`, e);
-        return false;
+        console.warn(`   ⚠️  Could not read local image ${src}:`, e instanceof Error ? e.message : e);
+        return null;
     }
 }
 
 async function main() {
-    console.log('🚀 Starting embeddingDescription generation for gallery items...\n');
+    console.log('🚀 Generating embeddingDescription for gallery items (local)...\n');
 
-    // Fetch all gallery items with images
-    console.log('📥 Fetching gallery items from Strapi...');
-    const allItems = await fetchAllGalleryItems();
-
-    // Deduplicate by base name of the first image to avoid repeats across multiple assets
-    const baseName = (name: string) => (name || '').replace(/\.[^.]+$/, '');
-    const seen = new Set<string>();
-    const itemsToProcess: GalleryItemForUpdate[] = [];
-    for (const item of allItems) {
-        const first = item.image?.[0];
-        const key = (first ? baseName(first.name) : `item-${item.id}`).toLowerCase();
-        if (seen.has(key)) continue;
-        seen.add(key);
-        itemsToProcess.push(item);
-    }
-
-    console.log(`🧹 Deduplicated to ${itemsToProcess.length} gallery items by base image name.`);
+    const items = await readGallery();
+    console.log(`📥 Loaded ${items.length} gallery items from content/gallery.json\n`);
 
     let processed = 0;
+    let skipped = 0;
     let failed = 0;
-    const updatedItemIds: number[] = [];
+    let changed = false;
 
-    // Process one at a time to ensure each is completed before moving on
-    for (const item of itemsToProcess) {
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        console.log(`🖼️  [${i + 1}/${items.length}] gallery-item ${item.id} (${item.src.split('/').pop()})`);
+
+        // Skip if already has embeddingDescription (unless --force)
+        if (!FORCE && item.embeddingDescription && item.embeddingDescription.trim().length > 0) {
+            console.log(`   ⏭️  Skipping: embeddingDescription already present`);
+            skipped++;
+            continue;
+        }
+
         try {
-            console.log(`\n🖼️  [${processed + failed + 1}/${itemsToProcess.length}] Processing gallery-item ${item.id} (${item.image?.[0]?.name || 'no-image'})`);
+            const metadata: GenMetadata = {
+                title: item.alt,
+                alt: item.alt,
+                category: item.category,
+                description: item.caption, // rich semantic tags
+            };
 
-            // Skip if already has embeddingDescription
-            if (item.embeddingDescription && item.embeddingDescription.trim().length > 0) {
-                console.log(`   ⏭️  Skipping: embeddingDescription already present`);
-                continue;
-            }
-
-            // Optional: sanity check that item exists server-side to avoid 404 surprises
-            try {
-                const checkUrl = `${STRAPI_URL}/api/gallery-items/${encodeURIComponent(String(item.documentId || item.id))}`;
-                const checkRes = await fetch(checkUrl, { headers: { Authorization: `Bearer ${STRAPI_TOKEN}` } });
-                if (checkRes.status === 404) {
-                    console.warn(`   ⚠️  GET ${checkUrl} returned 404 (not found). Skipping.`);
-                    failed++;
-                    continue;
-                }
-            } catch {}
-
-            const img = item.image?.[0];
-            const imageUrl = img?.url ? (img.url.startsWith('http') ? img.url : `${STRAPI_URL}${img.url}`) : '';
-            const description = USE_VISION && imageUrl
-                ? await generateDescriptionFromVision(imageUrl, {
-                    title: img?.name,
-                    description: img?.alternativeText,
-                    alt: img?.alternativeText,
-                    category: item.tag,
-                })
-                : await generateDescriptionFromMetadata({
-                    title: img?.name,
-                    description: '',
-                    alt: img?.alternativeText,
-                    category: item.tag,
-                });
-
-            console.log(`   ✅ Generated embeddingDescription (${Math.min(description.length, 80)} chars preview): ${description.slice(0, 80)}${description.length > 80 ? '…' : ''}`);
-
-            const identifier = item.documentId || item.id;
-            const success = DRY_RUN ? true : await updateGalleryItemEmbeddingDescription(identifier, description);
-            
-            if (success) {
-                processed++;
-                updatedItemIds.push(item.id);
-                console.log(`   ✅ Successfully updated gallery-item ${item.id}`);
+            let description: string;
+            if (USE_VISION) {
+                const imageData = await loadLocalImage(item.src);
+                description = imageData
+                    ? await generateDescriptionFromVision(imageData, metadata)
+                    : await generateDescriptionFromMetadata(metadata);
             } else {
-                failed++;
-                console.log(`   ❌ Failed to update gallery-item ${item.id}`);
+                description = await generateDescriptionFromMetadata(metadata);
             }
 
-            // Rate limiting - wait 2-3 seconds between requests
-            await new Promise(resolve => setTimeout(resolve, USE_VISION ? 3000 : 2000));
+            console.log(`   ✅ ${description.slice(0, 90)}${description.length > 90 ? '…' : ''}`);
+
+            if (!DRY_RUN) {
+                item.embeddingDescription = description;
+                changed = true;
+            }
+            processed++;
+
+            // Gentle pacing to stay under API rate limits
+            await new Promise(r => setTimeout(r, USE_VISION ? 1500 : 800));
         } catch (error) {
             console.error(`   ❌ Error processing item ${item.id}:`, error);
             failed++;
         }
     }
 
-    console.log(`\n\n✅ Complete!`);
-    console.log(`   Successfully updated: ${processed}`);
-    console.log(`   Failed: ${failed}`);
-    console.log(`   Total processed: ${itemsToProcess.length}`);
-    
-    if (updatedItemIds.length > 0) {
-        console.log(`\n📝 Updated Gallery Items:`);
-        updatedItemIds.forEach((id, index) => {
-            console.log(`   ${index + 1}. id=${id}`);
-        });
+    if (changed && !DRY_RUN) {
+        await writeGallery(items);
+        console.log(`\n💾 Wrote updates to content/gallery.json`);
+    } else if (DRY_RUN) {
+        console.log(`\n🔍 Dry run — no files written`);
     }
-    
-    return updatedItemIds;
+
+    console.log(`\n✅ Complete! generated: ${processed}, skipped: ${skipped}, failed: ${failed}`);
 }
 
 // Run if called directly
@@ -321,5 +259,4 @@ if (require.main === module) {
     main().catch(console.error);
 }
 
-export { generateDescriptionFromMetadata, generateDescriptionFromVision, updateGalleryItemEmbeddingDescription };
-
+export { generateDescriptionFromMetadata, generateDescriptionFromVision };

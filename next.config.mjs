@@ -7,12 +7,7 @@ const nextConfig = {
         ignoreBuildErrors: true,
     },
     images: {
-        remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "usable-broccoli-a2df028ad2.media.strapiapp.com",
-            },
-        ],
+        // Images are served locally from public/images/** after the Strapi migration.
         unoptimized: false,
         // Optimize cache usage to reduce Vercel Image Optimization cache writes
         minimumCacheTTL: 31536000, // 1 year - prevents frequent cache regeneration

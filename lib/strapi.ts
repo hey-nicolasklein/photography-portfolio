@@ -1,186 +1,67 @@
+// Local content data layer.
+//
+// Content was migrated out of Strapi into static JSON files under `content/`
+// (see scripts/export-strapi.ts). These functions keep the exact same names,
+// signatures, and return shapes the app already consumed, so no callers needed
+// to change — the only difference is the data now comes from the repo instead
+// of a live CMS. Images live in `public/images/**` and are served locally.
+
 import type {
-    StrapiGalleryItem,
-    StrapiPortfolioItem,
-    StrapiBioItem,
-    StrapiStory,
     GalleryItem,
     PortfolioItem,
     BioItem,
     Story,
-    StrapiResponse,
 } from "@/types";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
-const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
-const CONTENT_REVALIDATE_SECONDS = 300;
-const BIO_REVALIDATE_SECONDS = 600;
+import galleryData from "@/content/gallery.json";
+import portfolioData from "@/content/portfolio.json";
+import bioData from "@/content/bio.json";
+import storiesData from "@/content/stories.json";
 
-if (!STRAPI_URL) {
-    throw new Error("NEXT_PUBLIC_STRAPI_URL environment variable is required");
-}
-
-if (!STRAPI_TOKEN) {
-    throw new Error("STRAPI_API_TOKEN environment variable is required");
-}
-
-// Helper function to construct full image URLs
-function getFullImageUrl(url: string): string {
-    if (url.startsWith("http")) {
-        return url;
-    }
-    return `${STRAPI_URL}${url}`;
-}
-
-async function fetchStrapiJson<T>(
-    path: string,
-    revalidate: number
-): Promise<T> {
-    const res = await fetch(`${STRAPI_URL}${path}`, {
-        headers: {
-            Authorization: `Bearer ${STRAPI_TOKEN}`,
-        },
-        next: { revalidate },
-    });
-
-    if (!res.ok) {
-        throw new Error(
-            `Strapi request failed for ${path}: ${res.status} ${res.statusText}`
-        );
-    }
-
-    return res.json() as Promise<T>;
-}
-
-// Fetch gallery items from Strapi
+// Fetch gallery items
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-    try {
-        const json = await fetchStrapiJson<StrapiResponse<StrapiGalleryItem>>(
-            "/api/gallery-items?populate=image",
-            CONTENT_REVALIDATE_SECONDS
-        );
-        const galleryItems = json.data || [];
-
-        // Transform and construct full URLs
-        return galleryItems.map((item) => {
-            const imageUrl = item.image[0]?.url || "/placeholder.svg";
-            const fullImageUrl = getFullImageUrl(imageUrl);
-            const imageData = item.image[0];
-
-            return {
-                id: item.id,
-                documentId: item.documentId, // Include documentId for API updates
-                src: fullImageUrl,
-                alt:
-                    imageData?.alternativeText ||
-                    imageData?.name ||
-                    "Gallery image",
-                caption: imageData?.caption || '', // legacy tags
-                category: item.tag,
-                embeddingDescription: item.embeddingDescription,
-            };
-        });
-    } catch (error) {
-        console.error("Error fetching gallery items:", error);
-        return [];
-    }
+    return galleryData as GalleryItem[];
 }
 
-// Fetch portfolio items from Strapi
+// Fetch portfolio items
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
-    try {
-        const json = await fetchStrapiJson<StrapiResponse<StrapiPortfolioItem>>(
-            "/api/portfolio-items?populate=FullImage",
-            CONTENT_REVALIDATE_SECONDS
-        );
-        const portfolioItems = json.data || [];
-
-        return portfolioItems.map((item) => ({
-            id: item.id,
-            title: item.Title,
-            category: item.Description,
-            image: getFullImageUrl(item.FullImage.url),
-            alt: item.description,
-        }));
-    } catch (error) {
-        console.error("Error fetching portfolio items:", error);
-        return [];
-    }
+    return portfolioData as PortfolioItem[];
 }
 
-// Fetch bio item from Strapi
+// Fetch bio item
 export async function getBio(): Promise<BioItem | null> {
-    try {
-        const json = await fetchStrapiJson<{ data: StrapiBioItem | null }>(
-            "/api/bio?populate=profileImage",
-            BIO_REVALIDATE_SECONDS
-        );
-        const bioItem = json.data;
-
-        if (!bioItem) {
-            return null;
-        }
-
-        // Transform and construct full URLs
-        const profileImageUrl =
-            bioItem.profileImage?.url || "/photographer.png";
-        const fullProfileImageUrl = getFullImageUrl(profileImageUrl);
-
-        return {
-            id: bioItem.id,
-            tags: bioItem.tags,
-            title: bioItem.title,
-            description: bioItem.description,
-            profileImage: fullProfileImageUrl,
-            profileImageAlt:
-                bioItem.profileImage?.alternativeText ||
-                bioItem.profileImage?.name ||
-                "Nicolas Klein - Photographer",
-        };
-    } catch (error) {
-        console.error("Error fetching bio:", error);
-        return null;
-    }
+    return (bioData as BioItem) ?? null;
 }
 
-// Fetch stories from Strapi
+// Fetch stories (already sorted newest-first at export time)
 export async function getStories(): Promise<Story[]> {
-    try {
-        const json = await fetchStrapiJson<StrapiResponse<StrapiStory>>(
-            "/api/stories?populate=images&pagination[pageSize]=100",
-            CONTENT_REVALIDATE_SECONDS
-        );
-        const stories = json.data || [];
+    return storiesData as Story[];
+}
 
-        const transformedStories = stories.map((story) => ({
-            id: story.id,
-            documentId: story.documentId,
-            title: story.title,
-            description: story.description,
-            images: story.images.map((image) => ({
-                id: image.id,
-                url: getFullImageUrl(image.url),
-                alt: image.alternativeText || image.name || story.title,
-                width: image.width,
-                height: image.height,
-            })),
-            createdAt: story.createdAt,
-        }));
+// Filename of an image path — used to match the same photo across the
+// per-category folders (gallery/ vs stories/) it was exported into.
+export function imageBasename(path: string): string {
+    return (path || "").split("/").pop() || path;
+}
 
-        return transformedStories.sort((a, b) => {
-            const dateA = new Date(a.createdAt).getTime();
-            const dateB = new Date(b.createdAt).getTime();
-            return dateB - dateA;
-        });
-    } catch (error) {
-        console.error("Error fetching stories:", error);
-        return [];
+// Set of image filenames that already appear inside a story. The gallery grid
+// uses this to avoid showing the same photo twice on pages that also render
+// stories (15 of the gallery photos are also part of stories).
+export async function getStoryImageNames(): Promise<Set<string>> {
+    const stories = await getStories();
+    const names = new Set<string>();
+    for (const story of stories) {
+        for (const image of story.images) {
+            names.add(imageBasename(image.url));
+        }
     }
+    return names;
 }
 
 // Get all images with metadata for semantic search
 export interface ImageMetadata {
     id: string;
-    documentId?: string; // Strapi documentId for API updates
+    documentId?: string; // Strapi documentId (retained for compatibility)
     title: string;
     description: string;
     url: string;
@@ -205,13 +86,13 @@ export async function getAllImagesWithMetadata(): Promise<ImageMetadata[]> {
             // Extract tags from caption field first (where we write semantic tags), fallback to alt text
             const captionText = item.caption || '';
             const altText = item.alt || '';
-            
+
             // Prioritize caption for tags, but also include alt if caption is empty
             const tagsSource = captionText || altText;
             const tags = tagsSource
                 ? tagsSource.split(',').map((t: string) => t.trim()).filter((t: string) => t.length > 0 && t.length < 100)
                 : [];
-            
+
             images.push({
                 id: `gallery-${item.id}`,
                 documentId: item.documentId, // Store for API updates
@@ -233,7 +114,7 @@ export async function getAllImagesWithMetadata(): Promise<ImageMetadata[]> {
                 .split(',')
                 .map(t => t.trim())
                 .filter(t => t.length > 0 && t.length < 50); // Filter out overly long "tags"
-            
+
             images.push({
                 id: `portfolio-${item.id}`,
                 title: item.title || 'Portfolio image',
@@ -254,7 +135,7 @@ export async function getAllImagesWithMetadata(): Promise<ImageMetadata[]> {
                     .split(',')
                     .map(t => t.trim())
                     .filter(t => t.length > 0 && t.length < 50);
-                
+
                 images.push({
                     id: `story-${story.id}-${image.id}`,
                     title: story.title,
@@ -269,7 +150,7 @@ export async function getAllImagesWithMetadata(): Promise<ImageMetadata[]> {
 
         return images;
     } catch (error) {
-        console.error("Error fetching all images:", error);
+        console.error("Error building image metadata:", error);
         return [];
     }
 }

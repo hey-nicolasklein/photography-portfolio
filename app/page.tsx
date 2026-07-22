@@ -1,4 +1,4 @@
-import { getGalleryItems, getPortfolioItems, getBio, getStories } from "@/lib/strapi";
+import { getGalleryItems, getPortfolioItems, getBio, getStories, getStoryImageNames, imageBasename } from "@/lib/strapi";
 import HomeClient from "./home-client";
 
 const structuredData = {
@@ -45,9 +45,10 @@ const structuredData = {
 async function getInitialImages() {
     try {
         // Use same logic as API for consistency
-        const [galleryItems, portfolioItems] = await Promise.all([
+        const [galleryItems, portfolioItems, storyImageNames] = await Promise.all([
             getGalleryItems(),
-            getPortfolioItems()
+            getPortfolioItems(),
+            getStoryImageNames()
         ]);
 
         // Combine items (same as API)
@@ -66,10 +67,12 @@ async function getInitialImages() {
             }))
         ];
 
-        // Remove duplicates (same as API)
-        const uniqueItems = allItems.filter((item, index, self) => 
-            index === self.findIndex(i => i.src === item.src)
-        );
+        // Drop photos already shown in stories, then remove duplicates (same as API)
+        const uniqueItems = allItems
+            .filter(item => !storyImageNames.has(imageBasename(item.src)))
+            .filter((item, index, self) =>
+                index === self.findIndex(i => i.src === item.src)
+            );
 
         // Simple shuffle (same as API)
         const shuffledItems = [...uniqueItems].sort(() => Math.random() - 0.5);
